@@ -10,6 +10,7 @@ const ctx = window.ctx = canvas.getContext('2d')
 ctx.globalCompositeOperation = 'darker'
 
 const squareSize = 50
+const step = 4
 
 let squareStartY = 0
 while (squareStartY < canvas.height - squareSize) {
@@ -17,7 +18,7 @@ while (squareStartY < canvas.height - squareSize) {
   while (squareStartX < canvas.width - squareSize) {
     const squareEndX = squareStartX + squareSize
     const squareEndY = squareStartY + squareSize
-    createGrid([squareStartX, squareStartY], [squareEndX, squareEndY], 5)
+    createGrid([squareStartX, squareStartY], [squareEndX, squareEndY], step)
     squareStartX += squareSize + 10
   }
   squareStartY += squareSize + 10
@@ -31,7 +32,7 @@ function createGrid (start, end, step) {
 
   while (y < endY - step) {
     drawHorizontalLine(y)
-    y += step + Math.pow(rand() * y / 250, 8)
+    y += step + Math.pow(rand() * y / 250, 5)
   }
 
   function drawHorizontalLine (y) {
@@ -47,7 +48,7 @@ function createGrid (start, end, step) {
     ctx.lineWidth = 1
     if (rand() < 0.01) {
       const [r, g, b] = [255, 255, 255].map(c => c * rand() | 0)
-      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.8)`
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.5)`
       ctx.lineWidth = 2
     }
     ctx.stroke()
