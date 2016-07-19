@@ -1,7 +1,6 @@
 export default function createCanvas (container, border = 0) {
   if (!container) {
-    container = document.createElement('div')
-    document.body.appendChild(container)
+    throw new Error('Ya gotta pass in a container to `createCanvas`')
   }
 
   container.style.height = `calc(100vh - ${border * 2}px)`
