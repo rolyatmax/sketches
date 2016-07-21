@@ -6,7 +6,7 @@ export default function addTitle (titleText, style = {}) {
     position: 'absolute',
     bottom: '-40px',
     right: 0,
-    color: 'rgba(0, 0, 0, 0.08)',
+    color: 'rgba(190, 190, 190, 0.5)',
     fontSize: '20px',
     WebkitFontSmoothing: 'antialiased',
     ...style

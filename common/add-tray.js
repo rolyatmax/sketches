@@ -137,6 +137,7 @@ function applyStylesToElement (element, styles = {}) {
 }
 
 function buildButton () {
+  const color = 'rgb(190, 190, 190)'
   const buttonWidth = 40
   const button = document.createElement('div')
   applyStylesToElement(button, {
@@ -146,7 +147,7 @@ function buildButton () {
     width: `${buttonWidth}px`,
     left: '50%',
     marginLeft: `-${buttonWidth / 2}px`,
-    border: '1px solid rgb(221, 221, 221)',
+    border: `1px solid ${color}`,
     borderRadius: '50%',
     cursor: 'pointer',
     opacity: 1,
@@ -158,8 +159,8 @@ function buildButton () {
   applyStylesToElement(arrow, {
     height: `${arrowSize}px`,
     width: `${arrowSize}px`,
-    borderLeft: '1px solid rgb(221, 221, 221)',
-    borderBottom: '1px solid rgb(221, 221, 221)',
+    borderLeft: `1px solid ${color}`,
+    borderBottom: `1px solid ${color}`,
     transform: 'rotate(-45deg)',
     margin: '13px 14px'
   })
