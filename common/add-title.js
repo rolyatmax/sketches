@@ -1,6 +1,5 @@
-export default function addTitle (titleText, container, style = {}) {
+export default function addTitle (titleText, style = {}) {
   const title = document.createElement('div')
-  container.appendChild(title)
   title.innerHTML = titleText
 
   style = {

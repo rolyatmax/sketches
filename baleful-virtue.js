@@ -16,7 +16,13 @@ includeFont({
   url: 'https://fonts.googleapis.com/css?family=Space+Mono:700'
 })
 
-addTitle('baleful virtue', container)
+const title = addTitle('baleful virtue')
+title.style.opacity = 0
+title.style.transition = 'opacity 400ms ease'
+container.appendChild(title)
+setTimeout(() => {
+  title.style.opacity = 1
+}, 200)
 
 const canvas = createResizableCanvas(container, main, {
   margin: () => Math.min(win.innerHeight * 0.3, win.innerWidth * 0.3, 250)
