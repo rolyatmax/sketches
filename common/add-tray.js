@@ -1,3 +1,5 @@
+import applyAspectRatio from './apply-aspect-ratio'
+
 export default function addTray (list, container) {
   const tray = document.createElement('div')
   container.appendChild(tray)
@@ -23,8 +25,8 @@ export default function addTray (list, container) {
   })
 
   const tileCount = Math.min(8, list.length)
-  const tiles = list.map(({ onClick, settings, main }) => {
-    return renderTile({ onClick, settings, main }, tray, {
+  const tiles = list.map((config) => {
+    return renderTile(config, tray, {
       height: `${height - 15}px`,
       width: `${100 / tileCount - 1}vw`,
       maxWidth: `${height * 2}px`
@@ -103,28 +105,33 @@ export default function addTray (list, container) {
   return tray
 }
 
-function renderTile ({ onClick, settings, main }, tray, styles) {
+function renderTile ({ onClick, settings, main, aspectRatio, scale = 1 }, tray, styles) {
   const tile = document.createElement('div')
   applyStylesToElement(tile, {
     ...styles,
-    display: 'inline-block',
+    display: 'inline-flex',
     background: 'rgba(255, 255, 255, 1)',
-    position: 'relative'
+    position: 'relative',
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center'
   })
   tray.appendChild(tile)
-  const { height, width } = tile.getBoundingClientRect()
+  const parent = tile.getBoundingClientRect()
+  const canvasAspectRatio = aspectRatio || parent.width / parent.height
+  const { height, width } = applyAspectRatio(parent, canvasAspectRatio)
   const canvas = document.createElement('canvas')
-  canvas.width = width * 2
-  canvas.height = height * 2
+  canvas.width = width * scale
+  canvas.height = height * scale
   applyStylesToElement(canvas, {
-    width: '100%',
-    height: '100%',
-    opacity: 0,
-    position: 'absolute'
+    height: `${height}px`,
+    width: `${width}px`,
+    opacity: 0
   })
   tile.addEventListener('click', onClick)
   tile.appendChild(canvas)
-  main(canvas, settings)
+  setTimeout(() => main(canvas, settings), 100)
   return tile
 }
 

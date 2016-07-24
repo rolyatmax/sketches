@@ -5,7 +5,7 @@ import addTitle from './add-title'
 import addTray from './add-tray'
 
 export default function createProject (opts) {
-  const { settingsConfig, defaultSettings, tiles, main } = opts
+  const { aspectRatio, settingsConfig, defaultSettings, tiles, main } = opts
   const { encodeObject, decodeObject } = createEncoder(settingsConfig)
 
   let settings = { ...defaultSettings }
@@ -38,6 +38,8 @@ export default function createProject (opts) {
         settings: tileSettings,
         hash: tileHash,
         main: main,
+        aspectRatio: aspectRatio || 1,
+        scale: 6,
         onClick: () => {
           hash = tileHash
           settings = tileSettings
@@ -48,7 +50,10 @@ export default function createProject (opts) {
     addTray(tileConfigs, container)
   }
 
-  const canvas = createResizableCanvas(container, () => mainWrapper(canvas, settings), { margin: 90 })
+  const canvas = createResizableCanvas(container, () => mainWrapper(canvas, settings), {
+    margin: 90,
+    aspectRatio: aspectRatio
+  })
   canvas.style.opacity = 0
   setTimeout(() => {
     canvas.style.opacity = 1

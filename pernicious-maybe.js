@@ -6,6 +6,8 @@ import colorPalettes from './common/color-palettes'
 import createProject from './common/create-project'
 
 createProject({
+  // aspectRatio: 3 / 2,
+
   settingsConfig: {
     seed: ['int', 4],
     step: ['int', 3],
