@@ -23,8 +23,8 @@ export default function addTray (list, container) {
   })
 
   const tileCount = Math.min(8, list.length)
-  const tiles = list.map(({ onClick, config, main }) => {
-    return renderTile({ onClick, config, main }, tray, {
+  const tiles = list.map(({ onClick, settings, main }) => {
+    return renderTile({ onClick, settings, main }, tray, {
       height: `${height - 15}px`,
       width: `${100 / tileCount - 1}vw`,
       maxWidth: `${height * 2}px`
@@ -100,12 +100,10 @@ export default function addTray (list, container) {
     })
   }
 
-  setTimeout(openTray, 1000)
-
   return tray
 }
 
-function renderTile ({ onClick, config, main }, tray, styles) {
+function renderTile ({ onClick, settings, main }, tray, styles) {
   const tile = document.createElement('div')
   applyStylesToElement(tile, {
     ...styles,
@@ -126,7 +124,7 @@ function renderTile ({ onClick, config, main }, tray, styles) {
   })
   tile.addEventListener('click', onClick)
   tile.appendChild(canvas)
-  main(canvas, config)
+  main(canvas, settings)
   return tile
 }
 
@@ -142,7 +140,7 @@ function buildButton () {
   const button = document.createElement('div')
   applyStylesToElement(button, {
     position: 'absolute',
-    top: '-70px',
+    top: '-65px',
     height: `${buttonWidth}px`,
     width: `${buttonWidth}px`,
     left: '50%',
