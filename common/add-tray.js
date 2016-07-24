@@ -54,7 +54,7 @@ export default function addTray (list, container) {
       const canvas = tile.querySelector('canvas')
       setTimeout(() => {
         applyStylesToElement(canvas, {
-          transition: `opacity 300ms linear ${i * 100 + 100}ms`,
+          transition: `opacity 300ms linear ${i * 30 + 200}ms`,
           opacity: 1
         })
       }, 100)
@@ -105,7 +105,7 @@ export default function addTray (list, container) {
   return tray
 }
 
-function renderTile ({ onClick, settings, main, aspectRatio, scale = 1 }, tray, styles) {
+function renderTile ({ onClick, settings, main, aspectRatio }, tray, styles) {
   const tile = document.createElement('div')
   applyStylesToElement(tile, {
     ...styles,
@@ -118,20 +118,22 @@ function renderTile ({ onClick, settings, main, aspectRatio, scale = 1 }, tray, 
     alignContent: 'center'
   })
   tray.appendChild(tile)
-  const parent = tile.getBoundingClientRect()
-  const canvasAspectRatio = aspectRatio || parent.width / parent.height
-  const { height, width } = applyAspectRatio(parent, canvasAspectRatio)
-  const canvas = document.createElement('canvas')
-  canvas.width = width * scale
-  canvas.height = height * scale
-  applyStylesToElement(canvas, {
-    height: `${height}px`,
-    width: `${width}px`,
-    opacity: 0
-  })
-  tile.addEventListener('click', onClick)
-  tile.appendChild(canvas)
-  setTimeout(() => main(canvas, settings), 100)
+  setTimeout(() => {
+    const parent = tile.getBoundingClientRect()
+    const canvasAspectRatio = aspectRatio || parent.width / parent.height
+    const { height, width } = applyAspectRatio(parent, canvasAspectRatio)
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    applyStylesToElement(canvas, {
+      height: `${height}px`,
+      width: `${width}px`,
+      opacity: 0
+    })
+    tile.addEventListener('click', onClick)
+    tile.appendChild(canvas)
+    main(canvas, settings, 1 / 6)
+  }, 100)
   return tile
 }
 

@@ -43,39 +43,42 @@ createProject({
     '1bb051C10O0fi05'
   ],
 
-  main: (canvas, settings) => {
+  main: (canvas, settings, scale = 1) => {
+    let { step, lineLength, seed, noiseStep, multicolor, alpha } = settings
+    step *= scale
+    lineLength *= scale
     const ctx = window.ctx = canvas.getContext('2d')
     ctx.globalCompositeOperation = 'darker'
-    const rand = new Alea(settings.seed)
+    const rand = new Alea(seed)
     const simplex = new SimplexNoise(rand)
     const palette = colorPalettes[rand() * colorPalettes.length | 0]
-    const margin = settings.lineLength
+    const margin = lineLength
 
     let colorIndex
 
     let xNoiseStart = rand() * 100 | 0
     let xNoise = xNoiseStart
     let yNoise = rand() * 100 | 0
-    for (let y = margin; y <= canvas.height - margin; y += settings.step) {
-      yNoise += settings.noiseStep / 1000
+    for (let y = margin; y <= canvas.height - margin; y += step) {
+      yNoise += noiseStep / 1000
       xNoise = xNoiseStart
-      for (let x = margin; x <= canvas.width - margin; x += settings.step) {
-        xNoise += settings.noiseStep / 1000
+      for (let x = margin; x <= canvas.width - margin; x += step) {
+        xNoise += noiseStep / 1000
         drawPoint(x, y, simplex.noise2D(xNoise, yNoise))
       }
     }
 
     function drawPoint (x, y, noiseFactor) {
       const angle = noiseFactor * Math.PI * 2
-      colorIndex = settings.multicolor || colorIndex === undefined ? palette.length * rand() | 0 : colorIndex
+      colorIndex = multicolor || colorIndex === undefined ? palette.length * rand() | 0 : colorIndex
       const color = tinycolor(palette[colorIndex])
       let end = [Math.cos(angle), Math.sin(angle)]
       vec2.normalize(end, end)
-      end = end.map(coord => coord * settings.lineLength)
+      end = end.map(coord => coord * lineLength)
       ctx.beginPath()
       ctx.moveTo(x, y)
       ctx.lineTo(end[0] + x, end[1] + y)
-      ctx.strokeStyle = color.setAlpha(settings.alpha / 100).toRgbString()
+      ctx.strokeStyle = color.setAlpha(alpha / 100).toRgbString()
       ctx.stroke()
     }
   }

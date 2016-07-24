@@ -39,7 +39,6 @@ export default function createProject (opts) {
         hash: tileHash,
         main: main,
         aspectRatio: aspectRatio || 1,
-        scale: 6,
         onClick: () => {
           hash = tileHash
           settings = tileSettings
