@@ -4,9 +4,10 @@ import vec2 from 'gl-vec2'
 import tinycolor from 'tinycolor2'
 import colorPalettes from './common/color-palettes'
 import createProject from './common/create-project'
+import { rIC, cIC } from './common/request-idle-callback'
 
 createProject({
-  // aspectRatio: 3 / 2,
+  // aspectRatio: 9 / 7,
 
   settingsConfig: {
     seed: ['int', 4],
@@ -19,11 +20,11 @@ createProject({
 
   defaultSettings: {
     seed: Math.random() * 1000 | 0, // 4 digits
-    step: 5, // 3 digits
-    noiseStep: 50, // 2 digits
-    lineLength: 100, // 3 digits
-    alpha: 5, // 2 digits
-    multicolor: 1 // 0 or 1
+    step: 20, // 3 digits
+    noiseStep: 10, // 2 digits
+    lineLength: 30, // 3 digits
+    alpha: 60, // 2 digits
+    multicolor: 0 // 0 or 1
   },
 
   tiles: [
@@ -44,6 +45,10 @@ createProject({
   ],
 
   main: (canvas, settings, scale = 1) => {
+    canvas.callbackTokens = canvas.callbackTokens || []
+    while (canvas.callbackTokens.length) {
+      cIC(canvas.callbackTokens.pop())
+    }
     let { step, lineLength, seed, noiseStep, multicolor, alpha } = settings
     step *= scale
     lineLength *= scale
@@ -57,18 +62,25 @@ createProject({
     let colorIndex
 
     let xNoiseStart = rand() * 100 | 0
-    let xNoise = xNoiseStart
     let yNoise = rand() * 100 | 0
     for (let y = margin; y <= canvas.height - margin; y += step) {
       yNoise += noiseStep / 1000
-      xNoise = xNoiseStart
-      for (let x = margin; x <= canvas.width - margin; x += step) {
-        xNoise += noiseStep / 1000
-        drawPoint(x, y, simplex.noise2D(xNoise, yNoise))
-      }
+      const noise = [xNoiseStart, yNoise]
+      drawRow(y, noise[0], noise[1])
     }
 
-    function drawPoint (x, y, noiseFactor) {
+    function drawRow (y, xNoise, yNoise) {
+      const token = rIC(() => {
+        for (let x = margin; x <= canvas.width - margin; x += step) {
+          xNoise += noiseStep / 1000
+          drawPoint(x, y, xNoise, yNoise)
+        }
+      })
+      canvas.callbackTokens.push(token)
+    }
+
+    function drawPoint (x, y, xNoise, yNoise) {
+      const noiseFactor = simplex.noise2D(xNoise, yNoise)
       const angle = noiseFactor * Math.PI * 2
       colorIndex = multicolor || colorIndex === undefined ? palette.length * rand() | 0 : colorIndex
       const color = tinycolor(palette[colorIndex])

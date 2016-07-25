@@ -1,4 +1,5 @@
 import applyAspectRatio from './apply-aspect-ratio'
+import { rIC } from './request-idle-callback'
 
 export default function addTray (list, container) {
   const tray = document.createElement('div')
@@ -118,7 +119,7 @@ function renderTile ({ onClick, settings, main, aspectRatio }, tray, styles) {
     alignContent: 'center'
   })
   tray.appendChild(tile)
-  setTimeout(() => {
+  rIC(() => {
     const parent = tile.getBoundingClientRect()
     const canvasAspectRatio = aspectRatio || parent.width / parent.height
     const { height, width } = applyAspectRatio(parent, canvasAspectRatio)
@@ -133,7 +134,7 @@ function renderTile ({ onClick, settings, main, aspectRatio }, tray, styles) {
     tile.addEventListener('click', onClick)
     tile.appendChild(canvas)
     main(canvas, settings, 1 / 6)
-  }, 100)
+  })
   return tile
 }
 
