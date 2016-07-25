@@ -18,6 +18,7 @@
     "babelify": "^7.3.0",
     "budo": "^8.3.0",
     "encode-object": "^0.1.1",
+    "fontmetrics": "^1.0.0",
     "gl-vec2": "^1.0.0",
     "simplex-noise": "^2.2.0",
     "standard": "7.1.2",
