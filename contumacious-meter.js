@@ -21,14 +21,14 @@ createProject({
   main: (canvas, settings, scale = 1) => {
     let { seed } = settings
     const ctx = window.ctx = canvas.getContext('2d')
-    ctx.globalCompositeOperation = 'subtract'
+    ctx.globalCompositeOperation = 'darker'
     const center = [canvas.width / 2 | 0, canvas.height / 2 | 0]
     const rand = new Alea(seed)
     const simplex = new SimplexNoise(rand)
     const palette = colorPalettes[rand() * colorPalettes.length | 0]
-    const fontSize = 420
+    const fontSize = 820
     const noiseStep = 1
-    const wordCount = 50
+    const wordCount = 12
     const alphabet = 'tbaldwin' // 'abcdefghijklmnopqrstuvwxyz'
     const color = palette[rand() * palette.length | 0]
     let noise = rand() * 1000
@@ -42,12 +42,11 @@ createProject({
       const fill = rand() > 1
       const style = fill ? 'fillStyle' : 'strokeStyle'
       const text = fill ? 'fillText' : 'strokeText'
-      ctx[style] = tinycolor(color).setAlpha(rand() * 0.4).toRgbString()
+      ctx[style] = tinycolor(color).setAlpha(rand() * 0.7).toRgbString()
       const angle = noiseFactor * Math.PI * 2
       const vector = [Math.cos(angle), Math.sin(angle)]
       vec2.normalize(vector, vector)
-      const x = center[0] + vector[0] * canvas.width / 2
-
+      const x = center[0] + vector[0] * canvas.width / 10
       const sizeFactor = (1 - Math.abs((x / (canvas.width * 2) - 0.5) * 2))
       const size = (fontSize + (rand() - 0.5 * 2) * fontSize * 0.9) * sizeFactor
       ctx.font = `${size}px serif`
