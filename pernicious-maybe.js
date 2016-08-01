@@ -10,12 +10,12 @@ createProject({
   // aspectRatio: 9 / 7,
 
   settingsConfig: {
-    seed: ['int', 4],
-    step: ['int', 3],
-    noiseStep: ['int', 2],
-    lineLength: ['int', 3],
-    alpha: ['int', 2],
-    multicolor: ['int', 1]
+    seed: [0, 999],
+    step: [0, 999],
+    noiseStep: [0, 99],
+    lineLength: [0, 999],
+    alpha: [0, 99],
+    multicolor: [0, 1]
   },
 
   defaultSettings: {
@@ -28,20 +28,20 @@ createProject({
   },
 
   tiles: [
-    '1bb0k3e00505U05',
-    '1bb0O0a1050fZ05',
-    '1bb0O0a10101X05',
-    '1bb0O0a0010bM05',
-    '1bb0O1C00108N1C',
-    '1bb0O1C10108q1C',
-    '1bb0O1C10103b0O',
-    '1bb0O4Q10100E0a',
-    '1bb1s0510107a0a',
-    '1bb053e00101n05',
-    '1bb023e0010ed02',
-    '1bb023e0010eG02',
-    '1bb023e10a0fN02',
-    '1bb051C10O0fi05'
+    'ce1zJrcPpX',
+    'ce3U19WVZX',
+    'ce3U19BB6R',
+    'ce3U10z3b7',
+    'ce3UrnxL8M',
+    'ce3UrwCPaY',
+    'ce3UrwBqAq',
+    'ce3Vo7UjGy',
+    'ce71zlOJGa',
+    'cep8OgKCV',
+    'ceaCGB7jk',
+    'ceaCGBf2i',
+    'ceaCQkiCC',
+    'ceoFIeqyN'
   ],
 
   main: (canvas, settings, scale = 1) => {
@@ -95,3 +95,5 @@ createProject({
     }
   }
 })
+
+// [{"alpha":20,"lineLength":200,"multicolor":0,"noiseStep":5,"seed":366,"step":5},{"alpha":50,"lineLength":10,"multicolor":1,"noiseStep":5,"seed":991,"step":5},{"alpha":50,"lineLength":10,"multicolor":1,"noiseStep":1,"seed":121,"step":5},{"alpha":50,"lineLength":10,"multicolor":0,"noiseStep":1,"seed":730,"step":5},{"alpha":50,"lineLength":100,"multicolor":0,"noiseStep":1,"seed":545,"step":100},{"alpha":50,"lineLength":100,"multicolor":1,"noiseStep":1,"seed":522,"step":100},{"alpha":50,"lineLength":100,"multicolor":1,"noiseStep":1,"seed":197,"step":50},{"alpha":50,"lineLength":300,"multicolor":1,"noiseStep":1,"seed":40,"step":10},{"alpha":90,"lineLength":5,"multicolor":1,"noiseStep":1,"seed":444,"step":10},{"alpha":5,"lineLength":200,"multicolor":0,"noiseStep":1,"seed":85,"step":5},{"alpha":2,"lineLength":200,"multicolor":0,"noiseStep":1,"seed":881,"step":2},{"alpha":2,"lineLength":200,"multicolor":0,"noiseStep":1,"seed":910,"step":2},{"alpha":2,"lineLength":200,"multicolor":1,"noiseStep":10,"seed":979,"step":2},{"alpha":5,"lineLength":100,"multicolor":1,"noiseStep":50,"seed":948,"step":5}]

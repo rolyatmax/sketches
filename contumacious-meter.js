@@ -15,11 +15,11 @@ createProject({
   // aspectRatio: 9 / 7,
 
   settingsConfig: {
-    seed: ['int', 4]
+    seed: [0, 999]
   },
 
   defaultSettings: {
-    seed: Math.random() * 1000 | 0 // 4 digits
+    seed: Math.random() * 1000 | 0
   },
 
   tiles: [],

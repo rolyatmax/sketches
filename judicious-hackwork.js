@@ -4,35 +4,35 @@ import createProject from './common/create-project'
 
 createProject({
   settingsConfig: {
-    seed: ['int', 4],
-    radiusStep: ['int', 2],
-    radiusStart: ['int', 3],
-    maxSteps: ['int', 4],
-    angleStep: ['int', 3],
-    radiusVariance: ['int', 3],
-    angleVariance: ['int', 2],
-    fill: ['int', 1],
-    circleSize: ['int', 3]
+    seed: [0, 999],
+    radiusStep: [0, 255],
+    radiusStart: [0, 255],
+    maxSteps: [0, 511],
+    angleStep: [0, 255],
+    radiusVariance: [0, 255],
+    angleVariance: [0, 63],
+    fill: [0, 1],
+    circleSize: [0, 255]
   },
 
   defaultSettings: {
-    seed: Math.random() * 1000 | 0, // 4 digits
-    radiusStep: 16, // 2 digits
-    radiusStart: 20, // 3 digits
-    maxSteps: 200, // 4 digits
-    angleStep: 8, // 3 digits
-    radiusVariance: 15, // 3 digits
-    angleVariance: 12, // 2 digits
-    fill: 1, // 1 digit
-    circleSize: 4 // 3 digits
+    seed: Math.random() * 1000 | 0,
+    radiusStep: 16,
+    radiusStart: 20,
+    maxSteps: 200,
+    angleStep: 8,
+    radiusVariance: 15,
+    angleVariance: 12,
+    fill: 1,
+    circleSize: 4
   },
 
   tiles: [
-    'bea00011B000a0k000k0f7',
-    'bea00011B000a0k000k06A',
-    'bea01010a001C001s010fI',
-    'bea0a0c0a101C1s0901032',
-    'bea080c04103e0k0g0f04H'
+    '21sBrKOaKUh',
+    '21sBrKOaKLK',
+    '21wlrhQu1ZEi',
+    '215g0QWpLMs68',
+    '214e0nsfX4z9V'
   ],
 
   main: (canvas, settings) => {
@@ -70,3 +70,5 @@ createProject({
     }
   }
 })
+
+// [{"angleStep":0,"angleVariance":1,"circleSize":99,"fill":0,"maxSteps":10,"radiusStart":20,"radiusStep":0,"radiusVariance":20,"seed":937},{"angleStep":0,"angleVariance":1,"circleSize":99,"fill":0,"maxSteps":10,"radiusStart":20,"radiusStep":0,"radiusVariance":20,"seed":408},{"angleStep":1,"angleVariance":1,"circleSize":10,"fill":0,"maxSteps":100,"radiusStart":0,"radiusStep":90,"radiusVariance":1,"seed":974},{"angleStep":10,"angleVariance":12,"circleSize":10,"fill":1,"maxSteps":100,"radiusStart":90,"radiusStep":9,"radiusVariance":1,"seed":188},{"angleStep":8,"angleVariance":12,"circleSize":4,"fill":1,"maxSteps":200,"radiusStart":20,"radiusStep":16,"radiusVariance":15,"seed":291}]
