@@ -1,3 +1,5 @@
+/* global requestAnimationFrame */
+
 import createEncoder from 'encode-object'
 import createResizableCanvas from './resizable-canvas'
 import includeFont from './include-font'
@@ -5,7 +7,7 @@ import addTitle from './add-title'
 import addTray from './add-tray'
 
 export default function createProject (opts) {
-  const { aspectRatio, settingsConfig, defaultSettings, tiles, main } = opts
+  const { aspectRatio, settingsConfig, defaultSettings, tiles, main, animate } = opts
   const { encodeObject, decodeObject } = createEncoder(settingsConfig)
 
   let settings = { ...defaultSettings }
@@ -73,6 +75,16 @@ export default function createProject (opts) {
 
     const ctx = window.ctx = cvs.getContext('2d')
     ctx.clearRect(0, 0, cvs.width, cvs.height)
-    main(cvs, settings)
+
+    if (!animate) {
+      main(cvs, settings, 1)
+      return
+    }
+
+    function frame (t) {
+      requestAnimationFrame(frame)
+      main(cvs, settings, 1, t)
+    }
+    requestAnimationFrame(frame)
   }
 }
