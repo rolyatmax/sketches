@@ -24,14 +24,12 @@ setTimeout(() => {
   title.style.opacity = 1
 }, 200)
 
-const canvas = createResizableCanvas(container, main, {
-  margin: 20
-})
+const canvas = createResizableCanvas(container, main, { margin: 0 })
 const ctx = window.ctx = canvas.getContext('2d')
 ctx.globalCompositeOperation = 'darker'
 
 const settings = {
-  boidCount: 100
+  boidCount: 200
 }
 
 let rAFToken = 0
@@ -52,14 +50,15 @@ function loop (t) {
 }
 
 function update (t) {
+  const speed = 2
+
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   boids = boids.map(boid => align(boid, boids))
+  boids = boids.map(boid => avoid(boid, boids))
+  boids = boids.map(boid => cohere(boid, boids))
 
   boids = boids.map(boid => {
-    let [x, y] = boid.position
-    const [xVel, yVel] = boid.velocity
-    x += xVel
-    y += yVel
+    let [x, y] = add(boid.position, multiply(boid.velocity, speed))
     x = x < 0 ? canvas.width + x : x % canvas.width
     y = y < 0 ? canvas.height + y : y % canvas.height
     return {
@@ -71,66 +70,90 @@ function update (t) {
 }
 
 function align (boid, boids) {
-  const neighborThreshold = 50
-  const steerLimit = 0.05
+  const neighborThreshold = 40
+  const steerLimit = 0.01
   let sum = [0, 0]
   let neighbors = 0
   boids.forEach(b => {
     const distance = dist(b.position, boid.position)
     if (distance > 0 && distance < neighborThreshold) {
-      sum[0] += b.velocity[0]
-      sum[1] += b.velocity[1]
+      sum = add(sum, b.velocity)
       neighbors += 1
     }
   })
   if (!neighbors) return boid
 
-  sum[0] /= neighbors
-  sum[1] /= neighbors
-
+  sum = divide(sum, neighbors)
   sum = normalize(sum)
-
-  let steer = [sum[0] - boid.velocity[0], sum[1] - boid.velocity[1]]
+  let steer = subtract(sum, boid.velocity)
   steer = normalize(steer)
+  steer = multiply(steer, steerLimit)
 
   return {
     ...boid,
-    velocity: [boid.velocity[0] + steer[0] * steerLimit, boid.velocity[1] + steer[1] * steerLimit]
+    velocity: add(boid.velocity, steer)
+  }
+}
+
+function cohere (boid, boids) {
+  const neighborThreshold = 50
+  const steerLimit = 0.01
+  let sum = [0, 0]
+  let neighbors = 0
+  boids.forEach(b => {
+    const distance = dist(b.position, boid.position)
+    if (distance > 0 && distance < neighborThreshold) {
+      sum = add(sum, b.position)
+      neighbors += 1
+    }
+  })
+  if (!neighbors) return boid
+
+  sum = divide(sum, neighbors)
+  let desired = subtract(sum, boid.position)
+  desired = normalize(desired)
+  let steer = subtract(desired, boid.velocity)
+  steer = normalize(steer)
+  steer = multiply(steer, steerLimit)
+
+  return {
+    ...boid,
+    velocity: add(boid.velocity, steer)
   }
 }
 
 function avoid (boid, boids) {
-  const neighborThreshold = 50
-  const steerLimit = 0.05
+  const separationFactor = 10
+  const steerLimit = 0.02
   let sum = [0, 0]
   let neighbors = 0
   boids.forEach(b => {
     const distance = dist(b.position, boid.position)
-    if (distance > 0 && distance < neighborThreshold) {
-      sum[0] += b.velocity[0]
-      sum[1] += b.velocity[1]
+    if (distance > 0 && distance < separationFactor) {
+      let diff = subtract(boid.position, b.position)
+      diff = normalize(diff)
+      diff = divide(diff, distance)
+      sum = add(sum, diff)
       neighbors += 1
     }
   })
   if (!neighbors) return boid
 
-  sum[0] /= neighbors
-  sum[1] /= neighbors
-
+  sum = divide(sum, neighbors)
   sum = normalize(sum)
-
-  let steer = [sum[0] - boid.velocity[0], sum[1] - boid.velocity[1]]
+  let steer = subtract(sum, boid.velocity)
   steer = normalize(steer)
+  steer = multiply(steer, steerLimit)
 
   return {
     ...boid,
-    velocity: [boid.velocity[0] + steer[0] * steerLimit, boid.velocity[1] + steer[1] * steerLimit]
+    velocity: add(boid.velocity, steer)
   }
 }
 
 function normalize (vec) {
   const len = dist([0, 0], vec)
-  return [vec[0] / len, vec[1] / len]
+  return divide(vec, len)
 }
 
 function dist (vecA, vecB) {
@@ -139,10 +162,38 @@ function dist (vecA, vecB) {
   return Math.sqrt(xDiff * xDiff + yDiff * yDiff)
 }
 
+function subtract (vecA, vecB) {
+  return [
+    vecA[0] - vecB[0],
+    vecA[1] - vecB[1]
+  ]
+}
+
+function add (vecA, vecB) {
+  return [
+    vecA[0] + vecB[0],
+    vecA[1] + vecB[1]
+  ]
+}
+
+function multiply (vecA, val) {
+  return [
+    vecA[0] * val,
+    vecA[1] * val
+  ]
+}
+
+function divide (vecA, val) {
+  return [
+    vecA[0] / val,
+    vecA[1] / val
+  ]
+}
+
 function drawBoid (boid) {
   const size = 8
   const [x, y] = boid.position
-  const [xVel, yVel] = boid.velocity
+  const [xVel, yVel] = normalize(boid.velocity)
   ctx.fillStyle = 'rgb(20,20,20)'
 
   ctx.beginPath()
