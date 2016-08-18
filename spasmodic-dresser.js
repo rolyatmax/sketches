@@ -29,7 +29,10 @@ const ctx = window.ctx = canvas.getContext('2d')
 ctx.globalCompositeOperation = 'darker'
 
 const settings = {
-  boidCount: 200
+  boidCount: 100,
+  steerLimit: 0.006,
+  neighborThreshold: 80,
+  separationFactor: 40
 }
 
 let rAFToken = 0
@@ -70,13 +73,11 @@ function update (t) {
 }
 
 function align (boid, boids) {
-  const neighborThreshold = 40
-  const steerLimit = 0.01
   let sum = [0, 0]
   let neighbors = 0
   boids.forEach(b => {
     const distance = dist(b.position, boid.position)
-    if (distance > 0 && distance < neighborThreshold) {
+    if (distance > 0 && distance < settings.neighborThreshold) {
       sum = add(sum, b.velocity)
       neighbors += 1
     }
@@ -87,7 +88,7 @@ function align (boid, boids) {
   sum = normalize(sum)
   let steer = subtract(sum, boid.velocity)
   steer = normalize(steer)
-  steer = multiply(steer, steerLimit)
+  steer = multiply(steer, settings.steerLimit)
 
   return {
     ...boid,
@@ -96,13 +97,11 @@ function align (boid, boids) {
 }
 
 function cohere (boid, boids) {
-  const neighborThreshold = 50
-  const steerLimit = 0.01
   let sum = [0, 0]
   let neighbors = 0
   boids.forEach(b => {
     const distance = dist(b.position, boid.position)
-    if (distance > 0 && distance < neighborThreshold) {
+    if (distance > 0 && distance < settings.neighborThreshold) {
       sum = add(sum, b.position)
       neighbors += 1
     }
@@ -114,7 +113,7 @@ function cohere (boid, boids) {
   desired = normalize(desired)
   let steer = subtract(desired, boid.velocity)
   steer = normalize(steer)
-  steer = multiply(steer, steerLimit)
+  steer = multiply(steer, settings.steerLimit)
 
   return {
     ...boid,
@@ -123,13 +122,11 @@ function cohere (boid, boids) {
 }
 
 function avoid (boid, boids) {
-  const separationFactor = 10
-  const steerLimit = 0.02
   let sum = [0, 0]
   let neighbors = 0
   boids.forEach(b => {
     const distance = dist(b.position, boid.position)
-    if (distance > 0 && distance < separationFactor) {
+    if (distance > 0 && distance < settings.separationFactor) {
       let diff = subtract(boid.position, b.position)
       diff = normalize(diff)
       diff = divide(diff, distance)
@@ -143,7 +140,7 @@ function avoid (boid, boids) {
   sum = normalize(sum)
   let steer = subtract(sum, boid.velocity)
   steer = normalize(steer)
-  steer = multiply(steer, steerLimit)
+  steer = multiply(steer, settings.steerLimit)
 
   return {
     ...boid,
@@ -203,7 +200,6 @@ function drawBoid (boid) {
   ctx.closePath()
 
   ctx.fill()
-  // ctx.fillRect(x, y, size, size)
 }
 
 function main () {
