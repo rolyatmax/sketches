@@ -29,7 +29,7 @@ const ctx = window.ctx = canvas.getContext('2d')
 ctx.globalCompositeOperation = 'darker'
 
 const settings = {
-  boidCount: 100,
+  boidCount: 300,
   steerLimit: 0.006,
   neighborThreshold: 80,
   separationFactor: 40
