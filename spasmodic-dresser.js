@@ -33,9 +33,10 @@ ctx.globalCompositeOperation = 'darker'
 
 const settings = {
   boidCount: 100,
-  agility: 0.01,
-  neighborRadius: 100,
-  separation: 30,
+  agility: 0.005,
+  alignment: 80,
+  cohesion: 20,
+  separation: 20,
   path: 0
 }
 
@@ -79,7 +80,7 @@ function align (boid, boids) {
   let neighbors = 0
   boids.forEach(b => {
     const distance = dist(b.position, boid.position)
-    if (distance > 0 && distance < settings.neighborRadius) {
+    if (distance > 0 && distance < settings.alignment) {
       sum = add(sum, b.velocity)
       neighbors += 1
     }
@@ -103,7 +104,7 @@ function cohere (boid, boids) {
   let neighbors = 0
   boids.forEach(b => {
     const distance = dist(b.position, boid.position)
-    if (distance > 0 && distance < settings.neighborRadius) {
+    if (distance > 0 && distance < settings.cohesion) {
       sum = add(sum, b.position)
       neighbors += 1
     }
@@ -230,9 +231,10 @@ function reset () {
 reset()
 
 const gui = new GUI()
-gui.add(settings, 'boidCount', 1, 500).step(1).onFinishChange(main)
+gui.add(settings, 'boidCount', 1, 300).step(1).onFinishChange(main)
 gui.add(settings, 'agility', 0.001, 0.1).step(0.001)
-gui.add(settings, 'neighborRadius', 0, 500).step(1)
-gui.add(settings, 'separation', -100, 500).step(1)
+gui.add(settings, 'alignment', 0, 500).step(1)
+gui.add(settings, 'cohesion', 0, 500).step(1)
+gui.add(settings, 'separation', 0, 500).step(1)
 gui.add(settings, 'path', 0, 100).step(1)
 gui.add({ reset }, 'reset')
