@@ -17,6 +17,7 @@
     "babel-preset-es2015": "^6.9.0",
     "babelify": "^7.3.0",
     "budo": "^8.3.0",
+    "dat-gui": "^0.5.0",
     "encode-object": "^0.2.2",
     "fontmetrics": "^1.0.0",
     "gl-vec2": "^1.0.0",
