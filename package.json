@@ -2,12 +2,14 @@
   "name": "sketches",
   "version": "0.0.1",
   "description": "a starting point for sketches",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "node scripts/dev.js",
+    "build": "node scripts/build.js",
+    "serve": "open http://localhost:8080 && cd static && python -m SimpleHTTPServer 8080",
     "lint": "standard",
     "postinstall": "cp node_modules/standard/eslintrc.json .eslintrc || true",
-    "create": "NAME=$(node scripts/gen_name.js) && touch $NAME.js && npm run start -- $NAME.js"
+    "create": "NAME=$(node scripts/gen_name.js) && touch src/$NAME.js && npm run start src/$NAME.js"
   },
   "author": "Taylor Baldwin",
   "license": "MIT",
@@ -25,5 +27,13 @@
     "standard": "7.1.2",
     "tinycolor2": "^1.4.1",
     "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "browserify": "^13.1.0",
+    "bundle-collapser": "^1.2.1",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.5.4",
+    "simple-html-index": "^1.4.0",
+    "uglify-js": "^2.7.3"
   }
 }

@@ -6,7 +6,7 @@ const babelify = require('babelify')
 var entryFilename = argv._[0]
 
 if (!entryFilename) {
-  process.stdout.write('\nYou must pass in a filename.\nPerhaps like this?: npm run start -- FILENAME\n')
+  process.stdout.write('\nYou must pass in a filename.\nPerhaps like this?: npm run start FILENAME\n')
   process.exit(1)
 }
 
@@ -17,7 +17,7 @@ budo(entryFile, {
   dir: process.cwd(),
   stream: process.stdout,
   open: true,
-  css: path.join('css', 'reset.css'),
+  css: path.join('static', 'css', 'reset.css'),
   browserify: {
     debug: false,
     transform: [

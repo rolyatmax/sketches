@@ -6,6 +6,6 @@ a starting point for sketches
 
 ```shell
 npm run create
-npm run start -- FILENAME
+npm run start FILENAME
 npm run lint
 ```

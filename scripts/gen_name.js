@@ -34,7 +34,7 @@ const generateName = () => `${pickWord(adjectives)}-${pickWord(nouns)}`
 
 function exists (name) {
   try {
-    fs.accessSync(path.join(process.cwd(), `${name}.js`))
+    fs.accessSync(path.join(process.cwd(), 'src', `${name}.js`))
   } catch (e) {
     if (e.code === 'ENOENT') return false
     throw e
