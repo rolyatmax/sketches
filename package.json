@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node scripts/dev.js",
     "build": "node scripts/build.js",
-    "serve": "open http://localhost:8080 && cd static && python -m SimpleHTTPServer 8080",
+    "serve": "open http://localhost:8080 && cd docs && python -m SimpleHTTPServer 8080",
     "lint": "standard",
     "postinstall": "cp node_modules/standard/eslintrc.json .eslintrc || true",
     "create": "NAME=$(node scripts/gen_name.js) && touch src/$NAME.js && npm run start src/$NAME.js"

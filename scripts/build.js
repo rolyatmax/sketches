@@ -10,13 +10,13 @@ const files = ['index'].concat(config.include)
 
 var err
 
-err = rimrafSync('static/js')
+err = rimrafSync('docs/js')
 if (err) throw new Error(err)
 
-err = rimrafSync('static/*.html')
+err = rimrafSync('docs/*.html')
 if (err) throw new Error(err)
 
-mkdirpSync('static/js')
+mkdirpSync('docs/js')
 
 Promise.all(files.map(buildJs).concat(files.map(buildHtml)))
   .catch((e) => console.error(e))
@@ -36,7 +36,7 @@ function buildJs (filename) {
       console.log('Compressing', filename)
       var result = UglifyJS.minify(src.toString(), { fromString: true })
       console.log('Writing', filename)
-      fs.writeFile(`static/${getJsFilename(filename)}`, result.code, (err) => {
+      fs.writeFile(`docs/${getJsFilename(filename)}`, result.code, (err) => {
         if (err) return reject(err)
         resolve()
       })
@@ -51,7 +51,7 @@ function buildHtml (filename) {
       entry: getJsFilename(filename),
       css: 'css/reset.css'
     }).read()
-    fs.writeFile(`static/${filename}.html`, markup, (err) => {
+    fs.writeFile(`docs/${filename}.html`, markup, (err) => {
       if (err) return reject(err)
       resolve()
     })
