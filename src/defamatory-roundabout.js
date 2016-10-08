@@ -51,7 +51,7 @@ ctx.draw = function () {
   })
 }
 
-ctx.click = function () {
+ctx.touchstart = function () {
   const drawArea = Math.min(ctx.height, ctx.width)
   const center = [ctx.width / 2, ctx.height / 2]
   const dist = drawArea * (Math.random() * 0.5 + 0.15)
