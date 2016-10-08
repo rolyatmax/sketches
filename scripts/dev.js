@@ -6,7 +6,7 @@ const babelify = require('babelify')
 var entryFilename = argv._[0]
 
 if (!entryFilename) {
-  process.stdout.write('\nYou must pass in a filename.\nPerhaps like this?: npm run start FILENAME\n')
+  process.stdout.write('\nYou must pass in a filename.\nPerhaps like this?: npm run dev src/FILENAME\n')
   process.exit(1)
 }
 
