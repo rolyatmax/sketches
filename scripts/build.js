@@ -49,7 +49,7 @@ function buildHtml (filename) {
     var markup = html({
       title: filename,
       entry: getJsFilename(filename),
-      css: 'css/reset.css'
+      css: 'css/main.css'
     }).read()
     fs.writeFile(`docs/${filename}.html`, markup, (err) => {
       if (err) return reject(err)

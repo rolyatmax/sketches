@@ -4,9 +4,9 @@
   "description": "a starting point for sketches",
   "main": "src/index.js",
   "scripts": {
-    "start": "node scripts/dev.js",
+    "dev": "node scripts/dev.js",
     "build": "node scripts/build.js",
-    "serve": "open http://localhost:8080 && cd docs && python -m SimpleHTTPServer 8080",
+    "start": "open http://localhost:8080 && cd docs && python -m SimpleHTTPServer 8080",
     "lint": "standard",
     "postinstall": "cp node_modules/standard/eslintrc.json .eslintrc || true",
     "create": "NAME=$(node scripts/gen_name.js) && touch src/$NAME.js && npm run start src/$NAME.js"
@@ -35,5 +35,10 @@
     "rimraf": "^2.5.4",
     "simple-html-index": "^1.4.0",
     "uglify-js": "^2.7.3"
+  },
+  "standard": {
+    "ignore": [
+      "docs"
+    ]
   }
 }

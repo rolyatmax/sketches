@@ -8,9 +8,9 @@ Take a look here: [rolyatmax.github.io/sketches](https://rolyatmax.github.io/ske
 
 ```shell
 npm run create
-npm run start FILENAME
+npm run dev FILENAME
 npm run lint
 
 npm run build
-npm run serve
+npm run start
 ```

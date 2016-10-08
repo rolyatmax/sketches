@@ -17,7 +17,7 @@ budo(entryFile, {
   dir: process.cwd(),
   stream: process.stdout,
   open: true,
-  css: path.join('docs', 'css', 'reset.css'),
+  css: path.join('docs', 'css', 'main.css'),
   browserify: {
     debug: false,
     transform: [
