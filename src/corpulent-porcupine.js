@@ -2,11 +2,14 @@ import Sketch from 'sketch-js'
 import array from 'new-array'
 import { add, subtract, scale } from 'gl-vec2'
 
-const drawersCount = 200
+const drawersCount = 50
 const lineLength = 10
 const turnDegrees = 60
-const drawSpeed = 0.9
-const lineColor = 'rgba(100, 100, 100, 0.15)'
+const drawSpeed = 0.5
+const lineColors = [
+  'rgba(100, 100, 100, 0.1)',
+  'rgba(109, 129, 163, 0.1)'
+]
 
 let drawers
 let pathsTaken = {}
@@ -41,13 +44,13 @@ ctx.update = function () {
 }
 
 ctx.draw = function () {
-  drawers.forEach((drawer) => {
+  drawers.forEach((drawer, i) => {
     const direction = subtract([], drawer.nextPosition, drawer.position)
     const drawTo = add([], scale(direction, direction, drawer.progress), drawer.position)
     ctx.beginPath()
     ctx.moveTo(...drawer.position)
     ctx.lineTo(...drawTo)
-    ctx.strokeStyle = lineColor
+    ctx.strokeStyle = drawer.color
     ctx.lineWidth = 1
     ctx.stroke()
   })
@@ -55,9 +58,12 @@ ctx.draw = function () {
 
 function createDrawer (position) {
   const center = [ctx.width / 2, ctx.height / 2]
+  position = position || center
+  // position = add([], position, (Math.random() > 0.5 ? [0, 0] : [lineLength, lineLength]))
   return {
-    position: position || center,
-    progress: 0
+    position: position,
+    progress: 0,
+    color: lineColors[Math.random() * lineColors.length | 0]
   }
 }
 
