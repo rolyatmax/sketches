@@ -1,6 +1,6 @@
 /* global requestAnimationFrame cancelAnimationFrame */
 
-window.location = '/boids'
+window.location = 'https://tbaldw.in/boids'
 
 ///////////// this has been moved to github.com/rolyatmax/boids.git
 
