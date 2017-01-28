@@ -1,7 +1,13 @@
 /* global requestAnimationFrame cancelAnimationFrame */
 
+window.location = '/boids'
+
+///////////// this has been moved to github.com/rolyatmax/boids.git
+
+
 import Alea from 'alea'
 import createResizableCanvas from './common/resizable-canvas'
+import colorPalettes from './common/color-palettes.json'
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
 import {GUI} from 'dat-gui'
@@ -32,18 +38,20 @@ const ctx = window.ctx = canvas.getContext('2d')
 ctx.globalCompositeOperation = 'darker'
 
 const settings = {
-  boidCount: 100,
-  agility: 0.005,
+  boidCount: 350,
+  agility: 0.01,
   alignment: 80,
   cohesion: 20,
   separation: 20,
-  path: 0
+  size: 7,
+  path: false
 }
 
-let rAFToken = 0
-
+let colors = colorPalettes[rand() * colorPalettes.length | 0].slice(0, 3)
 let boids = []
+let boidsByColor = {}
 
+let rAFToken = 0
 function loop (t) {
   rAFToken = requestAnimationFrame(loop)
   update(t)
@@ -51,17 +59,13 @@ function loop (t) {
 
 function update (t) {
   const speed = 2
-  if (settings.path) {
-    const alpha = 1 - (settings.path / 100)
-    ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-  } else {
+  if (!settings.path) {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
   }
 
-  boids = boids.map(boid => align(boid, boids))
-  boids = boids.map(boid => avoid(boid, boids))
-  boids = boids.map(boid => cohere(boid, boids))
+  boids = boids.map(boid => align(boid, boidsByColor[boid.color]))
+  boids = boids.map(boid => avoid(boid, boidsByColor[boid.color]))
+  boids = boids.map(boid => cohere(boid, boidsByColor[boid.color]))
 
   boids = boids.map(boid => {
     let [x, y] = add(boid.position, multiply(boid.velocity, speed))
@@ -73,6 +77,7 @@ function update (t) {
     }
   })
   boids.forEach(drawBoid)
+  window.boids = boids
 }
 
 function align (boid, boids) {
@@ -85,6 +90,7 @@ function align (boid, boids) {
       neighbors += 1
     }
   })
+
   if (!neighbors) return boid
 
   sum = divide(sum, neighbors)
@@ -93,9 +99,11 @@ function align (boid, boids) {
   steer = normalize(steer)
   steer = multiply(steer, settings.agility)
 
+  const velocity = add(boid.velocity, steer)
+
   return {
     ...boid,
-    velocity: add(boid.velocity, steer)
+    velocity: velocity
   }
 }
 
@@ -153,6 +161,7 @@ function avoid (boid, boids) {
 
 function normalize (vec) {
   const len = dist([0, 0], vec)
+  if (!len) return vec
   return divide(vec, len)
 }
 
@@ -191,15 +200,14 @@ function divide (vecA, val) {
 }
 
 function drawBoid (boid) {
-  const size = 8
   const [x, y] = boid.position
   const [xVel, yVel] = normalize(boid.velocity)
-  ctx.fillStyle = 'rgb(20,20,20)'
+  ctx.fillStyle = boid.color
 
   ctx.beginPath()
-  ctx.moveTo(x + xVel * size, y + yVel * size)
-  ctx.lineTo(x - yVel * size / 3, y + xVel * size / 3)
-  ctx.lineTo(x + yVel * size / 3, y - xVel * size / 3)
+  ctx.moveTo(x + xVel * settings.size, y + yVel * settings.size)
+  ctx.lineTo(x - yVel * settings.size / 3, y + xVel * settings.size / 3)
+  ctx.lineTo(x + yVel * settings.size / 3, y - xVel * settings.size / 3)
   ctx.closePath()
 
   ctx.fill()
@@ -211,30 +219,52 @@ function main () {
   while (settings.boidCount !== boids.length) {
     if (settings.boidCount > boids.length) {
       const angle = rand() * Math.PI * 2
-      boids.push({
+      const boid = {
         position: [rand() * canvas.width, rand() * canvas.height],
-        velocity: [Math.cos(angle), Math.sin(angle)]
-      })
+        velocity: [Math.cos(angle), Math.sin(angle)],
+        color: colors[rand() * colors.length | 0]
+      }
+      boids.push(boid)
     } else {
       boids.pop()
     }
   }
-
+  cacheBoidsByColor()
   rAFToken = requestAnimationFrame(loop)
+}
+
+function cacheBoidsByColor () {
+  // build a dictionary of boids by color
+  boidsByColor = {}
+  boids.forEach(boid => {
+    boidsByColor[boid.color] = boidsByColor[boid.color] || []
+    boidsByColor[boid.color].push(boid)
+  })
 }
 
 function reset () {
   boids = []
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
   main()
+}
+
+function changeColors () {
+  colors = colorPalettes[rand() * colorPalettes.length | 0].slice(0, 3)
+  boids.forEach(boid => {
+    boid.color = colors[rand() * colors.length | 0]
+  })
+  cacheBoidsByColor()
 }
 
 reset()
 
-const gui = new GUI()
-gui.add(settings, 'boidCount', 1, 300).step(1).onFinishChange(main)
+const gui = new GUI({ closed: true })
+gui.add(settings, 'boidCount', 1, 600).step(5).onFinishChange(main)
 gui.add(settings, 'agility', 0.001, 0.1).step(0.001)
 gui.add(settings, 'alignment', 0, 500).step(1)
 gui.add(settings, 'cohesion', 0, 500).step(1)
 gui.add(settings, 'separation', 0, 500).step(1)
-gui.add(settings, 'path', 0, 100).step(1)
+gui.add(settings, 'size', 3, 100).step(1).onFinishChange(main)
+gui.add(settings, 'path')
+gui.add({ changeColors }, 'changeColors').onFinishChange(main)
 gui.add({ reset }, 'reset')

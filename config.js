@@ -6,7 +6,6 @@ module.exports = {
     'endemic-meter',
     'judicious-hackwork',
     'pernicious-maybe',
-    'spasmodic-dresser',
     'voluble-russian'
   ]
 }
