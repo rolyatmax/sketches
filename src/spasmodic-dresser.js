@@ -1,9 +1,6 @@
 /* global requestAnimationFrame cancelAnimationFrame */
 
-window.location = 'https://tbaldw.in/boids'
-
-///////////// this has been moved to github.com/rolyatmax/boids.git
-
+// /////////// this has been moved to github.com/rolyatmax/boids.git
 
 import Alea from 'alea'
 import createResizableCanvas from './common/resizable-canvas'
