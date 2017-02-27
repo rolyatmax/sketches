@@ -14,14 +14,14 @@ import colorPalettes from './common/color-palettes'
 
 const settings = {
   seed: Math.random() * 1000 | 0,
-  trianglesCount: 20,
-  circleRadius: 20,
+  trianglesCount: 200,
+  circleRadius: 200,
   colorAlpha: 60,
-  circleMargin: 35,
+  circleMargin: 0,
   startingRad: 1.5 * Math.PI,
-  spinSpeed: 5,
+  spinSpeed: 2,
   growthSpeed: 1,
-  radPower: 0.5
+  radPower: -0.8
 }
 
 window.THREE = THREE
