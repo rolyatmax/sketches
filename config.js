@@ -5,8 +5,9 @@ module.exports = {
     'defamatory-roundabout',
     'endemic-meter',
     'judicious-hackwork',
+    'limpid-law',
     'pernicious-maybe',
-    'voluble-russian',
-    'limpid-law'
+    'rebarbative-shop',
+    'voluble-russian'
   ]
 }
