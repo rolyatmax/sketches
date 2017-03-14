@@ -1860,6 +1860,12 @@ generate-object-property@^1.1.0:
   dependencies:
     is-property "^1.0.0"
 
+get-plane-normal@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/get-plane-normal/-/get-plane-normal-1.0.0.tgz#b19930bf2f5ecb105218d291a9814309ecbdc853"
+  dependencies:
+    gl-vec3 "^1.0.3"
+
 get-ports@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/get-ports/-/get-ports-1.0.3.tgz#f40bd580aca7ec0efb7b96cbfcbeb03ef894b5e8"
@@ -2045,6 +2051,12 @@ https-browserify@~0.0.0:
 iconv-lite@0.4.13:
   version "0.4.13"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.13.tgz#1f88aba4ab0b1508e8312acc39345f36e992e2f2"
+
+icosphere@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/icosphere/-/icosphere-1.0.0.tgz#8251555d437db9eabc688f88124b68a30fa84710"
+  dependencies:
+    vectors "^0.1.0"
 
 ieee754@^1.1.4:
   version "1.1.8"
@@ -3791,6 +3803,10 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "~1.0.0"
     spdx-expression-parse "~1.0.0"
+
+vectors@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/vectors/-/vectors-0.1.0.tgz#503fbb9b804464126a88ea8ac7999251798ea854"
 
 verror@1.3.6:
   version "1.3.6"
