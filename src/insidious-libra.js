@@ -43,16 +43,20 @@ const settings = {
   subdivisions: 1,
   lightSpeed: 2,
   cameraSpeed: 1,
-  multicolor: false
+  multicolor: false,
+  showEdges: true,
+  opacity: 70
 }
 
 const gui = new GUI()
 gui.add(settings, 'seed', 0, 1000).onChange(reset)
 gui.add(settings, 'palette', 0, colorPalettes.length - 1).step(1).onChange(reset)
 gui.add(settings, 'subdivisions', 0, 4).step(1).onChange(reset)
+gui.add(settings, 'opacity', 0, 100).step(1)
 gui.add(settings, 'lightSpeed', 0, 10).step(1)
 gui.add(settings, 'cameraSpeed', 0, 10).step(1)
 gui.add(settings, 'multicolor').onChange(reset)
+gui.add(settings, 'showEdges')
 
 function reset () {
   ctx.setup()
@@ -109,7 +113,7 @@ ctx.update = function () {
     const lightenPerc = Math.pow(Math.max(0, dotProduct), 0.75) * 0.5
     return {
       ...tri,
-      litColor: Color(color).lighten(lightenPerc).toString()
+      litColor: Color(color).lighten(lightenPerc).alpha(settings.opacity / 100).toString()
     }
   })
 }
@@ -126,10 +130,12 @@ function getCenterOfPlane (pts) {
 
 function drawTriangle (points, color) {
   ctx.fillStyle = color
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'
   ctx.beginPath()
   ctx.moveTo(points[0][0], points[0][1])
   ctx.lineTo(points[1][0], points[1][1])
   ctx.lineTo(points[2][0], points[2][1])
   ctx.lineTo(points[0][0], points[0][1])
   ctx.fill()
+  if (settings.showEdges) ctx.stroke()
 }
