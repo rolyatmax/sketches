@@ -20,9 +20,9 @@ createProject({
 
   defaultSettings: {
     seed: Math.random() * 1000 | 0, // 4 digits
-    step: 20, // 3 digits
+    step: 10, // 3 digits
     noiseStep: 10, // 2 digits
-    lineLength: 30, // 3 digits
+    lineLength: 5, // 3 digits
     alpha: 60, // 2 digits
     multicolor: 0 // 0 or 1
   },

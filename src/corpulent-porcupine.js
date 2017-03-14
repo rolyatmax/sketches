@@ -2,7 +2,7 @@ import Sketch from 'sketch-js'
 import array from 'new-array'
 import { add, subtract, scale } from 'gl-vec2'
 
-const drawersCount = 50
+const drawersCount = 10
 const lineLength = 10
 const turnDegrees = 60
 const drawSpeed = 0.5

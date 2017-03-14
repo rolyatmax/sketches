@@ -1006,6 +1006,23 @@ camelcase@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-2.1.1.tgz#7c1d16d679a1bbe59ca02cacecfb011e201f5a1f"
 
+camera-picking-ray@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/camera-picking-ray/-/camera-picking-ray-1.0.1.tgz#49567a4edc2de5bc13e4b6fd959520bf13a30490"
+  dependencies:
+    camera-unproject "^1.0.1"
+    gl-vec3 "^1.0.3"
+
+camera-project@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/camera-project/-/camera-project-1.0.2.tgz#d1d696c5aa164cee92e21bb922aba52b6c0a25de"
+  dependencies:
+    gl-vec4 "^1.0.1"
+
+camera-unproject@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/camera-unproject/-/camera-unproject-1.0.1.tgz#86927a9d6d5340a8c9e36da840f7ccb6d6da12cf"
+
 caseless@~0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.11.0.tgz#715b96ea9841593cc33067923f5ec60ebda4f7d7"
@@ -1863,9 +1880,21 @@ getpass@^0.1.1:
   dependencies:
     assert-plus "^1.0.0"
 
+gl-mat4@^1.1.3:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/gl-mat4/-/gl-mat4-1.1.4.tgz#1e895b55892e56a896867abd837d38f37a178086"
+
 gl-vec2@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/gl-vec2/-/gl-vec2-1.0.0.tgz#77fce6ae9612856d6c8b621cd261cd8281b9c637"
+
+gl-vec3@^1.0.2, gl-vec3@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/gl-vec3/-/gl-vec3-1.0.3.tgz#110fd897d0729f6398307381567d0944941bf22b"
+
+gl-vec4@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/gl-vec4/-/gl-vec4-1.0.1.tgz#97d96878281b14b532cbce101785dfd1cb340964"
 
 glob-base@^0.3.0:
   version "0.3.0"
@@ -2611,6 +2640,10 @@ oauth-sign@~0.8.1:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.8.2.tgz#46a6ab7f0aead8deae9ec0565780b7d4efeb9d43"
 
+object-assign@^2.0.0:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-2.1.1.tgz#43c36e5d569ff8e4816c4efa8be02d26967c18aa"
+
 object-assign@^4.0.0, object-assign@^4.0.1, object-assign@^4.1.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
@@ -2789,6 +2822,19 @@ pem@^1.8.3:
     os-tmpdir "^1.0.1"
     which "^1.2.4"
 
+perspective-camera@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/perspective-camera/-/perspective-camera-2.0.1.tgz#7593e47eba0b7038b81ce698db344f125a3b3625"
+  dependencies:
+    camera-picking-ray "^1.0.0"
+    camera-project "^1.0.2"
+    camera-unproject "^1.0.1"
+    defined "^1.0.0"
+    gl-mat4 "^1.1.3"
+    gl-vec3 "^1.0.3"
+    object-assign "^2.0.0"
+    ray-3d "^1.0.2"
+
 pify@^2.0.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
@@ -2915,6 +2961,38 @@ raw-body@~2.1.5:
     bytes "2.4.0"
     iconv-lite "0.4.13"
     unpipe "1.0.0"
+
+ray-3d@^1.0.2:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/ray-3d/-/ray-3d-1.1.1.tgz#73801135b567866850881a5c06655853f2e10273"
+  dependencies:
+    gl-vec3 "^1.0.3"
+    ray-aabb-intersection "^1.0.1"
+    ray-plane-intersection "^1.0.0"
+    ray-sphere-intersection "^1.0.0"
+    ray-triangle-intersection "^1.0.3"
+
+ray-aabb-intersection@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/ray-aabb-intersection/-/ray-aabb-intersection-1.0.1.tgz#2eb510228d7d9222fdc8167e6737aad73666dcc7"
+
+ray-plane-intersection@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ray-plane-intersection/-/ray-plane-intersection-1.0.0.tgz#763be1cd04eddad1847af6d5e70941b7302a47bb"
+  dependencies:
+    gl-vec3 "^1.0.3"
+
+ray-sphere-intersection@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ray-sphere-intersection/-/ray-sphere-intersection-1.0.0.tgz#7f233d1d4dbaf5265757c9826532f53b1e4eeaca"
+  dependencies:
+    gl-vec3 "^1.0.3"
+
+ray-triangle-intersection@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/ray-triangle-intersection/-/ray-triangle-intersection-1.0.3.tgz#8ea8f2f383580bdabd36f5e51359cf71e1074d34"
+  dependencies:
+    gl-vec3 "^1.0.2"
 
 rc@~1.1.6:
   version "1.1.7"

@@ -18,14 +18,14 @@ const settings = {
 }
 
 const gui = new GUI()
-gui.add(settings, 'dotCount', 1, 3500).onFinishChange(start)
-gui.add(settings, 'cameraDistance', 50, 1000)
-gui.add(settings, 'speed', 1, 15)
-gui.add(settings, 'radius', 1, 500).onFinishChange(start)
-gui.add(settings, 'edgeConnections', 2, 100).onFinishChange(start)
-gui.add(settings, 'edgeAlpha', 0, 100).onFinishChange(start)
-gui.add(settings, 'nodeAlpha', 0, 100).onFinishChange(start)
-gui.add(settings, 'distribPowerFunc', -100, 200).onFinishChange(start)
+gui.add(settings, 'dotCount', 1, 3500).step(1).onFinishChange(start)
+gui.add(settings, 'cameraDistance', 50, 1000).step(1)
+gui.add(settings, 'speed', 1, 15).step(1)
+gui.add(settings, 'radius', 1, 500).step(1).onFinishChange(start)
+gui.add(settings, 'edgeConnections', 2, 100).step(1).onFinishChange(start)
+gui.add(settings, 'edgeAlpha', 0, 100).step(1).onFinishChange(start)
+gui.add(settings, 'nodeAlpha', 0, 100).step(1).onFinishChange(start)
+gui.add(settings, 'distribPowerFunc', -100, 200).step(1).onFinishChange(start)
 gui.add({ startStop }, 'startStop')
 
 const container = document.createElement('div')

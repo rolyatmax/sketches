@@ -27,6 +27,7 @@
     "gl-vec2": "^1.0.0",
     "lerp": "^1.0.3",
     "new-array": "^1.0.0",
+    "perspective-camera": "^2.0.1",
     "shuffle-array": "^1.0.1",
     "simplex-noise": "^2.2.0",
     "sketch-js": "^1.1.3",
