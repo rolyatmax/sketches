@@ -39,22 +39,20 @@ setTimeout(() => {
 
 const settings = {
   seed: 442,
-  palette: 86,
-  cameraX: -6,
-  cameraY: -3,
-  cameraZ: -4,
+  palette: 110,
   subdivisions: 1,
-  lightSpeed: 2
+  lightSpeed: 2,
+  cameraSpeed: 1,
+  multicolor: false
 }
 
 const gui = new GUI()
-// gui.add(settings, 'seed', 0, 1000).onChange(reset)
-// gui.add(settings, 'palette', 0, colorPalettes.length - 1).step(1).onChange(reset)
-gui.add(settings, 'cameraX', -20, 20).onChange(reset)
-gui.add(settings, 'cameraY', -20, 20).onChange(reset)
-gui.add(settings, 'cameraZ', -20, 20).onChange(reset)
+gui.add(settings, 'seed', 0, 1000).onChange(reset)
+gui.add(settings, 'palette', 0, colorPalettes.length - 1).step(1).onChange(reset)
 gui.add(settings, 'subdivisions', 0, 4).step(1).onChange(reset)
-gui.add(settings, 'lightSpeed', 0, 10).step(1).onChange(reset)
+gui.add(settings, 'lightSpeed', 0, 10).step(1)
+gui.add(settings, 'cameraSpeed', 0, 10).step(1)
+gui.add(settings, 'multicolor').onChange(reset)
 
 function reset () {
   ctx.setup()
@@ -67,30 +65,40 @@ ctx.setup = function () {
   this.camera = createCamera({
     viewport: [0, 0, ctx.canvas.width, ctx.canvas.height]
   })
-  const { cameraX, cameraY, cameraZ } = settings
   this.camera.identity()
-  this.camera.translate([cameraX, cameraY, cameraZ])
-  this.camera.lookAt([0, 0, 0])
-  this.camera.update()
 
-  const colors = colorPalettes[settings.palette]
+  this.colors = colorPalettes[settings.palette]
   const mesh = icosphere(settings.subdivisions)
 
   this.tris = mesh.cells.map(cell => ({
     positions: cell.map((i) => mesh.positions[i]),
-    points: cell.map((i) => this.camera.project(mesh.positions[i])),
-    color: colors[0] // [rand() * colors.length | 0]
+    color: this.colors[settings.multicolor ? rand() * this.colors.length | 0 : 0]
   }))
-
-  this.tris = sortBy(this.tris, ({ points }) => Math.min(...points.map(p => p[2])))
 }
 
 ctx.update = function () {
-  const rads = this.millis / 3000 * settings.lightSpeed
+  const lightSrcRads = this.millis / 3000 * settings.lightSpeed
   const dist = 10
   const lightSource = [
-    0 * dist, Math.cos(rads) * dist, Math.sin(rads) * dist
+    0 * dist, Math.cos(lightSrcRads) * dist, Math.sin(lightSrcRads) * dist
   ]
+
+  const cameraRads = this.millis / 10000 * settings.cameraSpeed
+  const cameraPosition = [
+    Math.cos(cameraRads) * dist, 0, Math.sin(cameraRads) * dist
+  ]
+
+  this.camera.identity()
+  this.camera.translate(cameraPosition)
+  this.camera.lookAt([0, 0, 0])
+  this.camera.update()
+
+  this.tris = this.tris.map((tri) => ({
+    ...tri,
+    points: tri.positions.map((positions) => this.camera.project(positions))
+  }))
+
+  this.tris = sortBy(this.tris, ({ points }) => Math.min(...points.map(p => p[2])))
 
   this.tris = this.tris.map((tri) => {
     const { color, positions } = tri
