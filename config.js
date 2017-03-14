@@ -5,6 +5,7 @@ module.exports = {
     'corpulent-porcupine',
     'defamatory-roundabout',
     'endemic-meter',
+    'insidious-libra',
     'judicious-hackwork',
     'limpid-law',
     'pernicious-maybe',
