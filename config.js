@@ -4,6 +4,7 @@ module.exports = {
     'baleful-virtue',
     'corpulent-porcupine',
     'defamatory-roundabout',
+    'didactic-protest',
     'endemic-meter',
     'insidious-libra',
     'judicious-hackwork',
