@@ -42,12 +42,12 @@ setTimeout(() => {
 const settings = {
   seed: Math.random() * 1000,
   points: 200,
-  palette: 110,
-  lightSpeed: 1,
-  cameraSpeed: 2,
-  dist: 3,
+  palette: 97,
+  lightSpeed: 7,
+  cameraSpeed: 5,
+  dist: 4,
   multicolor: false,
-  showEdges: true,
+  showEdges: false,
   opacity: 80
 }
 
@@ -70,7 +70,7 @@ let rand = Math.random
 
 ctx.setup = function () {
   rand = new Alea(settings.seed)
-  const simplex = new SimplexNoise(rand)
+  this.simplex = new SimplexNoise(rand)
   this.camera = createCamera({
     viewport: [0, 0, ctx.canvas.width, ctx.canvas.height]
   })
@@ -90,24 +90,17 @@ ctx.setup = function () {
   const triIndices = triangulate(positions)
   const cells = []
   for (let i = 0; i < triIndices.length; i += 3) {
-    cells.push([
-      triIndices[i],
-      triIndices[i + 1],
-      triIndices[i + 2]
-    ])
+    cells.push({
+      color: this.colors[settings.multicolor ? rand() * this.colors.length | 0 : 0],
+      pointIndices: [
+        triIndices[i],
+        triIndices[i + 1],
+        triIndices[i + 2]
+      ]
+    })
   }
 
-  // add random z
-  positions.forEach(p => {
-    p[2] = simplex.noise2D(p[0] / 2.5, p[1] / 2.5) * 2
-  })
-
-  const mesh = { cells, positions }
-
-  this.tris = mesh.cells.map(cell => ({
-    positions: cell.map((i) => mesh.positions[i]),
-    color: this.colors[settings.multicolor ? rand() * this.colors.length | 0 : 0]
-  }))
+  this.mesh = { cells, positions }
 }
 
 ctx.update = function () {
@@ -126,9 +119,17 @@ ctx.update = function () {
   this.camera.lookAt([0, 0, 0])
   this.camera.update()
 
-  this.tris = this.tris.map((tri) => ({
-    ...tri,
-    points: tri.positions.map((positions) => this.camera.project(positions))
+  // add random z
+  this.mesh.positions.forEach(p => {
+    const offset = this.millis / 8000
+    const noise = this.simplex.noise2D(p[0] / 2.5 + offset, p[1] / 2.5 + offset)
+    p[2] = Math.sin(noise)
+  })
+
+  this.tris = this.mesh.cells.map(cell => ({
+    positions: cell.pointIndices.map((i) => this.mesh.positions[i]),
+    color: cell.color,
+    points: cell.pointIndices.map((i) => this.camera.project(this.mesh.positions[i]))
   }))
 
   this.tris = sortBy(this.tris, ({ points }) => Math.min(...points.map(p => p[2])))
