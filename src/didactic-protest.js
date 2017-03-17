@@ -21,7 +21,7 @@ includeFont({
 const container = document.createElement('div')
 document.body.appendChild(container)
 
-const ctx = Sketch.create({ container })
+const ctx = Sketch.create({ container, interval: 2 })
 ctx.canvas.style.opacity = 0
 ctx.canvas.style.transition = 'opacity 400ms ease'
 setTimeout(() => {
@@ -41,7 +41,7 @@ setTimeout(() => {
 
 const settings = {
   seed: Math.random() * 1000,
-  points: 200,
+  points: 180,
   palette: 97,
   lightSpeed: 7,
   cameraSpeed: 5,
@@ -74,7 +74,6 @@ ctx.setup = function () {
   this.camera = createCamera({
     viewport: [0, 0, ctx.canvas.width, ctx.canvas.height]
   })
-  this.camera.identity()
 
   this.colors = colorPalettes[settings.palette]
 
@@ -91,7 +90,7 @@ ctx.setup = function () {
   const cells = []
   for (let i = 0; i < triIndices.length; i += 3) {
     cells.push({
-      color: this.colors[settings.multicolor ? rand() * this.colors.length | 0 : 0],
+      color: Color(this.colors[settings.multicolor ? rand() * this.colors.length | 0 : 0]),
       pointIndices: [
         triIndices[i],
         triIndices[i + 1],
@@ -126,26 +125,23 @@ ctx.update = function () {
     p[2] = Math.sin(noise)
   })
 
-  this.tris = this.mesh.cells.map(cell => ({
-    positions: cell.pointIndices.map((i) => this.mesh.positions[i]),
-    color: cell.color,
-    points: cell.pointIndices.map((i) => this.camera.project(this.mesh.positions[i]))
-  }))
-
-  this.tris = sortBy(this.tris, ({ points }) => Math.min(...points.map(p => p[2])))
-
-  this.tris = this.tris.map((tri) => {
-    const { color, positions } = tri
+  this.tris = this.mesh.cells.map(cell => {
+    const positions = cell.pointIndices.map((i) => this.mesh.positions[i])
     const center = getCenterOfPlane(positions)
-    const lightDirection = normalize([], subtract([], lightSource, center))
+    const lightDirection = subtract([], lightSource, center)
+    normalize(lightDirection, lightDirection)
     const norm = getPlaneNormal([], ...positions)
     const dotProduct = Math.abs(dot(lightDirection, norm))
     const lightenPerc = Math.pow(Math.max(0, dotProduct), 0.75) * 0.5
+    const points = positions.map((p) => this.camera.project(p))
     return {
-      ...tri,
-      litColor: Color(color).lighten(lightenPerc).alpha(settings.opacity / 100).toString()
+      litColor: cell.color.lighten(lightenPerc).alpha(settings.opacity / 100).toString(),
+      points: points,
+      distance: Math.min(...points.map(p => p[2]))
     }
   })
+
+  this.tris = sortBy(this.tris, 'distance')
 }
 
 ctx.draw = function () {
