@@ -121,8 +121,9 @@ ctx.update = function () {
   // add random z
   this.mesh.positions.forEach(p => {
     const offset = this.millis / 8000
-    const noise = this.simplex.noise2D(p[0] / 2.5 + offset, p[1] / 2.5 + offset)
-    p[2] = Math.sin(noise)
+    const noise1 = this.simplex.noise2D(p[0] / 2.5 + offset, p[1] / 2.5 + offset)
+    const noise2 = this.simplex.noise2D(p[0] / 2 + offset + 1000, p[1] / 2 + offset + 1000)
+    p[2] = Math.sin(noise1 / 3 + noise2 / 3)
   })
 
   this.tris = this.mesh.cells.map(cell => {

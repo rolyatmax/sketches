@@ -20,8 +20,8 @@ createProject({
 
   defaultSettings: {
     seed: Math.random() * 1000 | 0, // 4 digits
-    step: 10, // 3 digits
-    noiseStep: 10, // 2 digits
+    step: 2, // 3 digits
+    noiseStep: 13, // 2 digits
     lineLength: 5, // 3 digits
     alpha: 60, // 2 digits
     multicolor: 0 // 0 or 1
@@ -30,6 +30,7 @@ createProject({
   tiles: [
     'ce1zJrcPpX',
     'ce3U19WVZX',
+    'ce4GnYlwMG',
     'ce3U19BB6R',
     'ce3U10z3b7',
     'ce3UrnxL8M',
@@ -80,7 +81,10 @@ createProject({
     }
 
     function drawPoint (x, y, xNoise, yNoise) {
-      const noiseFactor = simplex.noise2D(xNoise, yNoise)
+      const noiseFactor1 = simplex.noise2D(xNoise, yNoise)
+      const noiseFactor2 = simplex.noise2D(xNoise * 1.234 + 100, yNoise * 1.234 + 100)
+      const noiseFactor3 = simplex.noise2D(xNoise * 2.345, yNoise * 2.345)
+      const noiseFactor = (noiseFactor1 + noiseFactor2 + noiseFactor3) / 2.5
       const angle = noiseFactor * Math.PI * 2
       colorIndex = multicolor || colorIndex === undefined ? palette.length * rand() | 0 : colorIndex
       const color = tinycolor(palette[colorIndex])
