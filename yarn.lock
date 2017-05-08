@@ -1023,6 +1023,12 @@ camera-unproject@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/camera-unproject/-/camera-unproject-1.0.1.tgz#86927a9d6d5340a8c9e36da840f7ccb6d6da12cf"
 
+canvas-fit@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/canvas-fit/-/canvas-fit-1.5.0.tgz#ae13be66ade42f5be0e487e345fce30a5e5b5e5f"
+  dependencies:
+    element-size "^1.1.1"
+
 caseless@~0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.11.0.tgz#715b96ea9841593cc33067923f5ec60ebda4f7d7"
@@ -1263,6 +1269,10 @@ currently-unhandled@^0.4.1:
   dependencies:
     array-find-index "^1.0.1"
 
+d3-random@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/d3-random/-/d3-random-1.1.0.tgz#6642e506c6fa3a648595d2b2469788a8d12529d3"
+
 d@^0.1.1, d@~0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/d/-/d-0.1.1.tgz#da184c535d18d8ee7ba2aa229b914009fae11309"
@@ -1438,6 +1448,10 @@ ecc-jsbn@~0.1.1:
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
+
+element-size@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/element-size/-/element-size-1.1.1.tgz#64e5f159d97121631845bcbaecaf279c39b5e34e"
 
 elliptic@^6.0.0:
   version "6.3.3"
@@ -3846,6 +3860,14 @@ watchify@^3.3.1:
     outpipe "^1.1.0"
     through2 "^2.0.0"
     xtend "^4.0.0"
+
+watercolor-canvas@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/watercolor-canvas/-/watercolor-canvas-1.1.1.tgz#ce52cc5f459690f0bcddb6211de2233010ec7d22"
+  dependencies:
+    gl-vec2 "^1.0.0"
+    lerp "^1.0.3"
+    new-array "^1.0.0"
 
 websocket-driver@>=0.5.1:
   version "0.6.5"
