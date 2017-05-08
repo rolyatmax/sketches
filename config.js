@@ -7,6 +7,7 @@ module.exports = {
     'didactic-protest',
     'endemic-meter',
     'insidious-libra',
+    'irksome-stepmother',
     'judicious-hackwork',
     'limpid-law',
     'pernicious-maybe',
