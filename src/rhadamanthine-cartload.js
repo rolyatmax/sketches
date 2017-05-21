@@ -162,6 +162,7 @@ function drawRect (ctx, position, width, height, color) {
   ctx.rect(position[0], position[1], width, height)
   ctx.strokeStyle = color
   ctx.clearRect(position[0], position[1], width, height)
+  ctx.lineWidth = 0.4
   ctx.stroke()
 }
 
