@@ -9,6 +9,7 @@ module.exports = {
     'friable-bay',
     'insidious-libra',
     'irksome-stepmother',
+    'jocular-replace',
     'judicious-hackwork',
     'limpid-law',
     'pernicious-maybe',
