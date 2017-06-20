@@ -1,6 +1,7 @@
 module.exports = {
   include: [
     'animistic-meter',
+    'antic-grandmom',
     'baleful-virtue',
     'corpulent-porcupine',
     'defamatory-roundabout',
