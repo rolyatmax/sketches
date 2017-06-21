@@ -48,7 +48,8 @@ const settings = {
   sigma: 300,
   maxDist: 300,
   toCut: 5,
-  noiseSize: 18
+  noiseSize: 180,
+  useNoise: false
 }
 
 const BATCH_LENGTH = 100
@@ -60,6 +61,7 @@ gui.add(settings, 'sigma', 0, 1000).step(1).onChange(() => ctx.setup())
 gui.add(settings, 'maxDist', 2, 1000).step(1).onChange(() => ctx.setup())
 gui.add(settings, 'toCut', 0, 100).step(1).onChange(() => ctx.setup())
 gui.add(settings, 'noiseSize', 1, 200).step(1).onChange(() => ctx.setup())
+gui.add(settings, 'useNoise').onChange(() => ctx.setup())
 
 let rand
 let randX
@@ -88,12 +90,15 @@ function createLine () {
     // const lastLine = lines[lines.length - 1]
     // const start = lastLine ? lastLine[1] : [randX(), randY()]
     if (distance(start, center) > settings.maxDist) continue
-
-    const noiseSize = (sizeOffset = 0) => (settings.noiseSize + sizeOffset) / 100000
-    const noise1 = simplex.noise2D(start[0] * noiseSize(10), start[1] * noiseSize(10))
-    const noise2 = simplex.noise2D(start[0] * noiseSize() + 1000, start[1] * noiseSize() + 1000)
-    const dir = (noise1 + noise2) * Math.PI
-    // const dir = rand() * 2 * Math.PI
+    let dir
+    if (settings.useNoise) {
+      const noiseSize = (sizeOffset = 0) => (settings.noiseSize + sizeOffset) / 100000
+      const noise1 = simplex.noise2D(start[0] * noiseSize(10), start[1] * noiseSize(10))
+      const noise2 = simplex.noise2D(start[0] * noiseSize() + 1000, start[1] * noiseSize() + 1000)
+      dir = (noise1 + noise2) * Math.PI
+    } else {
+      dir = rand() * 2 * Math.PI
+    }
     const dist = ctx.width + ctx.height
     const end = [
       Math.cos(dir) * dist + start[0],
