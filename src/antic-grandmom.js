@@ -4,6 +4,8 @@ import { GUI } from 'dat-gui'
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
 import { randomNormal } from 'd3-random'
+import SimplexNoise from 'simplex-noise'
+import { distance, squaredDistance, lerp } from 'gl-vec2'
 
 const { requestIdleCallback, cancelIdleCallback } = window
 
@@ -37,14 +39,16 @@ title.style.transition = 'opacity 400ms ease'
 title.style.zIndex = 10
 container.appendChild(title)
 setTimeout(() => {
-  title.style.opacity = 1
+  // title.style.opacity = 1
 }, 200)
 
 const settings = {
   seed: 293,
   lineCount: 1000,
   sigma: 300,
-  maxDist: 300
+  maxDist: 300,
+  toCut: 5,
+  noiseSize: 18
 }
 
 const BATCH_LENGTH = 100
@@ -54,10 +58,13 @@ gui.add(settings, 'seed', 0, 1000).step(1).onChange(() => ctx.setup())
 gui.add(settings, 'lineCount', 0, 10000).step(1).onChange(() => ctx.setup())
 gui.add(settings, 'sigma', 0, 1000).step(1).onChange(() => ctx.setup())
 gui.add(settings, 'maxDist', 2, 1000).step(1).onChange(() => ctx.setup())
+gui.add(settings, 'toCut', 0, 100).step(1).onChange(() => ctx.setup())
+gui.add(settings, 'noiseSize', 1, 200).step(1).onChange(() => ctx.setup())
 
 let rand
 let randX
 let randY
+let simplex
 let lines
 let rICToken
 let center
@@ -68,6 +75,7 @@ ctx.setup = ctx.resize = function () {
   rand = new Alea(settings.seed)
   randX = randomNormal.source(rand)(center[0], settings.sigma)
   randY = randomNormal.source(rand)(center[1], settings.sigma)
+  simplex = new SimplexNoise(rand)
   lines = []
   cancelIdleCallback(rICToken)
   rICToken = requestIdleCallback(createLine)
@@ -77,8 +85,15 @@ function createLine () {
   const lineBatch = []
   while (lineBatch.length < BATCH_LENGTH && lines.length < settings.lineCount) {
     const start = [randX(), randY()]
-    if (Math.sqrt(squaredDistance(start, center)) > settings.maxDist) continue
-    const dir = Math.PI * 2 * rand()
+    // const lastLine = lines[lines.length - 1]
+    // const start = lastLine ? lastLine[1] : [randX(), randY()]
+    if (distance(start, center) > settings.maxDist) continue
+
+    const noiseSize = (sizeOffset = 0) => (settings.noiseSize + sizeOffset) / 100000
+    const noise1 = simplex.noise2D(start[0] * noiseSize(10), start[1] * noiseSize(10))
+    const noise2 = simplex.noise2D(start[0] * noiseSize() + 1000, start[1] * noiseSize() + 1000)
+    const dir = (noise1 + noise2) * Math.PI
+    // const dir = rand() * 2 * Math.PI
     const dist = ctx.width + ctx.height
     const end = [
       Math.cos(dir) * dist + start[0],
@@ -86,8 +101,9 @@ function createLine () {
     ]
     const line = [start, end]
     const firstIntersection = getFirstLineIntersection(line, lines)
-    lineBatch.push([start, firstIntersection])
-    lines.push([start, firstIntersection])
+    const newLine = cutLineByLength([start, firstIntersection], settings.toCut)
+    lineBatch.push(newLine)
+    lines.push(newLine)
   }
   lineBatch.forEach(l => drawLine(ctx, l[0], l[1]))
   if (lines.length < settings.lineCount) {
@@ -111,18 +127,20 @@ function getFirstLineIntersection (line, lines) {
   return closestIntersection || line[1]
 }
 
+function cutLineByLength (line, toCut) {
+  const [start, end] = line
+  const length = distance(start, end)
+  const newLength = Math.max(0, length - toCut)
+  const newEnd = lerp([], start, end, newLength / length)
+  return [start, newEnd]
+}
+
 function drawLine (ctx, start, end) {
   ctx.beginPath()
   ctx.moveTo(start[0], start[1])
   ctx.lineTo(end[0], end[1])
   ctx.strokeStyle = 'rgb(40, 40, 40)'
   ctx.stroke()
-}
-
-function squaredDistance (a, b) {
-  const dx = a[0] - b[0]
-  const dy = a[1] - b[1]
-  return dx * dx + dy * dy
 }
 
 // Adapted from http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect/1968345#1968345
