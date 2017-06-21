@@ -7,8 +7,6 @@ import { randomNormal } from 'd3-random'
 import SimplexNoise from 'simplex-noise'
 import { distance, squaredDistance, lerp } from 'gl-vec2'
 
-const { requestIdleCallback, cancelIdleCallback } = window
-
 includeFont({
   fontFamily: '"Space Mono", sans-serif',
   url: 'https://fonts.googleapis.com/css?family=Space+Mono:700'
@@ -26,7 +24,6 @@ ctx.canvas.style.transition = 'opacity 400ms ease'
 ctx.canvas.style.position = 'absolute'
 ctx.canvas.style.top = 0
 ctx.canvas.style.left = 0
-// ctx.canvas.style.zIndex = 1
 setTimeout(() => {
   ctx.canvas.style.opacity = 1
 }, 200)
@@ -39,7 +36,7 @@ title.style.transition = 'opacity 400ms ease'
 title.style.zIndex = 10
 container.appendChild(title)
 setTimeout(() => {
-  // title.style.opacity = 1
+  title.style.opacity = 1
 }, 200)
 
 const settings = {
@@ -68,7 +65,7 @@ let randX
 let randY
 let simplex
 let lines
-let rICToken
+let token
 let center
 
 ctx.setup = ctx.resize = function () {
@@ -79,8 +76,8 @@ ctx.setup = ctx.resize = function () {
   randY = randomNormal.source(rand)(center[1], settings.sigma)
   simplex = new SimplexNoise(rand)
   lines = []
-  cancelIdleCallback(rICToken)
-  rICToken = requestIdleCallback(createLine)
+  clearTimeout(token)
+  token = setTimeout(createLine, 0)
 }
 
 function createLine () {
@@ -112,7 +109,7 @@ function createLine () {
   }
   lineBatch.forEach(l => drawLine(ctx, l[0], l[1]))
   if (lines.length < settings.lineCount) {
-    rICToken = requestIdleCallback(createLine)
+    token = setTimeout(createLine, 0)
   }
 }
 
