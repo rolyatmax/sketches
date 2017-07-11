@@ -24,7 +24,7 @@ function createLineData () {
   const controls = array(Math.random() * (controlsLimit[1] - controlsLimit[0]) + controlsLimit[0] | 0).map(() => {
     const rads = Math.random() * Math.PI * 2
     const phi = Math.acos(Math.random() * 2 - 1)
-    const mag = Math.pow(Math.random(), -0.1) / 2
+    const mag = Math.pow(Math.random(), -0.1) * 2
     return [
       Math.cos(rads) * Math.sin(phi) * mag,
       Math.sin(rads) * Math.sin(phi) * mag,
@@ -44,7 +44,8 @@ function createLineData () {
       color: [
         (position[0] / multiplier / 2 + 0.5) / 2 + 0.5,
         (position[1] / multiplier / 2 + 0.5) / 2 + 0.5,
-        (position[2] / points.length) / 2 + 0.5
+        (position[2] / points.length) / 2 + 0.5,
+        Math.random() / 2 + 0.5
       ]
     }
   })
@@ -69,6 +70,21 @@ const globalStateDraw = regl({
     ),
     // pointSize: regl.prop('pointSize'),
     tick: regl.context('tick')
+  },
+
+  blend: {
+    enable: true,
+    func: {
+      srcRGB: 'src alpha',
+      srcAlpha: 1,
+      dstRGB: 'one minus src alpha',
+      dstAlpha: 1
+    },
+    equation: {
+      rgb: 'add',
+      alpha: 'add'
+    },
+    color: [0, 0, 0, 0]
   },
 
   primitive: 'point'
@@ -101,6 +117,8 @@ function cacheDrawPoints () {
 }
 
 cacheDrawPoints()
+camera.zoom(150)
+camera.rotate([500 * (Math.random() - 0.5), 500 * (Math.random() - 0.5)], [0, 0])
 
 let cancel
 function start () {
