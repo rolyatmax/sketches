@@ -2,6 +2,7 @@ const budo = require('budo')
 const argv = require('minimist')(process.argv.slice(2))
 const path = require('path')
 const babelify = require('babelify')
+const glslify = require('glslify')
 
 var entryFilename = argv._[0]
 
@@ -21,6 +22,7 @@ budo(entryFile, {
   browserify: {
     debug: false,
     transform: [
+      glslify,
       babelify.configure({
         presets: ['es2015'],
         plugins: ['transform-object-rest-spread']

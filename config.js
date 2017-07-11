@@ -16,6 +16,7 @@ module.exports = {
     'pernicious-maybe',
     'rebarbative-shop',
     'rhadamanthine-cartload',
-    'voluble-russian'
+    'voluble-russian',
+    'wheedling-tummy'
   ]
 }

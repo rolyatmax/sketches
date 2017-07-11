@@ -26,6 +26,7 @@ function buildJs (filename) {
   return new Promise((resolve, reject) => {
     console.log('Bundling', filename)
     var b = browserify(`src/${filename}.js`, { debug: false })
+    b.transform(require('glslify'))
     b.transform(require('babelify').configure({
       presets: ['es2015'],
       plugins: ['transform-object-rest-spread']
