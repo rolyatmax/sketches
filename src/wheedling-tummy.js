@@ -13,18 +13,19 @@ const canvas = document.createElement('canvas')
 const camera = createCamera(canvas)
 const regl = createRegl(canvas)
 
-const lineCount = 100
+const lineCount = 200
 const controlsLimit = [15, 15]
 
 const lines = array(lineCount).map(() => createLineData())
 
 console.log('points', lines[0].length * lineCount)
+window.camera = camera
 
 function createLineData () {
   const controls = array(Math.random() * (controlsLimit[1] - controlsLimit[0]) + controlsLimit[0] | 0).map(() => {
     const rads = Math.random() * Math.PI * 2
     const phi = Math.acos(Math.random() * 2 - 1)
-    const mag = Math.pow(Math.random(), -0.1) * 2
+    const mag = Math.pow(Math.random(), -0.1)
     return [
       Math.cos(rads) * Math.sin(phi) * mag,
       Math.sin(rads) * Math.sin(phi) * mag,
@@ -42,9 +43,9 @@ function createLineData () {
       randSeed: randSeed,
       size: Math.random() + 1,
       color: [
-        (position[0] / multiplier / 2 + 0.5) / 2 + 0.5,
-        (position[1] / multiplier / 2 + 0.5) / 2 + 0.5,
-        (position[2] / points.length) / 2 + 0.5,
+        (position[0] / 2 + 0.5) / multiplier + 0.45,
+        (position[1] / 2 + 0.5) / multiplier + 0.35,
+        (position[2] / 2 + 0.5) / points.length + 0.45,
         Math.random() / 2 + 0.5
       ]
     }
@@ -117,8 +118,11 @@ function cacheDrawPoints () {
 }
 
 cacheDrawPoints()
-camera.zoom(150)
-camera.rotate([500 * (Math.random() - 0.5), 500 * (Math.random() - 0.5)], [0, 0])
+camera.lookAt(
+  [0, 0, 200],
+  [0, 0, 0],
+  [0, 0, 1]
+)
 
 let cancel
 function start () {
