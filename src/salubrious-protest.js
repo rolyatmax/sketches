@@ -25,12 +25,12 @@ document.body.appendChild(canvas)
 
 const settings = guiSettings({
   seed: [442, 0, 1000, 1, true],
-  points: [90000, 1, 100000, 1, true],
+  points: [190000, 1, 900000, 1, true],
   pointSize: [1.2, 0.5, 10, 0.1],
-  duration: [20000, 100, 30000, 100],
-  circleSize: [25, 1, 50, 1, true],
+  duration: [15000, 100, 30000, 100],
+  circleSize: [9, 1, 50, 1, true],
   arcHeight: [4, 0, 25, 1],
-  spacing: [0.1, 0.01, 100, 0.05, true],
+  spacing: [0.01, 0.01, 100, 0.05, true],
   distribution: [0.5, -1, 2, 0.1, true]
 }, setup)
 
