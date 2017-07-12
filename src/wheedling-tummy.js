@@ -7,7 +7,7 @@ const createCamera = require('canvas-orbit-camera')
 const array = require('new-array')
 
 const pointsVertGL = glslify.file('./shaders/wheedling-tummy.vert')
-const pointsFragGL = glslify.file('./shaders/wheedling-tummy.frag')
+const pointsFragGL = glslify.file('./shaders/simple.frag')
 
 const canvas = document.createElement('canvas')
 const camera = createCamera(canvas)
