@@ -17,7 +17,7 @@ const canvas = document.createElement('canvas')
 const camera = createCamera(canvas)
 const regl = createRegl(canvas)
 
-camera.lookAt([5, 5, 5], [0, 0, 0], [-10, -10, 10])
+camera.lookAt([5, 5, 5], [0, 0, 0], [-10, -10, 99])
 
 window.camera = camera
 window.addEventListener('resize', fit(canvas), false)
