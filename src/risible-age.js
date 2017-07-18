@@ -137,10 +137,10 @@ function guiSettings (settings, onChange) {
       setting.onChange(onChange)
     }
   }
-  if (onChange) {
-    const redraw = onChange
-    gui.add({ redraw }, 'redraw')
-  }
+  // if (onChange) {
+  //   const redraw = onChange
+  //   gui.add({ redraw }, 'redraw')
+  // }
   return settingsObj
 }
 
