@@ -43,16 +43,14 @@ function createRenderer () {
         -1, -1,
         -1, 1,
         1, -1,
-        -1, 1,
-        1, -1,
         1, 1
       ]
     },
 
-    count: 6,
+    count: 4,
 
     uniforms: {
-      projection: ({viewportWidth, viewportHeight}) => (
+      projection: ({ viewportWidth, viewportHeight }) => (
         mat4.perspective([],
           Math.PI / 2,
           viewportWidth / viewportHeight,
@@ -60,14 +58,10 @@ function createRenderer () {
           1000)
       ),
       view: () => camera.matrix,
-      elapsed: ({ time }, { startTime }) => (time - startTime) * 1000,
-      thing: [
-        Math.sin(rand() * Math.PI * 2) * 500,
-        Math.sin(rand() * Math.PI * 2) * 500
-      ]
+      elapsed: ({ time }, { startTime }) => (time - startTime) * 1000
     },
 
-    primitive: 'triangles'
+    primitive: 'triangle strip'
   })
 }
 
