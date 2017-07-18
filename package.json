@@ -43,6 +43,7 @@
     "shuffle-array": "^1.0.1",
     "simplex-noise": "^2.2.0",
     "sketch-js": "^1.1.3",
+    "spring-animator": "^1.0.3",
     "standard": "7.1.2",
     "three": "^0.84.0",
     "tinycolor2": "^1.4.1",

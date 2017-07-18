@@ -3929,6 +3929,10 @@ split2@^0.2.1:
   dependencies:
     through2 "~0.6.1"
 
+spring-animator@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/spring-animator/-/spring-animator-1.0.3.tgz#4fc84e2ecb2e29152608f474a397acd2cf0d146b"
+
 sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
