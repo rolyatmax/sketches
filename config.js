@@ -18,6 +18,7 @@ module.exports = {
     'risible-age',
     'rhadamanthine-cartload',
     'salubrious-protest',
+    'tenacious-centimeter',
     'voluble-russian',
     'wheedling-tummy'
   ]
