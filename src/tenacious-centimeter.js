@@ -15,21 +15,26 @@ const camera = createCamera(canvas, {
   mode: 'orbit'
 })
 const regl = createREGL({
-  extensions: 'OES_texture_float',
+  extensions: 'OES_texture_half_float',
+  optionalExtensions: 'OES_texture_float',
   canvas: canvas
 })
 
-if (!regl.limits.extensions.includes('oes_texture_float')) {
-  const warningDiv = document.body.appendChild(document.createElement('div'))
-  warningDiv.innerText = 'This sketch requires the oes texture float WebGL extension and make not work on mobile browsers.'
-  css(warningDiv, {
-    width: 200,
-    textAlign: 'center',
-    margin: '200px auto',
-    color: '#333'
-  })
-  throw new Error('OES Texture Float extension required for WebGL')
-}
+const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+
+// window.regl = regl
+
+// if (!regl.limits.extensions.includes('oes_texture_float')) {
+//   const warningDiv = document.body.appendChild(document.createElement('div'))
+//   warningDiv.innerText = 'This sketch requires the oes texture float WebGL extension and make not work on mobile browsers.'
+//   css(warningDiv, {
+//     width: 200,
+//     textAlign: 'center',
+//     margin: '200px auto',
+//     color: '#333'
+//   })
+//   throw new Error('OES Texture Float extension required for WebGL')
+// }
 
 // title('tenacious-centimeter', '#ddd')
 instructions('drag + scroll to pan & zoom, spacebar to pause', '#ddd')
@@ -80,7 +85,8 @@ function restart () {
   const percToDistrOne = Math.random() / 2
   const percToDistrTwo = Math.random() / 2 + percToDistrOne
 
-  const initialParticleState = new Float32Array(numParticles * 4)
+  const ArrayType = iOS ? Array : Float32Array
+  const initialParticleState = new ArrayType(numParticles * 4)
   for (let i = 0; i < numParticles; ++i) {
     const coinToss = Math.random()
     const rand = coinToss < percToDistrOne ? distributions[0] : coinToss < percToDistrTwo ? distributions[1] : distributions[2]
@@ -94,7 +100,7 @@ function restart () {
     const initialTexture = regl.texture({
       data: initialParticleState,
       shape: [sqrtNumParticles, sqrtNumParticles, 4],
-      type: 'float'
+      type: iOS ? 'half float' : 'float'
     })
 
     return regl.framebuffer({
