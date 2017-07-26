@@ -16,27 +16,22 @@ const camera = createCamera(canvas, {
 })
 const regl = createREGL({
   extensions: 'OES_texture_float',
-  canvas: canvas,
-  onDone: (err, regl) => {
-    console.log('Context creation complete!')
-    if (err) console.warn('Error:', err)
-    console.log('regl limits:', regl.limits)
-  }
+  canvas: canvas
 })
 
 window.regl = regl
 
-// if (!regl.limits.extensions.includes('oes_texture_float')) {
-//   const warningDiv = document.body.appendChild(document.createElement('div'))
-//   warningDiv.innerText = 'This sketch requires the oes texture float WebGL extension and make not work on mobile browsers.'
-//   css(warningDiv, {
-//     width: 200,
-//     textAlign: 'center',
-//     margin: '200px auto',
-//     color: '#333'
-//   })
-//   throw new Error('OES Texture Float extension required for WebGL')
-// }
+function notSupported () {
+  canvas.parentElement.removeChild(canvas)
+  const warningDiv = document.body.appendChild(document.createElement('div'))
+  warningDiv.innerText = 'This sketch requires the oes texture float WebGL extension and make not work on mobile browsers.'
+  css(warningDiv, {
+    width: 200,
+    textAlign: 'center',
+    margin: '200px auto',
+    color: '#333'
+  })
+}
 
 // title('tenacious-centimeter', '#ddd')
 instructions('drag + scroll to pan & zoom, spacebar to pause', '#ddd')
@@ -104,11 +99,19 @@ function restart () {
       type: 'float'
     })
 
-    return regl.framebuffer({
-      color: initialTexture,
-      depth: false,
-      stencil: false
-    })
+    let fbuffer
+    try {
+      fbuffer = regl.framebuffer({
+        color: initialTexture,
+        depth: false,
+        stencil: false
+      })
+    } catch (err) {
+      notSupported()
+      throw new Error(err)
+    }
+
+    return fbuffer
   }
 
   prevParticleState = createInitialParticleBuffer(initialParticleState)
