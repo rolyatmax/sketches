@@ -1,55 +1,93 @@
-// loosely based on https://bl.ocks.org/pbeshai/dbed2fdac94b44d3b4573624a37fa9db
 const createREGL = require('regl')
 const { GUI } = require('dat-gui')
 const glslify = require('glslify')
 const fit = require('canvas-fit')
+const d3 = require('d3-random')
 const mat4 = require('gl-mat4')
 const createCamera = require('3d-view-controls')
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
 const css = require('dom-css')
 
-title('tenacious-centimeter', '#ddd')
-
 const canvas = document.body.appendChild(document.createElement('canvas'))
-const camera = createCamera(canvas)
-window.addEventListener('resize', fit(canvas), false)
+const camera = createCamera(canvas, {
+  distanceLimits: [0.01, 950],
+  mode: 'orbit'
+})
 const regl = createREGL({
   extensions: 'OES_texture_float',
   canvas: canvas
 })
 
+if (!regl.limits.extensions.includes('oes_texture_float')) {
+  const warningDiv = document.body.appendChild(document.createElement('div'))
+  warningDiv.innerText = 'This sketch requires the oes texture float WebGL extension and make not work on mobile browsers.'
+  css(warningDiv, {
+    width: 200,
+    textAlign: 'center',
+    margin: '200px auto',
+    color: '#333'
+  })
+  throw new Error('OES Texture Float extension required for WebGL')
+}
+
+// title('tenacious-centimeter', '#ddd')
+instructions('drag + scroll to pan & zoom, spacebar to pause', '#ddd')
+
+window.addEventListener('resize', fit(canvas), false)
+
 let animating = true
 const toggleAnimation = () => { animating = !animating }
 
 const settings = {
-  particles: 1000000,
-  speed: 20,
-  pointWidth: 3,
-  pullStrength: 1.5
+  particles: 800000,
+  excitability: 40,
+  pointWidth: 1,
+  pullStrength: 2.5,
+  decay: 2
 }
+const origSettings = Object.assign({}, settings)
 
 const gui = new GUI()
-gui.add(settings, 'particles', 4, 1500000).step(1).onFinishChange(reset)
-gui.add(settings, 'speed', 1, 1000)
-gui.add(settings, 'pointWidth', 0.5, 6)
-gui.add(settings, 'pullStrength', -1, 6).step(0.1)
-gui.add({ toggleAnimation }, 'toggleAnimation')
+gui.add(settings, 'particles', 4, 1500000).step(1).listen().onFinishChange(restart)
+gui.add(settings, 'excitability', 10, 500).step(10).listen()
+// gui.add(settings, 'pointWidth', 0.5, 6).listen()
+gui.add(settings, 'pullStrength', 0, 3).step(0.1).listen()
+gui.add(settings, 'decay', -10, 10).step(1).listen()
+gui.add({ 'start / stop': toggleAnimation }, 'start / stop')
+gui.add({ restart }, 'restart')
+gui.add({ reset }, 'reset')
+
+function reset () {
+  Object.assign(settings, origSettings)
+  restart()
+}
 
 let prevParticleState, currParticleState, nextParticleState
 let updateParticles, drawParticles
 
-function reset () {
+function restart () {
   const sqrtNumParticles = Math.ceil(Math.sqrt(settings.particles))
   const numParticles = sqrtNumParticles * sqrtNumParticles
 
   console.log(`Using ${numParticles} particles`)
 
+  const distributions = [
+    d3.randomNormal(2 * Math.random() - 1, Math.random() * 0.5),
+    d3.randomNormal(2 * Math.random() - 1, Math.random()),
+    d3.randomNormal(2 * Math.random() - 1, Math.random() * 0.75)
+  ]
+  const percToDistrOne = Math.random() / 2
+  const percToDistrTwo = Math.random() / 2 + percToDistrOne
+
   const initialParticleState = new Float32Array(numParticles * 4)
   for (let i = 0; i < numParticles; ++i) {
-    initialParticleState[i * 4] = 2 * Math.random() - 1
-    initialParticleState[i * 4 + 1] = 2 * Math.random() - 1
-    initialParticleState[i * 4 + 2] = 2 * Math.random() - 1
+    const coinToss = Math.random()
+    const rand = coinToss < percToDistrOne ? distributions[0] : coinToss < percToDistrTwo ? distributions[1] : distributions[2]
+    initialParticleState[i * 4] = rand()
+    initialParticleState[i * 4 + 1] = rand()
+    initialParticleState[i * 4 + 2] = rand()
+    initialParticleState[i * 4 + 3] = (2 * Math.random() - 1) * settings.excitability / 10000
   }
 
   function createInitialParticleBuffer (initialParticleState) {
@@ -96,8 +134,9 @@ function reset () {
       currParticleState: () => currParticleState,
       prevParticleState: () => prevParticleState,
       tick: regl.prop('tick'),
-      speed: regl.prop('speed'),
-      pullStrength: regl.prop('pullStrength')
+      excitability: regl.prop('excitability'),
+      pullStrength: regl.prop('pullStrength'),
+      decay: regl.prop('decay')
     },
 
     count: 4,
@@ -124,7 +163,7 @@ function reset () {
           1000)
       ),
       view: () => camera.matrix,
-      speed: regl.prop('speed')
+      excitability: regl.prop('excitability')
     },
 
     count: numParticles,
@@ -132,7 +171,7 @@ function reset () {
   })
 }
 
-reset()
+restart()
 
 camera.zoomSpeed = 4
 camera.lookAt(
@@ -156,11 +195,19 @@ regl.frame(({ tick }) => {
   camera.tick()
 
   if (animating) {
-    updateParticles({ speed: settings.speed / 100000, tick: ticks, pullStrength: settings.pullStrength })
+    updateParticles({
+      excitability: settings.excitability / 100000,
+      tick: ticks,
+      pullStrength: 3 - settings.pullStrength,
+      decay: settings.decay / 1000
+    })
     cycleParticleStates()
     ticks += 1
   }
-  drawParticles({ pointWidth: settings.pointWidth, speed: settings.speed / 100000 })
+  drawParticles({
+    pointWidth: settings.pointWidth,
+    excitability: settings.excitability / 100000
+  })
 })
 
 function cycleParticleStates () {
@@ -182,6 +229,28 @@ function title (name, color) {
     color: color,
     bottom: '5vh',
     right: '5vh',
+    transition: 'opacity 800ms linear',
+    zIndex: 10
+  })
+
+  document.body.appendChild(title)
+  setTimeout(() => {
+    css(title, 'opacity', 1)
+  }, 200)
+}
+
+function instructions (text, color) {
+  includeFont({
+    fontFamily: '"Space Mono", sans-serif',
+    url: 'https://fonts.googleapis.com/css?family=Space+Mono:700'
+  })
+
+  const title = addTitle(text)
+  css(title, {
+    opacity: 0,
+    color: color,
+    bottom: '5vh',
+    left: '5vh',
     transition: 'opacity 800ms linear',
     zIndex: 10
   })
