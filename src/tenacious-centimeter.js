@@ -22,9 +22,9 @@ const regl = createREGL({
 window.regl = regl
 
 function notSupported () {
-  canvas.parentElement.removeChild(canvas)
+  document.body.innerHTML = ''
   const warningDiv = document.body.appendChild(document.createElement('div'))
-  warningDiv.innerText = 'This sketch requires the oes texture float WebGL extension and make not work on mobile browsers.'
+  warningDiv.innerText = 'This sketch requires some fancy WebGL stuff and may not work on mobile browsers.'
   css(warningDiv, {
     width: 200,
     textAlign: 'center',
@@ -59,6 +59,8 @@ gui.add(settings, 'decay', -10, 10).step(1).listen()
 gui.add({ 'start / stop': toggleAnimation }, 'start / stop')
 gui.add({ restart }, 'restart')
 gui.add({ reset }, 'reset')
+
+window.gui = gui
 
 function reset () {
   Object.assign(settings, origSettings)
