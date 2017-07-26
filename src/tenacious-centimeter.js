@@ -15,14 +15,16 @@ const camera = createCamera(canvas, {
   mode: 'orbit'
 })
 const regl = createREGL({
-  extensions: 'OES_texture_half_float',
-  optionalExtensions: 'OES_texture_float',
-  canvas: canvas
+  extensions: 'OES_texture_float',
+  canvas: canvas,
+  onDone: (err, regl) => {
+    console.log('Context creation complete!')
+    if (err) console.warn('Error:', err)
+    console.log('regl limits:', regl.limits)
+  }
 })
 
-const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
-
-// window.regl = regl
+window.regl = regl
 
 // if (!regl.limits.extensions.includes('oes_texture_float')) {
 //   const warningDiv = document.body.appendChild(document.createElement('div'))
@@ -85,8 +87,7 @@ function restart () {
   const percToDistrOne = Math.random() / 2
   const percToDistrTwo = Math.random() / 2 + percToDistrOne
 
-  const ArrayType = iOS ? Array : Float32Array
-  const initialParticleState = new ArrayType(numParticles * 4)
+  const initialParticleState = new Float32Array(numParticles * 4)
   for (let i = 0; i < numParticles; ++i) {
     const coinToss = Math.random()
     const rand = coinToss < percToDistrOne ? distributions[0] : coinToss < percToDistrTwo ? distributions[1] : distributions[2]
@@ -100,7 +101,7 @@ function restart () {
     const initialTexture = regl.texture({
       data: initialParticleState,
       shape: [sqrtNumParticles, sqrtNumParticles, 4],
-      type: iOS ? 'half float' : 'float'
+      type: 'float'
     })
 
     return regl.framebuffer({
