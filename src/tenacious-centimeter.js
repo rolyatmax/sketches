@@ -43,7 +43,7 @@ const toggleAnimation = () => { animating = !animating }
 
 const settings = {
   particles: 800000,
-  excitability: 40,
+  excitability: 10,
   pointWidth: 1,
   pullStrength: 2.5,
   decay: 2
