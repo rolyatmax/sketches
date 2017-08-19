@@ -1053,7 +1053,7 @@ camelcase@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-2.1.1.tgz#7c1d16d679a1bbe59ca02cacecfb011e201f5a1f"
 
-camera-picking-ray@^1.0.0:
+camera-picking-ray@^1.0.0, camera-picking-ray@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/camera-picking-ray/-/camera-picking-ray-1.0.1.tgz#49567a4edc2de5bc13e4b6fd959520bf13a30490"
   dependencies:
