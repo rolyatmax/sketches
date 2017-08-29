@@ -94,6 +94,14 @@ function restart () {
     initialParticleState[i * 4 + 3] = (2 * Math.random() - 1) * settings.excitability / 10000
   }
 
+  const initialPrevParticleState = new Float32Array(numParticles * 4)
+  const rand = () => (Math.random() - 0.5) * 0.03
+  for (let i = 0; i < numParticles; ++i) {
+    initialPrevParticleState[i * 4] = initialParticleState[i * 4] + rand()
+    initialPrevParticleState[i * 4 + 1] = initialParticleState[i * 4 + 1] + rand()
+    initialPrevParticleState[i * 4 + 2] = initialParticleState[i * 4 + 2] + rand()
+  }
+
   function createInitialParticleBuffer (initialParticleState) {
     const initialTexture = regl.texture({
       data: initialParticleState,
@@ -116,7 +124,7 @@ function restart () {
     return fbuffer
   }
 
-  prevParticleState = createInitialParticleBuffer(initialParticleState)
+  prevParticleState = createInitialParticleBuffer(initialPrevParticleState)
   currParticleState = createInitialParticleBuffer(initialParticleState)
   nextParticleState = createInitialParticleBuffer(initialParticleState)
 

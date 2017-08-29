@@ -1451,6 +1451,10 @@ del@^2.0.2:
     pinkie-promise "^2.0.0"
     rimraf "^2.2.8"
 
+delaunator@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/delaunator/-/delaunator-1.0.4.tgz#25f530682be6ab4ce4b6ad9f9e174a0fc543b8c1"
+
 delaunay@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/delaunay/-/delaunay-0.4.0.tgz#e796dff0132930d6c2ee2595410abb5611200b12"

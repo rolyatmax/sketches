@@ -28,6 +28,7 @@
     "color": "^1.0.3",
     "d3-random": "^1.1.0",
     "dat-gui": "^0.5.0",
+    "delaunator": "^1.0.4",
     "delaunay": "^0.4.0",
     "dom-css": "^2.1.0",
     "encode-object": "^0.2.2",
