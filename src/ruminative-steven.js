@@ -7,6 +7,7 @@ const createRegl = require('regl')
 const glslify = require('glslify')
 const fit = require('canvas-fit')
 const mat4 = require('gl-mat4')
+const vec3 = require('gl-vec3')
 const createCamera = require('3d-view-controls')
 import array from 'new-array'
 import includeFont from './common/include-font'
@@ -18,6 +19,8 @@ title('ruminative-steven', '#ddd')
 const canvas = document.createElement('canvas')
 const camera = createCamera(canvas)
 const regl = createRegl(canvas)
+
+let follower
 
 camera.zoomSpeed = 4
 camera.lookAt(
@@ -33,13 +36,14 @@ document.body.appendChild(canvas)
 const settings = guiSettings({
   seed: [442, 0, 1000, 1, true],
   size: [5, 1, 20, 1],
-  points: [20000, 3, 100000, 1, true],
+  points: [100000, 3, 500000, 1, true],
   noiseSize: [300, 1, 800, 1, true],
   noiseMag: [15, 1, 100, 1, true],
   speed: [24, 1, 50, 1],
   colorVariance: [4, 0, 20, 1],
-  reflectionMult: [5, 0, 20, 0.1],
-  dotProdMult: [4, -20, 20, 0.01]
+  reflectionMult: [4.5, 0, 20, 0.1],
+  dotProdMult: [1.3, -20, 20, 0.01],
+  lightDistance: [3, 0, 10, 0.1]
 }, setup)
 
 let rand, simplex, drawTriangles
@@ -47,6 +51,7 @@ setup()
 function setup () {
   rand = new Alea(settings.seed)
   simplex = new SimplexNoise(rand)
+  follower = createFollower([1, -1, 0.5])
   const points = array(settings.points).map(() => {
     const x = rand() * 2 - 1
     const y = rand() * 2 - 1
@@ -100,7 +105,7 @@ const drawGlobal = regl({
     ),
     view: () => camera.matrix,
     tick: ({ tick }) => tick,
-    lightSource: [0.3, -0.1, 0.5],
+    lightSource: regl.prop('lightSource'),
     speed: () => settings.speed,
     colorVariance: () => settings.colorVariance / 100,
     baseColor: [0.03, 0.13, 0.5],
@@ -112,13 +117,25 @@ const drawGlobal = regl({
   primitive: 'triangles'
 })
 
-regl.frame(() => {
+let lastTime = 0
+regl.frame(({ time }) => {
+  if (time - lastTime > 4) {
+    follower.updateDestination([
+      (rand() - 0.5) * settings.lightDistance,
+      (rand() - 0.5) * settings.lightDistance,
+      (rand() - 0.5) * settings.lightDistance
+    ])
+    lastTime = time
+  }
+
   regl.clear({
-    color: [0.18, 0.18, 0.18, 1],
+    color: [0.95, 0.95, 0.95, 1],
     depth: 1
   })
   camera.tick()
-  drawGlobal(() => drawTriangles())
+  drawGlobal({
+    lightSource: follower.tick()
+  }, () => drawTriangles())
 })
 
 // ------------- helpers -------------
@@ -164,4 +181,34 @@ function title (name, color) {
   setTimeout(() => {
     css(title, 'opacity', 1)
   }, 200)
+}
+
+function createFollower (start) {
+  let destination = start
+  let lastPosition = start
+  let curPosition = start
+
+  return {
+    updateDestination,
+    tick
+  }
+
+  function updateDestination (newDest) {
+    destination = newDest
+  }
+
+  function tick () {
+    let velocity = vec3.subtract([], curPosition, lastPosition)
+    const delta = vec3.subtract([], destination, curPosition)
+    const acceleration = vec3.scale([], delta, 0.001)
+    velocity = vec3.add(velocity, acceleration, velocity)
+    if (vec3.length(velocity) > 0.005) {
+      velocity = vec3.normalize(velocity, velocity)
+      velocity = vec3.scale(velocity, velocity, 0.005)
+    }
+    const nextPosition = vec3.add([], velocity, curPosition)
+    lastPosition = curPosition
+    curPosition = nextPosition
+    return curPosition
+  }
 }

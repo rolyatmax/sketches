@@ -17,9 +17,8 @@ uniform float dotProdMult;
 
 void main() {
   vec3 computedColor = color * colorVariance + baseColor;
-  vec3 currentLightSource = sin(tick * speed / 1000.0) * lightSource;
-  vec3 lightDirection = currentLightSource - position;
-  lightDirection = normalize(lightDirection);
+  vec3 currentLightSource = lightSource;
+  vec3 lightDirection = normalize(currentLightSource - position);
   float dotProduct = abs(dot(lightDirection, normal));
   float mult = pow(1.0 - dotProduct, dotProdMult);
   float lightenPerc = pow(max(0.2, mult), 0.95) * reflectionMult;
