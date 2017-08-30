@@ -35,11 +35,10 @@ document.body.appendChild(canvas)
 
 const settings = guiSettings({
   seed: [442, 0, 1000, 1, true],
-  size: [5, 1, 20, 1],
   points: [100000, 3, 500000, 1, true],
   noiseSize: [300, 1, 800, 1, true],
   noiseMag: [15, 1, 100, 1, true],
-  speed: [24, 1, 50, 1],
+  // speed: [24, 1, 50, 1],
   colorVariance: [4, 0, 20, 1],
   reflectionMult: [4.5, 0, 20, 0.1],
   dotProdMult: [1.3, -20, 20, 0.01],
@@ -104,20 +103,17 @@ const drawGlobal = regl({
         1000)
     ),
     view: () => camera.matrix,
-    tick: ({ tick }) => tick,
     lightSource: regl.prop('lightSource'),
-    speed: () => settings.speed,
     colorVariance: () => settings.colorVariance / 100,
     baseColor: [0.03, 0.13, 0.5],
     reflectionMult: () => settings.reflectionMult,
-    size: () => settings.size,
     dotProdMult: () => settings.dotProdMult
   },
 
   primitive: 'triangles'
 })
 
-let lastTime = 0
+let lastTime = -1000
 regl.frame(({ time }) => {
   if (time - lastTime > 4) {
     follower.updateDestination([
