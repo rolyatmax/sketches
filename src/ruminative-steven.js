@@ -98,7 +98,7 @@ const drawGlobal = regl({
   uniforms: {
     projection: ({viewportWidth, viewportHeight}) => (
       mat4.perspective([],
-        Math.PI / 2,
+        Math.PI / 4,
         viewportWidth / viewportHeight,
         0.01,
         1000)
@@ -129,7 +129,7 @@ regl.frame(({ time }) => {
   }
 
   regl.clear({
-    color: [0.95, 0.95, 0.95, 1],
+    color: [0.19, 0.19, 0.19, 1],
     depth: 1
   })
   camera.tick()
