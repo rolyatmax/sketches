@@ -1,8 +1,6 @@
 import Alea from 'alea'
-import SimplexNoise from 'simplex-noise'
 import { GUI } from 'dat-gui'
 const Delaunator = require('delaunator')
-import getPlaneNormal from 'get-plane-normal'
 const createRegl = require('regl')
 const glslify = require('glslify')
 const fit = require('canvas-fit')
@@ -35,56 +33,51 @@ document.body.appendChild(canvas)
 
 const settings = guiSettings({
   seed: [442, 0, 1000, 1, true],
-  points: [100000, 3, 500000, 1, true],
-  noiseSize: [300, 1, 800, 1, true],
-  noiseMag: [15, 1, 100, 1, true],
-  // speed: [24, 1, 50, 1],
+  points: [800, 3, 200000, 1, true],
+  noiseSize: [100, 1, 800, 1],
+  noiseMag: [15, 1, 100, 1],
+  speed: [0.5, 0.1, 50, 0.1],
   colorVariance: [4, 0, 20, 1],
   reflectionMult: [4.5, 0, 20, 0.1],
   dotProdMult: [1.3, -20, 20, 0.01],
   lightDistance: [3, 0, 10, 0.1]
 }, setup)
 
-let rand, simplex, drawTriangles
+let rand, drawTriangles
 setup()
 function setup () {
   rand = new Alea(settings.seed)
-  simplex = new SimplexNoise(rand)
   follower = createFollower([1, -1, 0.5])
   const points = array(settings.points).map(() => {
     const x = rand() * 2 - 1
     const y = rand() * 2 - 1
-    const z = (
-      simplex.noise2D(x * settings.noiseSize / 100, y * settings.noiseSize / 100) *
-      settings.noiseMag / 100 +
-      simplex.noise2D(x * settings.noiseSize / 1000 + 1000, y * settings.noiseSize / 1000 + 1000) *
-      settings.noiseMag / 40
-    ) / 2
     return {
-      position: [x, y, z],
+      position: [x, y],
       color: [rand(), rand(), rand()]
     }
   })
   const delaunay = new Delaunator(points.map(p => p.position))
   const positions = []
+  const adjacentPositionsA = []
+  const adjacentPositionsB = []
   const colors = []
-  const normals = []
   for (let j = 0; j < delaunay.triangles.length; j += 3) {
     const p1 = points[delaunay.triangles[j]]
     const p2 = points[delaunay.triangles[j + 1]]
     const p3 = points[delaunay.triangles[j + 2]]
 
-    const norm = getPlaneNormal([], p1.position, p2.position, p3.position)
     positions.push(p1.position, p2.position, p3.position)
+    adjacentPositionsA.push(p2.position, p3.position, p1.position)
+    adjacentPositionsB.push(p3.position, p1.position, p2.position)
     colors.push(p1.color, p2.color, p3.color)
-    normals.push(norm, norm, norm)
   }
   window.delaunay = delaunay
   drawTriangles = regl({
     attributes: {
       position: positions,
       color: colors,
-      normal: normals
+      adjacentPositionA: adjacentPositionsA,
+      adjacentPositionB: adjacentPositionsB
     },
     count: positions.length
   })
@@ -107,7 +100,11 @@ const drawGlobal = regl({
     colorVariance: () => settings.colorVariance / 100,
     baseColor: [0.03, 0.13, 0.5],
     reflectionMult: () => settings.reflectionMult,
-    dotProdMult: () => settings.dotProdMult
+    dotProdMult: () => settings.dotProdMult,
+    noiseMag: () => settings.noiseMag,
+    noiseSize: () => settings.noiseSize,
+    tick: ({ tick }) => tick,
+    speed: () => settings.speed
   },
 
   primitive: 'triangles'
@@ -119,7 +116,7 @@ regl.frame(({ time }) => {
     follower.updateDestination([
       (rand() - 0.5) * settings.lightDistance,
       (rand() - 0.5) * settings.lightDistance,
-      (rand() - 0.5) * settings.lightDistance
+      rand() * settings.lightDistance
     ])
     lastTime = time
   }
@@ -149,10 +146,6 @@ function guiSettings (settings, onChange) {
     if (settings[key][4]) {
       setting.onChange(onChange)
     }
-  }
-  if (onChange) {
-    const redraw = onChange
-    gui.add({ redraw }, 'redraw')
   }
   return settingsObj
 }
