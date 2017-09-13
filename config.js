@@ -8,6 +8,7 @@ module.exports = {
     'defamatory-roundabout',
     'didactic-protest',
     'endemic-meter',
+    'equanimous-hackwork',
     'friable-bay',
     'insidious-libra',
     'irksome-stepmother',
