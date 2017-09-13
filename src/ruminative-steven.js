@@ -33,14 +33,14 @@ document.body.appendChild(canvas)
 
 const settings = guiSettings({
   seed: [442, 0, 1000, 1, true],
-  points: [800, 3, 200000, 1, true],
+  points: [800, 3, 50000, 1, true],
   noiseSize: [100, 1, 800, 1],
   noiseMag: [15, 1, 100, 1],
   speed: [0.5, 0.1, 50, 0.1],
   colorVariance: [4, 0, 20, 1],
   reflectionMult: [4.5, 0, 20, 0.1],
   dotProdMult: [1.3, -20, 20, 0.01],
-  lightDistance: [3, 0, 10, 0.1]
+  lightDistance: [1.5, 0, 10, 0.1]
 }, setup)
 
 let rand, drawTriangles
@@ -114,9 +114,9 @@ let lastTime = -1000
 regl.frame(({ time }) => {
   if (time - lastTime > 4) {
     follower.updateDestination([
-      (rand() - 0.5) * settings.lightDistance,
-      (rand() - 0.5) * settings.lightDistance,
-      rand() * settings.lightDistance
+      (rand() - 0.5) * settings.lightDistance * 0.1,
+      (rand() - 0.5) * settings.lightDistance * 0.1,
+      rand() / 2 * settings.lightDistance + 0.1
     ])
     lastTime = time
   }

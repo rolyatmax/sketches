@@ -36,7 +36,7 @@ void main() {
   vec3 computedColor = color * colorVariance + baseColor;
   vec3 currentLightSource = lightSource;
   vec3 lightDirection = normalize(currentLightSource - computedPosition);
-  float dotProduct = abs(dot(lightDirection, normal));
+  float dotProduct = max(dot(normal, lightDirection * -1.0), 0.0);
   float mult = pow(1.0 - dotProduct, dotProdMult);
   float lightenPerc = pow(max(0.2, mult), 0.95) * reflectionMult;
   fragColor = vec4(computedColor * lightenPerc + 0.1, 1.0);

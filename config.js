@@ -3,6 +3,7 @@ module.exports = {
     'animistic-meter',
     'antic-grandmom',
     'baleful-virtue',
+    'boorish-trellis',
     'corpulent-porcupine',
     'defamatory-roundabout',
     'didactic-protest',
