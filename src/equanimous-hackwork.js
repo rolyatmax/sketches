@@ -5,8 +5,8 @@ const { GUI } = require('dat-gui')
 const fit = require('canvas-fit')
 const memoize = require('memoizee')
 const { createSpring } = require('spring-animator')
-import tinycolor from 'tinycolor2'
-import colorPalettes from './common/color-palettes'
+// import tinycolor from 'tinycolor2'
+// import colorPalettes from './common/color-palettes'
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
 const css = require('dom-css')
@@ -45,14 +45,15 @@ function setup () {
   // about their bounds, axis-of-subdivision, and offset along that axis
   lines = {}
   for (let j = 0; j < settings.subdivisions; j++) {
-    // select the most recent space to subdivide
     const space = spaces[rand() * spaces.length | 0]
     const axisOfSubdivision = rand() < 0.5 ? 'x' : 'y'
     const lineID = `line${j}`
+    const offset = rand() < 0.5 ? 0 : 1
     lines[lineID] = {
       bounds: space.slice(),
       axisOfSubdivision: axisOfSubdivision,
-      offset: createSpring(settings.dampening, settings.stiffness, rand() < 0.5 ? 0 : 1)
+      offset: offset,
+      computedOffsetValue: createSpring(settings.dampening, settings.stiffness, offset ? settings.size : 0)
     }
 
     // split space up into two parts
@@ -113,8 +114,9 @@ function draw () {
     const min = line.axisOfSubdivision === 'x' ? boundsValues[0] : boundsValues[3]
     const max = line.axisOfSubdivision === 'x' ? boundsValues[2] : boundsValues[1]
     const delta = max - min
-    const offset = line.offset.tick(1, false) // stupid API that gives you the next value without updating internally
-    return (offset * delta + min) | 0
+    const offsetValue = (line.offset * delta + min) | 0
+    line.computedOffsetValue.updateValue(offsetValue)
+    return line.computedOffsetValue.tick(1, false) // stupid API that gives you the next value without updating internally
   })
 
   spaces.forEach((bounds, i) => {
@@ -145,7 +147,7 @@ function draw () {
       ptB[0] += startX
       ptB[1] += startY
       drawLine(ctx, ptA, ptB, color)
-      line.offset.tick()
+      line.computedOffsetValue.tick()
     })
 }
 
@@ -153,7 +155,7 @@ function setNewLineOffsets () {
   Object.keys(lines).forEach((k, i) => {
     const line = lines[k]
     const newValue = rand() * 0.8 + 0.1
-    setTimeout(() => line.offset.updateValue(newValue), settings.animationDelay * i)
+    setTimeout(() => { line.offset = newValue }, settings.animationDelay * i)
   })
 }
 
