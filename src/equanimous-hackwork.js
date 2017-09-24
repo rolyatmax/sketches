@@ -53,7 +53,7 @@ function setup () {
       bounds: space.slice(),
       axisOfSubdivision: axisOfSubdivision,
       offset: offset,
-      computedOffsetValue: createSpring(settings.dampening, settings.stiffness, offset ? settings.size : 0)
+      computedOffsetValue: createSpring(settings.dampening, settings.stiffness, rand() * settings.size)
     }
 
     // split space up into two parts
