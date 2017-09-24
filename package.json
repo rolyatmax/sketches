@@ -20,6 +20,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
     "babelify": "^7.3.0",
+    "beats": "^0.0.0",
     "budo": "^9.4.5",
     "camera-picking-ray": "^1.0.1",
     "canvas-fit": "^1.5.0",
@@ -52,7 +53,8 @@
     "three": "^0.84.0",
     "tinycolor2": "^1.4.1",
     "underscore": "^1.8.3",
-    "watercolor-canvas": "^1.1.1"
+    "watercolor-canvas": "^1.1.1",
+    "web-audio-analyser": "^2.0.1"
   },
   "devDependencies": {
     "browserify": "^13.1.0",
