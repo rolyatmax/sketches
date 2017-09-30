@@ -37,6 +37,8 @@
     "get-plane-normal": "^1.0.0",
     "gl-mat4": "^1.1.4",
     "gl-vec2": "^1.0.0",
+    "glsl-fast-gaussian-blur": "^1.0.2",
+    "glsl-hash-blur": "^1.0.3",
     "glsl-noise": "^0.0.0",
     "glslify": "^6.1.0",
     "icosphere": "^1.0.0",
