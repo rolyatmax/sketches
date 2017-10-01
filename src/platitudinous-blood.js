@@ -50,6 +50,7 @@ const renderToBlurredFBO = regl({ framebuffer: blurredFbo })
 
 const renderBlur = createRenderBlur()
 const tracks = [
+  'src/audio/04-33_GOD_.mp3',
   'src/audio/06-666(upsidedowncross).mp3',
   'src/audio/09-45.mp3',
   'src/audio/01-22(Over_Soon).mp3',
@@ -57,7 +58,6 @@ const tracks = [
   'src/audio/05-29Strafford Apts.mp3',
   'src/audio/07-21Moon Water.mp3',
   'src/audio/re-stacks.mp3',
-  'src/audio/04-33_GOD_.mp3',
   'src/audio/08-8(circle).mp3',
   'src/audio/10-1000000Million.mp3',
   'src/audio/02-10Death_Breast.mp3'
@@ -75,15 +75,14 @@ const settings = guiSettings({
   stiffness: [0.55, 0.01, 1, 0.01, true],
   linesDampening: [0.02, 0.01, 1, 0.01, true],
   linesStiffness: [0.9, 0.01, 1, 0.01, true],
-  linesAnimationOffset: [30, 0, 100, 1, true],
+  linesAnimationOffset: [20, 0, 100, 1, true],
   freqPow: [1.7, 0.01, 3, 0.01],
   connectedNeighbors: [4, 0, 10, 1, true],
   neighborWeight: [0.99, 0, 1, 0.01],
   connectedBinsStride: [1, 1, 12, 1, true], // make this a numFrequencyNodes setting or something
   blurAngle: [0.25, 0, 1, 0.01],
   blurMag: [7, 0, 20, 1],
-  blurRadius: [0.0001, 0, 0.5, 0.0001],
-  gridLines: [100, 1, 200, 1, true],
+  gridLines: [90, 1, 200, 1, true],
   gridMaxHeight: [0.35, 0.01, 2, 0.01],
   roam: [true]
 }, setup)
@@ -481,112 +480,3 @@ function createRenderBlur () {
     primitive: 'triangles'
   })
 }
-
-// function createRenderBloom () {
-//   const tempFbo = regl.framebuffer({
-//     color: regl.texture({
-//       shape: [canvas.width, canvas.height, 4]
-//     }),
-//     depth: true,
-//     stencil: false
-//   })
-//
-//   const renderBloomBlur = regl({
-//     framebuffer: tempFbo,
-//     vert: glsl`
-//       precision highp float;
-//
-//       attribute vec2 position;
-//
-//       void main() {
-//         gl_Position = vec4(position, 0, 1);
-//       }
-//     `,
-//     frag: glsl`
-//       precision highp float;
-//
-//       uniform vec2 resolution;
-//       uniform sampler2D iChannel0;
-//       uniform float radius;
-//
-//       vec3 tex(vec2 uv);
-//
-//       #pragma glslify: blur = require('glsl-hash-blur', sample=tex, iterations=20)
-//
-//       vec3 tex(vec2 uv) {
-//         return texture2D(iChannel0, uv).rgb;
-//       }
-//
-//       void main() {
-//         vec2 uv = vec2(gl_FragCoord.xy / resolution.xy);
-//         float distToCenter = distance(vec2(0.5), uv);
-//         float weightedRadius = radius * pow(distToCenter * 5.0, 2.0);
-//         float aspect = resolution.x / resolution.y;
-//         gl_FragColor = vec4(blur(uv, weightedRadius, aspect), 1.0);
-//       }
-//     `,
-//     uniforms: {
-//       resolution: ({viewportWidth, viewportHeight}) => [viewportWidth, viewportHeight],
-//       iChannel0: regl.prop('iChannel0'), // sampler2D
-//       radius: () => settings.blurRadius
-//     },
-//     attributes: {
-//       position: [
-//         -1, -1,
-//         -1, 4,
-//         4, -1
-//       ]
-//     },
-//     count: 3,
-//     primitive: 'triangles'
-//   })
-//
-//   const renderBloomCombine = regl({
-//     vert: glsl`
-//       precision highp float;
-//
-//       attribute vec2 position;
-//
-//       void main() {
-//         gl_Position = vec4(position, 0, 1);
-//       }
-//     `,
-//     frag: glsl`
-//       precision highp float;
-//
-//       uniform sampler2D iChannel0;
-//       uniform sampler2D blurredFrame;
-//       uniform vec2 resolution;
-//
-//       void main () {
-//         vec2 uv = vec2(gl_FragCoord.xy / resolution.xy);
-//         float distToCenter = distance(uv, vec2(0.5));
-//         vec4 blurred = texture2D(blurredFrame, uv);
-//         blurred.r = pow(blurred.r, 2.0);
-//         blurred.g = pow(blurred.g, 2.0);
-//         blurred.b = pow(blurred.b, 2.0);
-//         vec4 result = texture2D(iChannel0, uv) + blurred * (1.0 - distToCenter) * 0.7;
-//         gl_FragColor = vec4(result.rgb, 1.0);
-//       }
-//     `,
-//     uniforms: {
-//       resolution: ({viewportWidth, viewportHeight}) => [viewportWidth, viewportHeight],
-//       iChannel0: regl.prop('iChannel0'), // sampler2D
-//       blurredFrame: () => tempFbo // sampler2D
-//     },
-//     attributes: {
-//       position: [
-//         -1, -1,
-//         -1, 4,
-//         4, -1
-//       ]
-//     },
-//     count: 3,
-//     primitive: 'triangles'
-//   })
-//
-//   return function render ({ iChannel0 }) {
-//     renderBloomBlur({ iChannel0 })
-//     renderBloomCombine({ iChannel0 })
-//   }
-// }
