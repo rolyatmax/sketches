@@ -400,24 +400,41 @@ function createRenderGrid () {
     primitive: 'lines'
   })
 
-  setOnTimeout()
+  setLinesOffsetsLoop()
 
-  function setNewLineOffsets () {
-    lines.sort((a, b) => {
-      return a.offset.tick(1, false) > b.offset.tick(1, false) ? 1 : -1
-    })
+  let calls = 0
+  function setLinesOffsets () {
+    let xVal = 1
+    let yVal = 1
+    calls += 1
+    calls = calls % 2
+    // lines.sort((a, b) => {
+    //   return a.offset.tick(1, false) > b.offset.tick(1, false) ? 1 : -1
+    // })
+    const randomGranularity = (Math.random() * 10 | 0) / 5
     lines.forEach((line, i) => {
+      let nextVal
+      if (calls === 0) {
+        nextVal = ((line.axis === 'x' ? xVal++ : yVal++) / settings.gridLines * 2 - 1) * randomGranularity
+      } else if (calls === 1) {
+        nextVal = Math.random() * 2 - 1
+      } else {
+        nextVal = (line.axis === 'x' ? xVal++ : yVal++) / settings.gridLines * 2 - 1
+      }
+
       setTimeout(() => {
-        line.offset.updateValue(Math.random() * 2 - 1)
+        line.offset.updateValue(nextVal)
       }, i * settings.linesAnimationOffset)
     })
   }
 
-  function setOnTimeout () {
+  let linesOffsetsLoopToken
+  function setLinesOffsetsLoop () {
     setTimeout(() => {
-      setNewLineOffsets()
-      setOnTimeout()
-    }, 8000)
+      clearTimeout(linesOffsetsLoopToken)
+      setLinesOffsets()
+      linesOffsetsLoopToken = setLinesOffsetsLoop()
+    }, 9500)
   }
 
   return function ({ frequencyVals }) {
