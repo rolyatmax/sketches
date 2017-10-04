@@ -12,6 +12,7 @@ module.exports = {
     'friable-bay',
     'insidious-libra',
     'irksome-stepmother',
+    'jejune-mop',
     'jocular-replace',
     'judicious-hackwork',
     'limpid-law',
