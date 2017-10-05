@@ -42,7 +42,7 @@ const renderBloom = createRenderBloom()
 let stateManager, rand, render, particleTexture
 
 const image = new window.Image()
-image.src = '/src/images/particle.png'
+image.src = 'src/images/particle.png'
 image.onload = function () {
   particleTexture = regl.texture(image)
   setup()
