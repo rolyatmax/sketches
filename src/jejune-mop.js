@@ -39,7 +39,15 @@ const renderBlur = createRenderBlur()
 const renderBloom = createRenderBloom()
 // const renderBackground = createBackgroundGradient()
 
-let stateManager, rand, render
+let stateManager, rand, render, particleTexture
+
+const image = new window.Image()
+image.src = '/src/images/particle.png'
+image.onload = function () {
+  particleTexture = regl.texture(image)
+  setup()
+  start()
+}
 
 const settings = guiSettings({
   seed: [0, 0, 9999, 1, true],
@@ -96,15 +104,21 @@ function setup () {
     frag: glsl`
       precision highp float;
       varying vec4 fragColor;
-      void main() {
+      uniform sampler2D particleTexture;
+
+      void main(){
+        vec4 particle = texture2D(particleTexture, gl_PointCoord);
         gl_FragColor = fragColor;
+        gl_FragColor.a = min(fragColor.a, particle.a);
       }
+
     `,
     attributes: {
       textureIndex: stateManager.getStateIndexes(),
       entropy: entropies
     },
     uniforms: {
+      particleTexture: particleTexture,
       stateTexture: regl.prop('stateTexture'),
       projection: ({viewportWidth, viewportHeight}) => mat4.perspective(
         [],
@@ -137,36 +151,37 @@ function setup () {
   })
 }
 
-setup()
-regl.frame(({ time }) => {
-  camera.tick()
-  camera.up = [camera.up[0], camera.up[1], 999]
-  if (settings.roam) {
-    camera.center = [
-      Math.sin(time / 4) * 2.5,
-      Math.cos(time / 4) * 4.5,
-      (Math.sin(time / 4) * 0.5 + 0.5) * 3 - 0.2
-    ]
-  }
-  if (settings.playing) {
-    stateManager.tick()
-  }
-  renderToBlurredFBO(() => {
-    regl.clear({
-      color: [0.18, 0.18, 0.18, 1],
-      depth: 1
+function start () {
+  regl.frame(({ time }) => {
+    camera.tick()
+    camera.up = [camera.up[0], camera.up[1], 999]
+    if (settings.roam) {
+      camera.center = [
+        Math.sin(time / 4) * 2.5,
+        Math.cos(time / 4) * 4.5,
+        (Math.sin(time / 4) * 0.5 + 0.5) * 3 - 0.2
+      ]
+    }
+    if (settings.playing) {
+      stateManager.tick()
+    }
+    renderToBlurredFBO(() => {
+      regl.clear({
+        color: [0.18, 0.18, 0.18, 1],
+        depth: 1
+      })
+      // renderBackground()
+      render({
+        stateTexture: stateManager.getStateTexture()
+      })
     })
-    // renderBackground()
-    render({
-      stateTexture: stateManager.getStateTexture()
-    })
+    if (settings.bloom) {
+      renderBloom({ iChannel0: blurredFbo })
+    } else {
+      renderBlur({ iChannel0: blurredFbo, direction: [0, 0] })
+    }
   })
-  if (settings.bloom) {
-    renderBloom({ iChannel0: blurredFbo })
-  } else {
-    renderBlur({ iChannel0: blurredFbo, direction: [0, 0] })
-  }
-})
+}
 
 // ///// helpers (to abstract down the line?) //////
 
@@ -362,7 +377,15 @@ function createRenderBloom () {
           blurred.r = pow(blurred.r, 1.9);
           blurred.g = pow(blurred.g, 2.0);
           blurred.b = pow(blurred.b, 1.5);
-          vec4 result = original * originalWeight + blurred * blurWeight;
+          vec4 weightedOriginal = originalWeight * original;
+          vec4 weightedBlur = blurWeight * blurred;
+          // gl_FragColor = vec4(
+          //   max(weightedOriginal.r, weightedBlur.r),
+          //   max(weightedOriginal.g, weightedBlur.g),
+          //   max(weightedOriginal.b, weightedBlur.b),
+          //   original.a
+          // );
+          vec4 result = weightedOriginal + weightedBlur;
           gl_FragColor = vec4(result.rgb / 1.5, result.a);
         }
       }
