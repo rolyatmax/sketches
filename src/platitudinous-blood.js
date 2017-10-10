@@ -15,6 +15,7 @@ import addTitle from './common/add-title'
 const createAnalyser = require('web-audio-analyser')
 const createAudioControls = require('./common/audio-controls')
 const createAudioTrackSelector = require('./common/audio-track-selector')
+const createRenderBloom = require('./common/render-bloom')
 
 title('platitudinous-blood', '#555')
 
@@ -38,15 +39,24 @@ const fbo = regl.framebuffer({
   depth: false,
   stencil: false
 })
-const blurredFbo = regl.framebuffer({
+const freqMapFBO = regl.framebuffer({
   color: regl.texture({
     shape: [512, 512, 4]
   }),
   depth: false,
   stencil: false
 })
+const blurredFbo = regl.framebuffer({
+  color: regl.texture({
+    shape: [canvas.width, canvas.height, 4]
+  }),
+  depth: false,
+  stencil: false
+})
 const renderToFBO = regl({ framebuffer: fbo })
+const renderToFreqMapFBO = regl({ framebuffer: freqMapFBO })
 const renderToBlurredFBO = regl({ framebuffer: blurredFbo })
+const renderBloom = createRenderBloom(regl, canvas)
 
 const renderBlur = createRenderBlur()
 const tracks = [
@@ -82,6 +92,9 @@ const settings = guiSettings({
   connectedBinsStride: [1, 1, 12, 1, true], // make this a numFrequencyNodes setting or something
   blurAngle: [0.25, 0, 1, 0.01],
   blurMag: [7, 0, 20, 1],
+  blurRadius: [1, 0, 20, 1],
+  blurWeight: [1.1, 0, 2, 0.01],
+  originalWeight: [1.2, 0, 2, 0.01],
   gridLines: [90, 1, 200, 1, true],
   gridMaxHeight: [0.35, 0.01, 2, 0.01],
   roam: [true]
@@ -220,18 +233,27 @@ function start () {
       })
       renderFrequencies()
     })
-    renderToBlurredFBO(() => {
+    renderToFreqMapFBO(() => {
       regl.clear({
         color: [0, 0, 0, 1],
         depth: 1
       })
       renderBlur({ iChannel0: fbo })
     })
-    regl.clear({
-      color: [0.18, 0.18, 0.18, 1],
-      depth: 1
+    renderToBlurredFBO(() => {
+      regl.clear({
+        color: [0.18, 0.18, 0.18, 1],
+        depth: 1
+      })
+      renderGrid({ frequencyVals: freqMapFBO })
     })
-    renderGrid({ frequencyVals: blurredFbo })
+
+    renderBloom({
+      iChannel0: blurredFbo,
+      blurMag: settings.blurRadius,
+      blurWeight: settings.blurWeight,
+      originalWeight: settings.originalWeight
+    })
   })
 }
 
