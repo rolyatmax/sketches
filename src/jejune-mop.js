@@ -493,7 +493,7 @@ function createStateManager (regl, settings) {
 
         float x = cos(angle) * mag;
         float y = sin(angle) * mag;
-        float z = 0.0;
+        float z = (1.0 - pow(length(vec2(x, y)), 2.0)) * -0.5;
 
         // set size 0 to indicate this is new
         return vec4(x, y, z, 0);
@@ -509,13 +509,12 @@ function createStateManager (regl, settings) {
         // if there's no size, it means this is a new one
         vec4 nextState;
         if (curState.w == 0.0) {
-          vec3 nextPosition = curPosition + vec3(
-            (rand(randomVal.xw) * 2.0 - 1.0) * 0.001 * speed / 10.0,
-            (rand(randomVal.yw) * 2.0 - 1.0) * 0.001 * speed / 10.0,
-            rand(randomVal.xz) * 0.005 * speed / 10.0
-          );
+          float x = (rand(randomVal.xw) * 2.0 - 1.0) * 0.001 * speed / 10.0;
+          float y = (rand(randomVal.yw) * 2.0 - 1.0) * 0.001 * speed / 10.0;
+          float z = rand(randomVal.xz) * 0.005 * speed / 10.0;
+          vec3 nextPosition = curPosition + vec3(x, y, z);
           float mag = length(curState.xy);
-          float nextSize = rand(randomVal.yz) * 1.5 * (1.5 - mag);
+          float nextSize = rand(randomVal.yz) * 1.5 * (2.0 - mag);
           nextState = vec4(nextPosition, nextSize);
         } else {
           vec3 velocity = (curPosition - prevPosition) * decay * 0.001;
