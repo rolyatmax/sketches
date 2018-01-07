@@ -18,6 +18,7 @@ module.exports = {
     'limpid-law',
     'pernicious-maybe',
     'rebarbative-shop',
+    'redolent-hostel',
     'risible-age',
     'rhadamanthine-cartload',
     'ruminative-steven',
