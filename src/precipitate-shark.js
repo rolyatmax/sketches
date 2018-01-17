@@ -2,13 +2,15 @@ const Sketch = require('sketch-js')
 const Alea = require('alea')
 const { GUI } = require('dat-gui')
 const { createSpring } = require('spring-animator')
+import fit from 'objectfit/cover'
+import loadImg from 'load-img'
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
 const css = require('dom-css')
 
 title('precipitate-shark', '#555')
 
-const hiddenCtx = Sketch.create({ autoclear: false })
+const hiddenCtx = Sketch.create({ autoclear: false, autostart: false })
 hiddenCtx.canvas.style.display = 'none'
 
 const ctx = Sketch.create()
@@ -17,6 +19,21 @@ ctx.canvas.style.transition = 'opacity 400ms ease'
 setTimeout(() => {
   ctx.canvas.style.opacity = 1
 }, 200)
+
+function preSetup () {
+  if (settings.useImage) {
+    loadImg('src/images/palms.jpg', (err, image) => {
+      if (err) throw err
+      drawImageToCanvas(hiddenCtx, image)
+      ctx.setup()
+    })
+  } else {
+    hiddenCtx.fillStyle = 'rgb(255, 255, 255)'
+    hiddenCtx.fillRect(0, 0, hiddenCtx.width, hiddenCtx.height)
+    printText(hiddenCtx, 'audiofabric', Math.min(hiddenCtx.width, hiddenCtx.height) * 0.1)
+    ctx.setup()
+  }
+}
 
 const settings = guiSettings({
   seed: [Math.random() * 1000 | 0, 0, 1000, 1, true],
@@ -29,10 +46,9 @@ const settings = guiSettings({
   turnGranularity: [55, 1, 100, 1],
   startSpread: [300, 0, 800, 1, true],
   particleDieRate: [0.1, 0, 0.3, 0.01],
-  showParticles: [false]
-}, () => {
-  ctx.setup()
-})
+  showParticles: [false],
+  useImage: [false, null, null, null, true]
+}, preSetup)
 
 let rand, points, keyCode
 
@@ -48,7 +64,18 @@ function printText (context, text, size) {
   context.font = `bold ${size}px Helvetica`
   context.textAlign = 'center'
   context.textBaseline = 'middle'
+  context.fillStyle = 'rgb(0, 0, 0)'
   context.fillText(text, context.canvas.width / 2, context.canvas.height / 2)
+}
+
+function drawImageToCanvas (context, img) {
+  let imgWidth = img.naturalWidth || img.width
+  let imgHeight = img.naturalHeight || img.height
+  let bounds = fit(
+    [0, 0, context.canvas.width, context.canvas.height],
+    [0, 0, imgWidth, imgHeight]
+  )
+  context.drawImage.apply(context, [img].concat(bounds))
 }
 
 // document.addEventListener('keyup', (e) => {
@@ -59,7 +86,6 @@ function printText (context, text, size) {
 
 ctx.setup = function setup () {
   rand = new Alea(settings.seed)
-  printText(hiddenCtx, 'audiofabric', Math.min(hiddenCtx.width, hiddenCtx.height) * 0.1)
   points = (new Array(settings.particles)).fill().map(() => {
     const rads = rand() * Math.PI * 2
     const mag = Math.pow(rand(), 0.5) * settings.startSpread
@@ -81,7 +107,7 @@ ctx.update = function update () {
   points.forEach((p) => {
     if (!p.isActive) return
     const color = pixelPicker(p.x, p.y)
-    const isOnActivePixel = !!color.a || p.line.length
+    const isOnActivePixel = getAveragePixelVal(color) < 200 || p.line.length
 
     if (rand() < settings.precision) {
       if (isOnActivePixel) {
@@ -111,28 +137,32 @@ ctx.update = function update () {
       i += 1
     }
   }
-  console.log(points.length)
 }
 
 function updateNextAngle (p, pixelPicker) {
   const angle = p.angle.tick(1, false)
+  const currentPixelVal = getAveragePixelVal(pixelPicker(p.x, p.y))
   for (let i = 0; i <= settings.turnGranularity; i += 1) {
     const t = i / settings.turnGranularity * Math.PI
     let velX = Math.cos(angle + t) * p.speed
     let velY = Math.sin(angle + t) * p.speed
     let pixel = pixelPicker(p.x + velX, p.y + velY)
-    if (pixel.a) {
+    if (getAveragePixelVal(pixel) < currentPixelVal) {
       p.angle.updateValue(angle + t)
       break
     }
     velX = Math.cos(angle - t) * p.speed
     velY = Math.sin(angle - t) * p.speed
     pixel = pixelPicker(p.x + velX, p.y + velY)
-    if (pixel.a) {
+    if (getAveragePixelVal(pixel) < currentPixelVal) {
       p.angle.updateValue(angle - t)
       break
     }
   }
+}
+
+function getAveragePixelVal (pixel) {
+  return (pixel.r + pixel.g + pixel.b) / 3
 }
 
 ctx.draw = function draw () {
@@ -161,6 +191,8 @@ ctx.draw = function draw () {
   })
   ctx.stroke()
 }
+
+preSetup()
 
 // ---------- HELPERS ----------------
 

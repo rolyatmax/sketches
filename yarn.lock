@@ -2863,6 +2863,10 @@ livereload-js@^2.2.0:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/livereload-js/-/livereload-js-2.2.2.tgz#6c87257e648ab475bc24ea257457edcc1f8d0bc2"
 
+load-img@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/load-img/-/load-img-1.0.0.tgz#09537449893c32a8709074645566c4c5faa9ac26"
+
 load-json-file@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/load-json-file/-/load-json-file-1.1.0.tgz#956905708d58b4bab4c2261b04f59f31c99374c0"
@@ -3211,6 +3215,10 @@ object.omit@^2.0.0:
   dependencies:
     for-own "^0.1.4"
     is-extendable "^0.1.1"
+
+objectfit@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/objectfit/-/objectfit-1.2.0.tgz#92ec59a3502f792d426d42f020c8150988848a6f"
 
 on-finished@^2.3.0, on-finished@~2.3.0:
   version "2.3.0"
