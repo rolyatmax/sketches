@@ -20,15 +20,16 @@ setTimeout(() => {
 
 const settings = guiSettings({
   seed: [Math.random() * 1000 | 0, 0, 1000, 1, true],
-  particles: [1000, 500, 5000, 1, true],
-  dampening: [0.2, 0, 1, 0.01, true],
-  stiffness: [0.2, 0, 1, 0.01, true],
-  speed: [140, 1, 400, 1],
-  precision: [0.7, 0.01, 1, 0.01],
+  particles: [2500, 500, 5000, 1, true],
+  dampening: [0.4, 0, 1, 0.01, true],
+  stiffness: [0.9, 0, 1, 0.01, true],
+  speed: [340, 1, 400, 1],
+  precision: [0.98, 0.01, 1, 0.01],
   lineOpacity: [0.05, 0, 0.5, 0.01],
-  turnGranularity: [25, 1, 100, 1],
-  startSpread: [180, 0, 800, 1, true],
-  drawCircles: [true]
+  turnGranularity: [55, 1, 100, 1],
+  startSpread: [300, 0, 800, 1, true],
+  particleDieRate: [0.1, 0, 0.3, 0.01],
+  showParticles: [false]
 }, () => {
   ctx.setup()
 })
@@ -58,7 +59,7 @@ function printText (context, text, size) {
 
 ctx.setup = function setup () {
   rand = new Alea(settings.seed)
-  printText(hiddenCtx, 'tb', Math.min(hiddenCtx.width, hiddenCtx.height) * 0.5)
+  printText(hiddenCtx, 'audiofabric', Math.min(hiddenCtx.width, hiddenCtx.height) * 0.1)
   points = (new Array(settings.particles)).fill().map(() => {
     const rads = rand() * Math.PI * 2
     const mag = Math.pow(rand(), 0.5) * settings.startSpread
@@ -69,6 +70,7 @@ ctx.setup = function setup () {
       speed: rand() * settings.speed / 40,
       size: createSpring(settings.dampening, settings.stiffness, 0),
       entropy: rand(),
+      isActive: true,
       line: []
     }
   })
@@ -77,11 +79,12 @@ ctx.setup = function setup () {
 ctx.update = function update () {
   const pixelPicker = makePixelPicker(hiddenCtx.canvas)
   points.forEach((p) => {
+    if (!p.isActive) return
     const color = pixelPicker(p.x, p.y)
-    const isActive = !!color.a || p.line.length
+    const isOnActivePixel = !!color.a || p.line.length
 
     if (rand() < settings.precision) {
-      if (isActive) {
+      if (isOnActivePixel) {
         p.line.push([p.x, p.y])
       }
       updateNextAngle(p, pixelPicker)
@@ -92,8 +95,23 @@ ctx.update = function update () {
     const velY = Math.sin(angle) * p.speed
     p.x += velX
     p.y += velY
-    p.isActive = isActive
+    p.isOnActivePixel = isOnActivePixel
+
+    if (rand() < settings.particleDieRate / 10) {
+      p.isActive = false
+    }
   })
+
+  let i = 0
+  while (i < points.length) {
+    const p = points[i]
+    if (!p.line.length && (p.x < 0 || p.y < 0 || p.x > ctx.width || p.y > ctx.height)) {
+      points.splice(i, 1)
+    } else {
+      i += 1
+    }
+  }
+  console.log(points.length)
 }
 
 function updateNextAngle (p, pixelPicker) {
@@ -118,8 +136,9 @@ function updateNextAngle (p, pixelPicker) {
 }
 
 ctx.draw = function draw () {
-  if (settings.drawCircles) {
+  if (settings.showParticles) {
     points.forEach((p) => {
+      if (!p.isActive) return
       const radius = p.line.length ? 2 : 0
       const opacity = 0.3 * (radius < 10 ? radius / 10 : 1)
       ctx.strokeStyle = `rgba(30, 30, 30, ${opacity})`
