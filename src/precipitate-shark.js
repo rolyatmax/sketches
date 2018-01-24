@@ -21,17 +21,17 @@ setTimeout(() => {
 }, 200)
 
 function preSetup () {
-  if (settings.useImage) {
-    loadImg('src/images/palms.jpg', (err, image) => {
-      if (err) throw err
-      drawImageToCanvas(hiddenCtx, image)
-      ctx.setup()
-    })
-  } else {
+  if (settings.image === 'text') {
     hiddenCtx.fillStyle = 'rgb(255, 255, 255)'
     hiddenCtx.fillRect(0, 0, hiddenCtx.width, hiddenCtx.height)
     printText(hiddenCtx, 'audiofabric', Math.min(hiddenCtx.width, hiddenCtx.height) * 0.1)
     ctx.setup()
+  } else {
+    loadImg(`src/images/${settings.image}.jpg`, (err, image) => {
+      if (err) throw err
+      drawImageToCanvas(hiddenCtx, image)
+      ctx.setup()
+    })
   }
 }
 
@@ -46,8 +46,12 @@ const settings = guiSettings({
   turnGranularity: [55, 1, 100, 1],
   startSpread: [300, 0, 800, 1, true],
   particleDieRate: [0.1, 0, 0.3, 0.01],
+  colorThreshold: [200, 0, 255, 1, true],
   showParticles: [false],
-  useImage: [false, null, null, null, true]
+  negative: [false, null, null, null, true],
+  image: ['fruit', [
+    'text', 'coffee', 'empire', 'flatiron', 'fruit', 'mosque', 'mountains', 'palms', 'skyline', 'snowday', 'whitehouse'
+  ], null, null, true]
 }, preSetup)
 
 let rand, points, keyCode
@@ -107,7 +111,10 @@ ctx.update = function update () {
   points.forEach((p) => {
     if (!p.isActive) return
     const color = pixelPicker(p.x, p.y)
-    const isOnActivePixel = getAveragePixelVal(color) < 200 || p.line.length
+    const averageVal = getAveragePixelVal(color)
+    const isOnActivePixel = p.line.length || (
+      settings.negative ? averageVal > settings.colorThreshold : averageVal < settings.colorThreshold
+    )
 
     if (rand() < settings.precision) {
       if (isOnActivePixel) {
@@ -147,14 +154,18 @@ function updateNextAngle (p, pixelPicker) {
     let velX = Math.cos(angle + t) * p.speed
     let velY = Math.sin(angle + t) * p.speed
     let pixel = pixelPicker(p.x + velX, p.y + velY)
-    if (getAveragePixelVal(pixel) < currentPixelVal) {
+    let averageVal = getAveragePixelVal(pixel)
+    let exertsPull = settings.negative ? averageVal > currentPixelVal : averageVal < currentPixelVal
+    if (exertsPull) {
       p.angle.updateValue(angle + t)
       break
     }
     velX = Math.cos(angle - t) * p.speed
     velY = Math.sin(angle - t) * p.speed
     pixel = pixelPicker(p.x + velX, p.y + velY)
-    if (getAveragePixelVal(pixel) < currentPixelVal) {
+    averageVal = getAveragePixelVal(pixel)
+    exertsPull = settings.negative ? averageVal > currentPixelVal : averageVal < currentPixelVal
+    if (exertsPull) {
       p.angle.updateValue(angle - t)
       break
     }
