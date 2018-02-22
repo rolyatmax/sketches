@@ -23,9 +23,12 @@ const settings = guiSettings({
   cellSize: [50, 5, 200, 1, true],
   padding: [10, 0, 200, 1, true],
   margin: [100, 0, 100, 1, true],
-  refractions: [5, 0, 50, 1],
-  opacity: [0.5, 0, 1, 0.01],
-  showCircles: [true]
+  reflections: [5, 0, 50, 1],
+  opacity: [0.3, 0, 1, 0.01],
+  originSpread: [2.3, 0, 4, 0.01, true],
+  baseSpeed: [0.2, 0, 1, 0.01],
+  showCircles: [true],
+  showOrigin: [true]
 }, setup)
 
 setup()
@@ -48,12 +51,15 @@ function setup () {
 
   for (let x = 0; x < rows; x++) {
     for (let y = 0; y < rows; y++) {
+      const xT = x / (rows - 1)
+      const yT = y / (rows - 1)
       const offset = [
         x * (settings.cellSize + settings.padding) + startOffset[0],
         y * (settings.cellSize + settings.padding) + startOffset[1]
       ]
       const center = [settings.cellSize / 2 + offset[0], settings.cellSize / 2 + offset[1]]
-      const mag = rand() * settings.cellSize / 2
+      const multiplier = (1 - Math.pow(1 - xT, settings.originSpread)) * (1 - Math.pow(1 - yT, settings.originSpread))
+      const mag = rand() * settings.cellSize / 2 * (multiplier * 0.9 + 0.1)
       const rads = rand() * Math.PI * 2
       const position = [
         Math.cos(rads) * mag + center[0],
@@ -65,15 +71,15 @@ function setup () {
         size: settings.cellSize,
         position: position,
         center: center,
-        xT: x / (rows - 1),
-        yT: y / (rows - 1),
+        xT: xT,
+        yT: yT,
         points: []
       })
     }
   }
 }
 
-function draw (time) {
+function draw () {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   if (settings.showCircles) {
     ctx.beginPath()
@@ -82,19 +88,25 @@ function draw (time) {
     ctx.stroke()
   }
 
-  ctx.beginPath()
-  ctx.strokeStyle = `rgba(50, 50, 50, ${settings.opacity})`
-  cells.forEach(cell => drawCell(cell, time))
-  ctx.stroke()
+  cells.forEach(cell => drawCell(cell))
 }
 
-function drawCell (cell, time) {
+function drawCell (cell) {
   const points = cell.points
   points.length = 0
   points.push(cell.position)
-  let directionAngle = time * (cell.xT + 0.01) * (cell.yT + 0.01) / 200 + cell.direction
+  cell.direction += 16 / 500 * (cell.xT + settings.baseSpeed) * (cell.yT + settings.baseSpeed)
+  let directionAngle = cell.direction
 
-  let n = settings.refractions + 1
+  if (settings.showOrigin) {
+    ctx.beginPath()
+    ctx.strokeStyle = 'rgb(55, 162, 212)'
+    drawCircle(ctx, cell.position, 2)
+    ctx.stroke()
+  }
+
+  const iterations = settings.reflections + 1
+  let n = iterations
   while (n--) {
     const directionVector = [
       Math.cos(directionAngle) * cell.size + points[0][0],
@@ -113,11 +125,14 @@ function drawCell (cell, time) {
     const angle = Math.atan2(position[1] - intersections[0][1], position[0] - intersections[0][0])
     const angle2 = Math.atan2(intersections[0][1] - cell.center[1], intersections[0][0] - cell.center[0])
     directionAngle = angle2 - angle + angle2
+    ctx.beginPath()
+    ctx.strokeStyle = `rgba(50, 50, 50, ${settings.opacity * n * 0.5})`
+    drawLine(ctx, points.slice(points.length - 2))
+    ctx.stroke()
   }
-  drawLine(ctx, points)
 }
 
-function drawLine (ctx, points) {
+function drawLine (ctx, points, color) {
   ctx.moveTo(points[0][0], points[0][1])
   points.slice(1).forEach(pt => ctx.lineTo(pt[0], pt[1]))
 }
