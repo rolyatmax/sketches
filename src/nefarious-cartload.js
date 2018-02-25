@@ -2,8 +2,11 @@ const Alea = require('alea')
 const { GUI } = require('dat-gui')
 const fit = require('canvas-fit')
 const css = require('dom-css')
+const d3 = require('d3-scale-chromatic')
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
+
+window.d3 = d3
 
 title('nefarious-cartload', '#555')
 
@@ -24,10 +27,12 @@ const settings = guiSettings({
   padding: [10, 0, 200, 1, true],
   margin: [100, 0, 100, 1, true],
   reflections: [5, 0, 50, 1],
-  opacity: [0.3, 0, 1, 0.01],
+  opacity: [0.1, 0, 1, 0.01],
   originSpread: [2.3, 0, 4, 0.01, true],
-  baseSpeed: [0.2, 0, 1, 0.01],
+  minSpeed: [0.2, 0, 5, 0.01],
+  speedRange: [1, 0, 10, 0.01],
   showCircles: [true],
+  fillCircles: [true],
   showOrigin: [true]
 }, setup)
 
@@ -81,13 +86,6 @@ function setup () {
 
 function draw () {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
-  if (settings.showCircles) {
-    ctx.beginPath()
-    ctx.strokeStyle = '#ccc'
-    cells.forEach(cell => drawCircle(ctx, cell.center, cell.size / 2))
-    ctx.stroke()
-  }
-
   cells.forEach(cell => drawCell(cell))
 }
 
@@ -95,7 +93,7 @@ function drawCell (cell) {
   const points = cell.points
   points.length = 0
   points.push(cell.position)
-  cell.direction += 16 / 500 * (cell.xT + settings.baseSpeed) * (cell.yT + settings.baseSpeed)
+  cell.direction += settings.speedRange * 16 / 500 * cell.xT * cell.yT + settings.minSpeed * 16 / 500
   let directionAngle = cell.direction
 
   if (settings.showOrigin) {
@@ -125,11 +123,48 @@ function drawCell (cell) {
     const angle = Math.atan2(position[1] - intersections[0][1], position[0] - intersections[0][0])
     const angle2 = Math.atan2(intersections[0][1] - cell.center[1], intersections[0][0] - cell.center[0])
     directionAngle = angle2 - angle + angle2
+  }
+
+  if (settings.showCircles) {
     ctx.beginPath()
-    ctx.strokeStyle = `rgba(50, 50, 50, ${settings.opacity * n * 0.5})`
-    drawLine(ctx, points.slice(points.length - 2))
+    ctx.strokeStyle = '#ccc'
+    drawCircle(ctx, cell.center, cell.size / 2)
+    if (settings.fillCircles) {
+      const spreadValue = getSpreadValue(points.slice(1)) / cell.size
+      let color = d3.interpolateBuPu(Math.pow(spreadValue, 4) * 4)
+      let opacity = 0.8
+      color = color.replace('rgb(', 'rgba(').replace(')', `, ${opacity})`)
+      ctx.fillStyle = color
+      ctx.fill()
+    }
     ctx.stroke()
   }
+
+  for (let i = 1; i < points.length; i++) {
+    ctx.beginPath()
+    ctx.strokeStyle = `rgba(50, 50, 50, ${settings.opacity * (points.length - i) * 0.5})`
+    drawLine(ctx, [points[i - 1], points[i]])
+    ctx.stroke()
+  }
+}
+
+function getSpreadValue (pts) {
+  let total = 0
+  let denom = 0
+  for (let ptA of pts) {
+    for (let ptB of pts) {
+      total += dist(ptA, ptB)
+      denom += 1
+    }
+  }
+  if (denom) return total / denom
+  return 0
+}
+
+function dist (ptA, ptB) {
+  const dX = ptA[0] - ptB[0]
+  const dY = ptA[1] - ptB[1]
+  return Math.sqrt(dX * dX + dY * dY)
 }
 
 function drawLine (ctx, points, color) {
@@ -207,6 +242,12 @@ function findCircleLineIntersections (r, h, k, sX, sY, eX, eY) {
     getPt((-b - Math.sqrt(Math.pow(b, 2) - 4 * a * c)) / (2 * a))
   ]
 
+  intersections = intersections.filter((pt) => !isEqual(pt[0], sX) || !isEqual(pt[1], sY))
+
+  if (intersections.length === 1) {
+    return intersections
+  }
+
   if (eX > sX) {
     intersections = intersections.filter((pt) => pt[0] > sX || isEqual(pt[0], sX))
   }
@@ -214,17 +255,11 @@ function findCircleLineIntersections (r, h, k, sX, sY, eX, eY) {
     intersections = intersections.filter((pt) => pt[0] < sX || isEqual(pt[0], sX))
   }
   if (eY > sY) {
-    intersections = intersections.filter((pt) => pt[1] >= sY || isEqual(pt[1], sY))
+    intersections = intersections.filter((pt) => pt[1] > sY || isEqual(pt[1], sY))
   }
   if (eY < sY) {
-    intersections = intersections.filter((pt) => pt[1] <= sY || isEqual(pt[1], sY))
+    intersections = intersections.filter((pt) => pt[1] < sY || isEqual(pt[1], sY))
   }
-
-  if (intersections.length === 1) {
-    return intersections
-  }
-
-  intersections = intersections.filter((pt) => !isEqual(pt[0], sX) || !isEqual(pt[1], sY))
 
   return intersections
 
@@ -234,5 +269,5 @@ function findCircleLineIntersections (r, h, k, sX, sY, eX, eY) {
 }
 
 function isEqual (a, b) {
-  return Math.abs(a - b) < 0.00001
+  return Math.abs(a - b) < 0.1
 }
