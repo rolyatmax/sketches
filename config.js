@@ -16,6 +16,7 @@ module.exports = {
     'jocular-replace',
     'judicious-hackwork',
     'limpid-law',
+    'loquacious-infancy',
     'nefarious-cartload',
     'pernicious-maybe',
     'rebarbative-shop',
