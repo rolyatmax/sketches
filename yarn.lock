@@ -3402,6 +3402,12 @@ parse-ms@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/parse-ms/-/parse-ms-1.0.1.tgz#56346d4749d78f23430ca0c713850aef91aa361d"
 
+parse-obj@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/parse-obj/-/parse-obj-0.0.0.tgz#c98c8bc4790fd0ca3a61a5ae5ff8b1c2532dea86"
+  dependencies:
+    split "~0.2.10"
+
 parse-unit@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/parse-unit/-/parse-unit-1.0.1.tgz#7e1bb6d5bef3874c28e392526a2541170291eecf"
@@ -4102,6 +4108,12 @@ split2@^0.2.1:
   dependencies:
     through2 "~0.6.1"
 
+split@~0.2.10:
+  version "0.2.10"
+  resolved "https://registry.yarnpkg.com/split/-/split-0.2.10.tgz#67097c601d697ce1368f418f06cd201cf0521a57"
+  dependencies:
+    through "2"
+
 spring-animator@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/spring-animator/-/spring-animator-1.0.3.tgz#4fc84e2ecb2e29152608f474a397acd2cf0d146b"
@@ -4382,7 +4394,7 @@ through2@^2.0.0, through2@^2.0.1:
     readable-stream "^2.1.5"
     xtend "~4.0.1"
 
-"through@>=2.2.7 <3", through@^2.3.6, through@~2.3.4, through@~2.3.8:
+through@2, "through@>=2.2.7 <3", through@^2.3.6, through@~2.3.4, through@~2.3.8:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
 
