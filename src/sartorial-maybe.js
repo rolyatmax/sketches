@@ -80,11 +80,11 @@ function startLoop() {
 
     camera.tick()
     camera.up = [camera.up[0], 999, camera.up[2]]
-    camera.center = [
-      Math.sin(time / 4) * 30,
-      Math.sin(time / 6) * 10 + 15,
-      Math.cos(time / 4) * 30
-    ]
+    // camera.center = [
+    //   Math.sin(time / 4) * 30,
+    //   Math.sin(time / 6) * 10 + 15,
+    //   Math.cos(time / 4) * 30
+    // ]
 
     globalRender(render)
   })
@@ -167,19 +167,12 @@ function createModelRenderer(model, i) {
     primitive: 'points'
   })
 
-  const colors = new Float32Array(model.facePositions.length * 4 * 3)
-  const faces = new Float32Array(model.facePositions.length * 3 * 3)
-  const normals = new Float32Array(model.facePositions.length * 3 * 3)
+  const faces = [] // new Float32Array(model.facePositions.length * 3 * 3)
+  const normals = [] // new Float32Array(model.facePositions.length * 3 * 3)
 
   let q = 0
   let r = 0
   for (let j = 0; j < model.facePositions.length; j++) {
-    let bwValue = Math.random() * 0.1 + 0.7
-    colors[j * 12 + 0] = colors[j * 12 + 1] = colors[j * 12 + 2] = bwValue
-    colors[j * 12 + 4] = colors[j * 12 + 5] = colors[j * 12 + 6] = bwValue
-    colors[j * 12 + 8] = colors[j * 12 + 9] = colors[j * 12 + 10] = bwValue
-    colors[j * 12 + 3] = colors[j * 12 + 7] = colors[j * 12 + 11] = 0.8
-
     for (let k = -1; k <= model.facePositions[j].length; k++) {
       // do the first and last one twice so we can use a single triangle strip?
       const index = Math.max(0, Math.min(k, model.facePositions[j].length - 1))
@@ -189,7 +182,7 @@ function createModelRenderer(model, i) {
       faces[q++] = v[1]
       faces[q++] = v[2]
 
-      const n = model.faceNormals[j][index]
+      const n = model.vertexNormals[model.faceNormals[j][index]]
       normals[r++] = n[0]
       normals[r++] = n[1]
       normals[r++] = n[2]
@@ -202,9 +195,7 @@ function createModelRenderer(model, i) {
 
     attribute vec3 position;
     attribute vec3 normal;
-    attribute vec4 color;
 
-    varying vec4 fragColor;
     varying vec3 vNormal;
 
     uniform mat4 projection;
@@ -214,14 +205,12 @@ function createModelRenderer(model, i) {
     void main() {
       float y = position.y * heightMultiplier;
       gl_Position = projection * view * vec4(position.x, position.y, position.z, 1.0);
-      fragColor = color;
       vNormal = normal;
     }
     `,
     frag: `
     precision highp float;
 
-    varying vec4 fragColor;
     varying vec3 vNormal;
 
     uniform float heightMultiplier;
@@ -231,8 +220,7 @@ function createModelRenderer(model, i) {
         discard;
       }
       float bW = clamp(1.0 - ((vNormal.x + vNormal.y + vNormal.z) / 3.0), 0.2, 1.0);
-      gl_FragColor = vec4(vec3(0.5), 0.1);
-      // gl_FragColor = fragColor;
+      gl_FragColor = vec4(vec3(bW), 0.3);
     }
     `,
     blend: {
@@ -245,7 +233,7 @@ function createModelRenderer(model, i) {
       },
       equation: { rgb: 'add', alpha: 'add' }
     },
-    attributes: { position: faces, normal: normals, color: colors },
+    attributes: { position: faces, normal: normals },
     uniforms: { heightMultiplier: () => heightMultiplier.tick() },
     count: faces.length / 3,
     primitive: 'triangle strip'
