@@ -3530,6 +3530,18 @@ pretty-ms@^2.1.0:
     parse-ms "^1.0.0"
     plur "^1.0.0"
 
+primitive-cube@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/primitive-cube/-/primitive-cube-2.0.1.tgz#8aa5bc3cbff2efee83cce74cfcab8ac9b5b46b06"
+
+primitive-icosphere@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/primitive-icosphere/-/primitive-icosphere-1.0.2.tgz#61176a0a5fc5bed6b2bf3bd8566db24642ba43fe"
+  dependencies:
+    gl-vec2 "^1.0.0"
+    gl-vec3 "^1.0.3"
+    icosphere "^1.0.0"
+
 private@^0.1.6:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/private/-/private-0.1.7.tgz#68ce5e8a1ef0a23bb570cc28537b5332aba63ef1"
@@ -4461,6 +4473,10 @@ tough-cookie@~2.3.0:
   resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.3.2.tgz#f081f76e4c85720e6c37a5faced737150d84072a"
   dependencies:
     punycode "^1.4.1"
+
+triangle-normal@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/triangle-normal/-/triangle-normal-0.0.0.tgz#b67c7a7c87a578347c1d97013326f5a082b06937"
 
 trim-newlines@^1.0.0:
   version "1.0.0"
