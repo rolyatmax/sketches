@@ -112,7 +112,6 @@ function setup () {
         gl_FragColor = fragColor;
         gl_FragColor.a = min(fragColor.a, particle.a);
       }
-
     `,
     attributes: {
       textureIndex: stateManager.getStateIndexes(),
@@ -366,10 +365,10 @@ function createStateManager (regl, settings) {
         // if there's no size, it means this is a new one
         vec4 nextState;
         if (curState.w == 0.0) {
-          float x = (rand(randomVal.xw) * 2.0 - 1.0) * 0.001 * speed / 10.0;
-          float y = (rand(randomVal.yw) * 2.0 - 1.0) * 0.001 * speed / 10.0;
-          float z = rand(randomVal.xz) * 0.005 * speed / 10.0;
-          vec3 nextPosition = curPosition + vec3(x, y, z);
+          float velX = (rand(randomVal.xw) * 2.0 - 1.0) * 0.001 * speed / 10.0;
+          float velY = (rand(randomVal.yw) * 2.0 - 1.0) * 0.001 * speed / 10.0;
+          float velZ = rand(randomVal.xz) * 0.005 * speed / 10.0;
+          vec3 nextPosition = curPosition + vec3(velX, velY, velZ);
           float mag = length(curState.xy);
           float nextSize = rand(randomVal.yz) * 1.5 * (2.0 - mag);
           nextState = vec4(nextPosition, nextSize);

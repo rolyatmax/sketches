@@ -21,31 +21,32 @@ document.body.appendChild(canvas)
 
 const initialSize = Math.min(canvas.height, canvas.width) - 60
 
-const settings = guiSettings({
-  seed: [Math.random() * 1000 | 0, 0, 1000, 1, true],
-  // palette: [Math.random() * colorPalettes.length | 0, 0, colorPalettes.length - 1, 1],
-  size: [initialSize, 50, initialSize, 10, true],
-  subdivisions: [200, 0, 500, 1, true],
-  alpha: [0.3, 0, 1, 0.01],
-  dampening: [0.1, 0.01, 1, 0.01, true],
-  stiffness: [0.3, 0.01, 1, 0.01, true],
-  animationDelay: [30, 0, 40, 1]
-}, setup)
+const settings = guiSettings(
+  {
+    seed: [(Math.random() * 1000) | 0, 0, 1000, 1, true],
+    // palette: [Math.random() * colorPalettes.length | 0, 0, colorPalettes.length - 1, 1],
+    size: [initialSize, 50, initialSize, 10, true],
+    subdivisions: [200, 0, 500, 1, true],
+    alpha: [0.3, 0, 1, 0.01],
+    dampening: [0.1, 0.01, 1, 0.01, true],
+    stiffness: [0.3, 0.01, 1, 0.01, true],
+    animationDelay: [30, 0, 40, 1]
+  },
+  setup
+)
 
 let rand, lines, spaces
-function setup () {
+function setup() {
   rand = new Alea(settings.seed)
   // a list of open spaces that can be subdivided
   // each space is defined as an array of [top, right, bottom, left] line boundaries
   // a `null` value indicates the root container (prob a better way to do this?)
-  spaces = [
-    [null, null, null, null]
-  ]
+  spaces = [[null, null, null, null]]
   // a dictionary of line ids mapped to line objects which contain information
   // about their bounds, axis-of-subdivision, and offset along that axis
   lines = {}
   for (let j = 0; j < settings.subdivisions; j++) {
-    const space = spaces[rand() * spaces.length | 0]
+    const space = spaces[(rand() * spaces.length) | 0]
     const axisOfSubdivision = rand() < 0.5 ? 'x' : 'y'
     const lineID = `line${j}`
     const offset = rand() < 0.5 ? 0 : 1
@@ -53,7 +54,11 @@ function setup () {
       bounds: space.slice(),
       axisOfSubdivision: axisOfSubdivision,
       offset: offset,
-      computedOffsetValue: createSpring(settings.dampening, settings.stiffness, rand() * settings.size)
+      computedOffsetValue: createSpring(
+        settings.dampening,
+        settings.stiffness,
+        rand() * settings.size
+      )
     }
 
     // split space up into two parts
@@ -73,10 +78,10 @@ function setup () {
   setNewLineOffsets()
 }
 
-function draw () {
+function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   const color = '#555'
-  const center = [canvas.width, canvas.height].map(v => v / 2 | 0)
+  const center = [canvas.width, canvas.height].map(v => (v / 2) | 0)
   const [startX, startY] = center.map(v => v - settings.size / 2)
   drawRect(ctx, startX, startY, settings.size, settings.size, color)
 
@@ -103,7 +108,7 @@ function draw () {
   const getBoundsValues = memoize((bounds, lines) => {
     return bounds.map((boundary, i) => {
       if (boundary === null) {
-        return (i === 1 || i === 2) ? settings.size : 0
+        return i === 1 || i === 2 ? settings.size : 0
       }
       return getOffsetValue(lines[boundary], lines)
     })
@@ -111,8 +116,10 @@ function draw () {
 
   const getOffsetValue = memoize((line, lines) => {
     const boundsValues = getBoundsValues(line.bounds, lines)
-    const min = line.axisOfSubdivision === 'x' ? boundsValues[0] : boundsValues[3]
-    const max = line.axisOfSubdivision === 'x' ? boundsValues[2] : boundsValues[1]
+    const min =
+      line.axisOfSubdivision === 'x' ? boundsValues[0] : boundsValues[3]
+    const max =
+      line.axisOfSubdivision === 'x' ? boundsValues[2] : boundsValues[1]
     const delta = max - min
     const offsetValue = (line.offset * delta + min) | 0
     line.computedOffsetValue.updateValue(offsetValue)
@@ -126,10 +133,10 @@ function draw () {
     const height = eY - sY
     // const palette = colorPalettes[settings.palette]
     // const colorHex = palette[i % palette.length]
-    const r = sX / settings.size * 205 | 0
-    const g = sY / settings.size * 205 | 0
-    const b = width / settings.size * 205 | 0
-    const a = (1 - height * width / (settings.size * settings.size))
+    const r = (sX / settings.size * 205) | 0
+    const g = (sY / settings.size * 205) | 0
+    const b = (width / settings.size * 205) | 0
+    const a = 1 - height * width / (settings.size * settings.size)
     const alpha = a * a * settings.alpha
     ctx.beginPath()
     ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`
@@ -151,11 +158,13 @@ function draw () {
     })
 }
 
-function setNewLineOffsets () {
+function setNewLineOffsets() {
   Object.keys(lines).forEach((k, i) => {
     const line = lines[k]
     const newValue = rand() * 0.8 + 0.1
-    setTimeout(() => { line.offset = newValue }, settings.animationDelay * i)
+    setTimeout(() => {
+      line.offset = newValue
+    }, settings.animationDelay * i)
   })
 }
 
@@ -164,21 +173,20 @@ canvas.addEventListener('click', setNewLineOffsets)
 setup()
 loop()
 
-function loop () {
+function loop() {
   requestAnimationFrame(loop)
   draw()
 }
 
-
 // ------------- helpers -------------
 
-function drawRect (ctx, startX, startY, width, height, color) {
+function drawRect(ctx, startX, startY, width, height, color) {
   ctx.beginPath()
   ctx.strokeStyle = color
   ctx.strokeRect(startX, startY, width, height)
 }
 
-function drawLine (ctx, ptA, ptB, color) {
+function drawLine(ctx, ptA, ptB, color) {
   ctx.beginPath()
   ctx.strokeStyle = color
   ctx.moveTo(ptA[0], ptA[1])
@@ -186,13 +194,17 @@ function drawLine (ctx, ptA, ptB, color) {
   ctx.stroke()
 }
 
-function guiSettings (settings, onChange) {
+function guiSettings(settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
   for (let key in settings) {
     settingsObj[key] = settings[key][0]
-    const setting = gui
-      .add(settingsObj, key, settings[key][1], settings[key][2])
+    const setting = gui.add(
+      settingsObj,
+      key,
+      settings[key][1],
+      settings[key][2]
+    )
     if (settings[key][3]) {
       setting.step(settings[key][3])
     }
@@ -204,7 +216,7 @@ function guiSettings (settings, onChange) {
   return settingsObj
 }
 
-function title (name, color) {
+function title(name, color) {
   includeFont({
     fontFamily: '"Space Mono", sans-serif',
     url: 'https://fonts.googleapis.com/css?family=Space+Mono:700'

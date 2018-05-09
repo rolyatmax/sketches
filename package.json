@@ -39,6 +39,7 @@
     "gl-mat4": "^1.1.4",
     "gl-vec2": "^1.0.0",
     "glsl-fast-gaussian-blur": "^1.0.2",
+    "glsl-fxaa": "^3.0.0",
     "glsl-hash-blur": "^1.0.3",
     "glsl-noise": "^0.0.0",
     "glslify": "^6.1.0",

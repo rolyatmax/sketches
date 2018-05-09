@@ -59,7 +59,7 @@ const render = regl({
     }
 
     vec4 processSphere(in vec3 sph, in vec3 ro, in vec3 rd, in vec2 uv, in vec3 lo, vec3 color, float dMin, in vec3 otherSph, in vec3 otherOtherSph, in vec3 otherOtherOtherSph) {
-      vec3 p = vec3(1.5, -2, -3);
+      vec3 p = vec3(1.3, -2, -1.3);
       vec4 spherePos = vec4(cos(uTime + sph) * p, 1);
       vec4 otherSpherePos = vec4(cos(uTime + otherSph) * p, 1);
       vec4 otherOtherSpherePos = vec4(cos(uTime + otherOtherSph) * p, 1);
@@ -129,12 +129,12 @@ const render = regl({
         dMin = d;
         vec3 pos = rd * d + ro;
 
-        vec3 p = vec3(1.5, -2, -3);
+        vec3 p = vec3(1.3, -2, -1.3);
         vec4 spherePos = vec4(cos(uTime + sph) * p, 1);
         vec4 otherSpherePos = vec4(cos(uTime + otherSph) * p, 1);
         vec4 otherOtherSpherePos = vec4(cos(uTime + otherOtherSph) * p, 1);
         vec4 otherOtherOtherSpherePos = vec4(cos(uTime + otherOtherOtherSph) * p, 1);
-        vec3 nor = vec3(0, 1, 0);
+        vec3 nor = normalize(vec3(3, 3, 0));
 
         float occ1 = planeSphOcclusion(pos, nor, spherePos);
         float occ2 = planeSphOcclusion(pos, nor, otherSpherePos);
@@ -164,6 +164,11 @@ const render = regl({
       vec3 sphere2 = vec3(-1, 2, -1);
       vec3 sphere3 = vec3(4, 4, -4);
       vec3 sphere4 = vec3(7, -19, -15);
+
+      // vec3 sphere1 = vec3(0.5, 0.5, 0.5);
+      // vec3 sphere2 = vec3(-1, 0, -1);
+      // vec3 sphere3 = vec3(1, 2, -2);
+      // vec3 sphere4 = vec3(2, -5, -1);
 
       vec4 o = processPlane(ro, rd, color, dMin, sphere1, sphere2, sphere3, sphere4);
       color = o.rgb;
@@ -204,9 +209,9 @@ const render = regl({
   }
 })
 
-regl.frame(function draw ({ time, pixelRatio }) {
+regl.frame(function draw (context) {
   render({
-    uTime: time
+    uTime: context.time
   })
 })
 
