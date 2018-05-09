@@ -26,6 +26,7 @@ module.exports = {
     'ruminative-steven',
     'sagacious-catamaran',
     'salubrious-protest',
+    'strident-jasmine',
     'tenacious-centimeter',
     'voluble-russian',
     'wheedling-tummy'
