@@ -31,7 +31,8 @@ camera.lookAt([0, 0, 0], [-5, 0, -3], [0, 99, 0])
 //   .step(0.01)
 
 const modelFiles = [
-  '/src/models/fidi.mesh.json'
+  '/src/models/fidi.mesh.json',
+  // '/src/models/empire-state.mesh.json'
   // '/src/models/fidi.obj'
   // '/src/models/empire-state.obj',
   // '/src/models/chrysler.obj',
@@ -189,6 +190,8 @@ function createModelRenderer(model, i) {
     }
   }
 
+  // debugger;
+
   const renderFaces = regl({
     vert: `
     precision highp float;
@@ -219,8 +222,8 @@ function createModelRenderer(model, i) {
       if (heightMultiplier < 0.01) {
         discard;
       }
-      float bW = clamp(1.0 - ((vNormal.x + vNormal.y + vNormal.z) / 3.0), 0.2, 1.0);
-      gl_FragColor = vec4(vec3(bW), 0.3);
+      float bW = 0.4; // clamp(1.0 - ((vNormal.x + vNormal.y + vNormal.z) / 3.0), 0.2, 1.0);
+      gl_FragColor = vec4(vec3(bW), 0.99);
     }
     `,
     blend: {
@@ -241,6 +244,6 @@ function createModelRenderer(model, i) {
 
   return function render() {
     renderPoints()
-    renderFaces()
+    // renderFaces()
   }
 }

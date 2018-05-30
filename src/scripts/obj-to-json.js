@@ -8,7 +8,7 @@ if (argv.h || argv.help || !argv._.length) {
   process.exit(0)
 }
 
-const filepath = path.join(__dirname, argv._[0])
+const filepath = path.join(process.cwd(), argv._[0])
 parseObj(fs.createReadStream(filepath), (err, result) => {
   if (err) {
     throw new Error('Error parsing OBJ file:', err)
