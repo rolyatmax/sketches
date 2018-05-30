@@ -12,7 +12,10 @@ const { GUI } = require('dat-gui')
 const canvas = document.body.appendChild(document.createElement('canvas'))
 window.addEventListener('resize', fit(canvas), false)
 const camera = createCamera(canvas, { zoomSpeed: 4 })
-const regl = createRegl(canvas)
+const regl = createRegl({
+  extensions: 'OES_texture_float',
+  canvas: canvas
+})
 
 camera.lookAt(
   [50, 50, 50],
@@ -23,7 +26,7 @@ camera.lookAt(
 const settings = {
   meshCount: 100,
   spreadSize: 20,
-  shadowBufferSize: 512,
+  shadowBufferSize: 1024,
   lightPosX: 100,
   lightPosY: 50,
   lightPosZ: 80,
@@ -34,13 +37,13 @@ const gui = new GUI()
 gui.add(settings, 'meshCount', 1, 1000).step(1).onChange(setup)
 gui.add(settings, 'spreadSize', 1, 100).step(1).onChange(setup)
 gui.add(settings, 'shadowBufferSize', 256, 4096).step(1).onChange(setup)
-gui.add(settings, 'lightPosX', 0, 200).step(1)
-gui.add(settings, 'lightPosY', 0, 200).step(1)
-gui.add(settings, 'lightPosZ', 0, 200).step(1)
+gui.add(settings, 'lightPosX', -600, 600).step(1)
+gui.add(settings, 'lightPosY', -600, 600).step(1)
+gui.add(settings, 'lightPosZ', -600, 600).step(1)
 gui.add(settings, 'toggleDebug')
 
-const mesh = primitiveIcosphere(1, { subdivisions: 1 })
-// const mesh = require('primitive-cube')()
+// const mesh = primitiveIcosphere(1, { subdivisions: 1 })
+const mesh = require('primitive-cube')()
 window.mesh = mesh
 
 let renderShadowMap, renderCube, shadowFbo, lightCamera, random
@@ -55,14 +58,18 @@ function setup () {
   shadowFbo = regl.framebuffer({
     color: regl.texture({
       shape: [settings.shadowBufferSize, settings.shadowBufferSize, 4],
-      data: new Uint8Array(settings.shadowBufferSize * settings.shadowBufferSize * 4)
+      data: new Float32Array(settings.shadowBufferSize * settings.shadowBufferSize * 4),
+      // mag: 'linear',
+      // min: 'linear',
+      wrap: ['clamp', 'clamp'],
+      type: 'float'
     }),
     depth: true,
     stencil: false
   })
 
   lightCamera = createPerspectiveCamera({
-    fov: Math.PI / 4,
+    fov: Math.PI / 16,
     near: 0.01,
     far: 1000,
     viewport: [0, 0, settings.shadowBufferSize, settings.shadowBufferSize]
@@ -76,24 +83,19 @@ function setup () {
     vert: glsl`
       precision highp float;
       attribute vec3 position;
+      varying float vDepth;
       uniform mat4 projection;
       uniform mat4 view;
       void main() {
         gl_Position = projection * view * vec4(position, 1);
+        vDepth = gl_Position.z;
       }
     `,
     frag: glsl`
       precision highp float;
-      vec4 encodeFloat (float depth) {
-        const vec4 bitShift = vec4(1.0, 256.0, 256.0 * 256.0, 256.0 * 256.0 * 256.0);
-        const vec4 bitMask = vec4(1.0/256.0, 1.0/256.0, 1.0/256.0, 0.0);
-        vec4 comp = fract(depth * bitShift);
-        comp -= comp.gbaa * bitMask;
-        return comp;
-      }
-      
+      varying float vDepth;
       void main() {
-        gl_FragColor = encodeFloat(gl_FragCoord.z);
+        gl_FragColor = vec4(vec3(vDepth), 1);
       }
     `,
     attributes: {
@@ -114,15 +116,25 @@ function setup () {
       attribute vec3 position;
       attribute vec3 normal;
       varying vec3 vNormal;
-      varying vec4 vPositionFromLight;
+      varying vec4 vShadowCoord;
+      varying float vBias;
       uniform mat4 projection;
       uniform mat4 view;
+      uniform vec3 lightDirection;
       uniform mat4 lightProjection;
       uniform mat4 lightView;
       
+      const mat4 biasMatrix = mat4(
+        0.5, 0.0, 0.0, 0.0,
+        0.0, 0.5, 0.0, 0.0,
+        0.0, 0.0, 0.5, 0.0,
+        0.5, 0.5, 0.5, 1.0
+      );
+
       void main (void) {
+        vBias = max(.002 * (1.0 - dot(normalize(normal), normalize(lightDirection))), .002);
         vNormal = normal;
-        vPositionFromLight = lightProjection * lightView * vec4(position, 1.0);
+        vShadowCoord = biasMatrix * lightProjection * lightView * vec4(position, 1.0);
         gl_Position = projection * view * vec4(position, 1.0);
       }
     `,
@@ -130,41 +142,52 @@ function setup () {
       precision highp float;
   
       varying vec3 vNormal;
-      varying vec4 vPositionFromLight;
+      varying vec4 vShadowCoord;
+      varying float vBias;
       uniform vec4 color;
       uniform vec3 lightDirection;
       uniform sampler2D shadowMap;
-  
-      float unpackDepth(const in vec4 rgbaDepth) {
-          const vec4 bitShift = vec4(1.0, 1.0/256.0, 1.0/(256.0 * 256.0), 1.0/(256.0*256.0*256.0));
-          float depth = dot(rgbaDepth, bitShift);
-          return depth;
+
+      float random(vec3 seed, int i){
+        vec4 seed4 = vec4(seed,i);
+        float dot_product = dot(seed4, vec4(12.9898,78.233,45.164,94.673));
+        return fract(sin(dot_product) * 43758.5453);
       }
-  
-      void main() {
-        vec3 shadowPos = (vPositionFromLight.xyz / vPositionFromLight.w);
-        vec3 shadowCoords = shadowPos / 2.0 + 0.5;
-      
-        float texelSize = 1.0 / ${settings.shadowBufferSize}.0;
-        float visibility = 0.0;
-        for (int x = -1; x <= 1; x++) {
-          for (int y = -1; y <= 1; y++) {
-            float depth = unpackDepth(texture2D(shadowMap, shadowCoords.xy + vec2(x, y) * texelSize));
-            visibility += (shadowPos.z > depth + 0.0015) ? 0.4 : 1.0;
-          }
+
+      float sampleVisibility( vec3 coord, float bias ) {
+        float depth = texture2D(shadowMap, coord.xy).r;
+        float visibility  = (coord.z - depth > bias) ? 0. : 1.;
+        return visibility;
+      }
+
+      void main() { 
+        const int NUM_TAPS = 12;
+        vec2 poissonDisk[12];
+        poissonDisk[0 ] = vec2( -0.94201624, -0.39906216 );
+        poissonDisk[1 ] = vec2( 0.94558609, -0.76890725 );
+        poissonDisk[2 ] = vec2( -0.094184101, -0.92938870 );
+        poissonDisk[3 ] = vec2( 0.34495938, 0.29387760 );
+        poissonDisk[4 ] = vec2( -0.91588581, 0.45771432 );
+        poissonDisk[5 ] = vec2( -0.81544232, -0.87912464 );
+        poissonDisk[6 ] = vec2( -0.38277543, 0.27676845 );
+        poissonDisk[7 ] = vec2( 0.97484398, 0.75648379 );
+        poissonDisk[8 ] = vec2( 0.44323325, -0.97511554 );
+        poissonDisk[9 ] = vec2( 0.53742981, -0.47373420 );
+        poissonDisk[10] = vec2( -0.26496911, -0.41893023 );
+        poissonDisk[11] = vec2( 0.79197514, 0.19090188 );
+        float occlusion = 0.;
+        vec3 shadowCoord = vShadowCoord.xyz / vShadowCoord.w;
+        for (int i=0; i < NUM_TAPS; i++) {
+          vec2 r = .0005 * vec2(random(gl_FragCoord.xyz,1), random(gl_FragCoord.zxy,1));
+          occlusion += sampleVisibility( shadowCoord + vec3(poissonDisk[i] / 700. + 0.*r, 0. ), vBias );
         }
-        visibility /= 9.0;
-  
-        // vec4 rgbaDepth = texture2D(shadowMap, shadowCoords.xy);
-        // gl_FragColor = rgbaDepth;
-        // float depth = unpackDepth(rgbaDepth);
-        // float visibility = (shadowPos.z > depth + 0.0015) ? 0.7 : 1.0;
+        occlusion /= float( NUM_TAPS );
   
         vec3 normal = normalize(vNormal);
         vec3 direction = normalize(lightDirection * -1.0);
         float light = dot(normal, direction);
         gl_FragColor = color;
-        gl_FragColor.rgb *= visibility;
+        gl_FragColor.rgb *= occlusion;
         gl_FragColor.rgb *= (light * 0.35 + 0.65);
       }
     `,
@@ -194,17 +217,17 @@ function setup () {
 
 regl.frame(({ time }) => {
   camera.tick()
-  // lightCamera.position = [
-  //   settings.lightPosX,
-  //   settings.lightPosY,
-  //   settings.lightPosZ
-  // ]
-
   lightCamera.position = [
-    Math.sin(time * 2 + 4) * 50 + 100,
-    Math.cos(time * 3 + 9) * 50 + 100,
-    Math.sin(time * 5 + 5) * 50 + 100
+    settings.lightPosX,
+    settings.lightPosY,
+    settings.lightPosZ
   ]
+
+  // lightCamera.position = [
+  //   Math.sin(time * 0.5 + 4) * 50 + 100,
+  //   Math.cos(time * 1 + 9) * 50 + 100,
+  //   Math.sin(time * 2 + 5) * 50 + 100
+  // ]
 
   lightCamera.lookAt([0, 0, 0])
   lightCamera.update()
