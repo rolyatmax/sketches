@@ -58,26 +58,24 @@ const render = regl({
       return clamp( res*(sph.w*sph.w)/(l*l*l), 0.0, 1.0 );
     }
 
-    vec4 processSphere(in vec3 sph, in vec3 ro, in vec3 rd, in vec2 uv, in vec3 lo, vec3 color, float dMin, in vec3 otherSph, in vec3 otherOtherSph, in vec3 otherOtherOtherSph) {
+    vec4 processSphere(in vec3 sph1, in vec3 ro, in vec3 rd, in vec2 uv, in vec3 lo, vec3 color, float dMin, in vec3 sph2, in vec3 sph3, in vec3 sph4) {
       vec3 p = vec3(1.3, -2, -1.3);
-      vec4 spherePos = vec4(cos(uTime + sph) * p, 1);
-      vec4 otherSpherePos = vec4(cos(uTime + otherSph) * p, 1);
-      vec4 otherOtherSpherePos = vec4(cos(uTime + otherOtherSph) * p, 1);
-      vec4 otherOtherOtherSpherePos = vec4(cos(uTime + otherOtherOtherSph) * p, 1);
-      float d = sphIntersect(ro, rd, spherePos);
+      vec4 sphPos = vec4(cos(uTime + sph1) * p, 1);
+      float d = sphIntersect(ro, rd, sphPos);
       vec3 c = color;
       if (d > 0.0 && d < dMin) {
         dMin = d;
+
+        vec4 sph2Pos = vec4(cos(uTime + sph2) * p, 1);
+        vec4 sph3Pos = vec4(cos(uTime + sph3) * p, 1);
+        vec4 sph4Pos = vec4(cos(uTime + sph4) * p, 1);
+
         vec3 pos = rd * d + ro;
-        vec3 ld = normalize(pos - lo);
-        vec3 normal = normalize(pos - spherePos.xyz);
-        float occ = sphOcclusion(pos, normal, otherSpherePos);
-        float occ2 = sphOcclusion(pos, normal, otherOtherSpherePos);
-        float occ3 = sphOcclusion(pos, normal, otherOtherOtherSpherePos);
-        c = getColorForSphere(spherePos, ro, rd, uv, lo);
-        c *= 1.0 - occ;
-        c *= 1.0 - occ2;
-        c *= 1.0 - occ3;
+        vec3 normal = normalize(pos - sphPos.xyz);
+        c = getColorForSphere(sphPos, ro, rd, uv, lo);
+        c *= 1.0 - sphOcclusion(pos, normal, sph2Pos);
+        c *= 1.0 - sphOcclusion(pos, normal, sph3Pos);
+        c *= 1.0 - sphOcclusion(pos, normal, sph4Pos);
       }
       return vec4(c, dMin);
     }
@@ -89,20 +87,7 @@ const render = regl({
       float h  = l/sph.w;
       float h2 = h*h;
       float k2 = 1.0 - h2*nl*nl;
-  
-      // above/below horizon: Quilez - http://iquilezles.org/www/articles/sphereao/sphereao.htm
       float res = max(0.0,nl)/h2;
-      // intersecting horizon: Lagarde/de Rousiers - http://www.frostbite.com/wp-content/uploads/2014/11/course_notes_moving_frostbite_to_pbr.pdf
-      if (k2 > 0.0) {
-        #if 1
-          res = nl*acos(-nl*sqrt( (h2-1.0)/(1.0-nl*nl) )) - sqrt(k2*(h2-1.0));
-          res = res/h2 + atan( sqrt(k2/(h2-1.0)));
-          res /= 3.141593;
-        #else
-          // cheap approximation: Quilez
-          res = pow( clamp(0.5*(nl*h+1.0)/h2,0.0,1.0), 1.5 );
-        #endif
-      }
       return res;
     }
 
@@ -121,8 +106,7 @@ const render = regl({
       }
     }
 
-    // this doesn't seem to be workinggggg
-    vec4 processPlane(in vec3 ro, in vec3 rd, vec3 color, float dMin, in vec3 sph, in vec3 otherSph, in vec3 otherOtherSph, in vec3 otherOtherOtherSph) {
+    vec4 processPlane(in vec3 ro, in vec3 rd, vec3 color, float dMin, in vec3 sph, in vec3 sph2, in vec3 sph3, in vec3 sph4) {
       float d = planeIntersect(ro, rd);
       vec3 c = color;
       if (d > 0.0 && d < dMin) {
@@ -130,21 +114,16 @@ const render = regl({
         vec3 pos = rd * d + ro;
 
         vec3 p = vec3(1.3, -2, -1.3);
-        vec4 spherePos = vec4(cos(uTime + sph) * p, 1);
-        vec4 otherSpherePos = vec4(cos(uTime + otherSph) * p, 1);
-        vec4 otherOtherSpherePos = vec4(cos(uTime + otherOtherSph) * p, 1);
-        vec4 otherOtherOtherSpherePos = vec4(cos(uTime + otherOtherOtherSph) * p, 1);
+        vec4 sphPos = vec4(cos(uTime + sph) * p, 1);
+        vec4 sph2Pos = vec4(cos(uTime + sph2) * p, 1);
+        vec4 sph3Pos = vec4(cos(uTime + sph3) * p, 1);
+        vec4 sph4Pos = vec4(cos(uTime + sph4) * p, 1);
         vec3 nor = normalize(vec3(3, 3, 0));
 
-        float occ1 = planeSphOcclusion(pos, nor, spherePos);
-        float occ2 = planeSphOcclusion(pos, nor, otherSpherePos);
-        float occ3 = planeSphOcclusion(pos, nor, otherOtherSpherePos);
-        float occ4 = planeSphOcclusion(pos, nor, otherOtherOtherSpherePos);
-
-        c *= 1.0 - occ1;
-        c *= 1.0 - occ2;
-        c *= 1.0 - occ3;
-        c *= 1.0 - occ4;
+        c *= 1.0 - planeSphOcclusion(pos, nor, sphPos);
+        c *= 1.0 - planeSphOcclusion(pos, nor, sph2Pos);
+        c *= 1.0 - planeSphOcclusion(pos, nor, sph3Pos);
+        c *= 1.0 - planeSphOcclusion(pos, nor, sph4Pos);
       }
       return vec4(c, dMin);
     }
@@ -164,11 +143,6 @@ const render = regl({
       vec3 sphere2 = vec3(-1, 2, -1);
       vec3 sphere3 = vec3(4, 4, -4);
       vec3 sphere4 = vec3(7, -19, -15);
-
-      // vec3 sphere1 = vec3(0.5, 0.5, 0.5);
-      // vec3 sphere2 = vec3(-1, 0, -1);
-      // vec3 sphere3 = vec3(1, 2, -2);
-      // vec3 sphere4 = vec3(2, -5, -1);
 
       vec4 o = processPlane(ro, rd, color, dMin, sphere1, sphere2, sphere3, sphere4);
       color = o.rgb;
