@@ -1,20 +1,19 @@
 const canvasSketch = require('canvas-sketch')
 const { GUI } = require('dat-gui')
+const css = require('dom-css')
 const Alea = require('alea')
 const vec2 = require('gl-vec2')
-const p5 = require('p5')
 
-window.p5 = p5
-
-const WIDTH = 1024
-const HEIGHT = 1024
+const WIDTH = 600
+const HEIGHT = 600
 
 const settings = {
   seed: 0,
   ballSize: 15,
-  gravity: 1.2,
+  gravity: 1.3,
+  friction: 0.02,
   holeCount: 50,
-  holeSize: 25,
+  holeSize: 20,
   platformSize: 0.8
 }
 
@@ -22,10 +21,12 @@ const gui = new GUI()
 gui.add(settings, 'seed', 0, 1000).step(1).onChange(setup)
 gui.add(settings, 'ballSize', 1, 100).onChange(setup)
 gui.add(settings, 'gravity', 0, 1.5).step(0.01)
+gui.add(settings, 'friction', 0, 0.5).step(0.01)
 gui.add(settings, 'holeCount', 0, 200).step(1).onChange(setup)
+gui.add(settings, 'holeSize', 1, 100)
 gui.add({ restart: setup }, 'restart')
 
-let rand, ball, platform, holes
+let rand, ball, platform, holes, cSketchCtx
 
 function setup () {
   rand = new Alea(settings.seed)
@@ -50,10 +51,28 @@ function setup () {
     // TODO: make sure holes have enough space between them so as to create a solvable puzzle
     return {
       position: [rand() * WIDTH, rand() * HEIGHT * 0.85],
-      color: 'rgb(200, 200, 200)'
+      color: 'rgb(200, 200, 200)',
+      touched: false
     }
   })
 }
+
+// message for when you win/lose
+const messageDiv = document.body.appendChild(document.createElement('div'))
+css(messageDiv, {
+  fontSize: 40,
+  color: '#333',
+  fontFamily: 'sans-serif',
+  textAlign: 'center',
+  position: 'absolute',
+  width: '100vw',
+  top: '45%',
+  left: 0,
+  background: 'white',
+  padding: '40px 0',
+  boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+  display: 'none'
+})
 
 // setup controls
 window.addEventListener('keydown', (e) => {
@@ -65,23 +84,31 @@ window.addEventListener('keydown', (e) => {
     platform.positionLeft[1] -= 5
   } else if (e.code === 'KeyD') {
     platform.positionLeft[1] += 5
+  } else if (e.code === 'KeyR') {
+    css(messageDiv, { display: 'none' })
+    messageDiv.innerText = ''
+    setup()
+    cSketchCtx.play()
   }
 })
 
-const sketch = () => {
+const sketch = (cSketchCtx) => {
+  console.log(cSketchCtx)
   setup()
 
   function update () {
     // calculate the ball position
     const ballAcceleration = [0, settings.gravity]
     const velocity = vec2.subtract([], ball.position, ball.lastPosition)
+    vec2.scale(velocity, velocity, 1 - settings.friction)
     vec2.add(velocity, velocity, ballAcceleration)
 
     ball.lastPosition = ball.position.slice()
     vec2.add(ball.position, ball.position, velocity)
 
     // calculate ball/platform collision
-    if (doesCircleLineCollide(platform.positionLeft, platform.positionRight, ball.position, settings.ballSize)) {
+    const ballOnPlatform = doesCircleLineCollide(platform.positionLeft, platform.positionRight, ball.position, settings.ballSize)
+    if (ballOnPlatform) {
       const closest = getClosestPt(platform.positionLeft, platform.positionRight, ball.position)
       if (closest !== null) {
         const distToClosest = vec2.subtract([], ball.position, closest)
@@ -96,8 +123,22 @@ const sketch = () => {
     holes.forEach((hole) => {
       if (vec2.distance(hole.position, ball.position) <= settings.ballSize + settings.holeSize) {
         hole.color = 'red'
+        hole.touched = true
       }
     })
+
+    if (ball.position[0] < 0 || ball.position[0] > WIDTH || ball.position[1] > HEIGHT) {
+      setup()
+    } else if (ball.position[1] <= 0) {
+      cSketchCtx.pause()
+      window.cSketchCtx = cSketchCtx
+      css(messageDiv, { display: 'block' })
+      if (holes.some(h => h.touched)) {
+        messageDiv.innerText = 'Nope, you lost. (Press "R" to try again)'
+      } else {
+        messageDiv.innerText = 'OMG, you won! Wait - are you a computer? (Press "R" to try again)'
+      }
+    }
   }
 
   return ({ context, width, height }) => {
@@ -132,9 +173,12 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
+  fps: 24,
   animate: true,
   dimensions: [WIDTH, HEIGHT]
-})
+}).then((args) => { cSketchCtx = args.props })
+
+// geometry helpers
 
 function doesCircleLineCollide (lineStart, lineEnd, circleCenter, circleRadius) {
   if (isPointInCircle(lineStart, circleCenter, circleRadius) || isPointInCircle(lineEnd, circleCenter, circleRadius)) return true
