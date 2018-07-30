@@ -1487,6 +1487,12 @@ debug@^2.1.1, debug@^2.2.0:
   dependencies:
     ms "0.7.2"
 
+debug@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
+  dependencies:
+    ms "2.0.0"
+
 debug@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.2.0.tgz#f87057e995b1a1f6ae6a4960664137bc56f039da"
@@ -3805,6 +3811,12 @@ pluralize@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-1.2.1.tgz#d1a21483fd22bb41e58a12fa3421823140897c45"
 
+point-line-distance@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/point-line-distance/-/point-line-distance-1.0.0.tgz#5f22515f31fd1d17f9a7da5ccf81928a2bf367d1"
+  dependencies:
+    gl-vec3 "^1.0.3"
+
 prefix-style@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/prefix-style/-/prefix-style-2.0.1.tgz#66bba9a870cfda308a5dc20e85e9120932c95a06"
@@ -3912,6 +3924,15 @@ querystring-es3@~0.2.0:
 querystring@0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
+
+quickhull3d@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/quickhull3d/-/quickhull3d-2.0.4.tgz#beb4d988398c842486b4fbf13b21119cc2a5df0b"
+  dependencies:
+    debug "^3.1.0"
+    get-plane-normal "^1.0.0"
+    gl-vec3 "^1.0.3"
+    point-line-distance "^1.0.0"
 
 raf@^3.3.0:
   version "3.4.0"

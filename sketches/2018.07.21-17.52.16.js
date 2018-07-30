@@ -60,31 +60,31 @@ const sketch = () => {
     context.fillStyle = `rgb(${BACKGROUND_COLOR.join(', ')})`
     context.fillRect(0, 0, width, height)
 
-    getLineCoords = memoize(_getLineCoords)
+    getLineCoords = window.getLineCoords = memoize(_getLineCoords)
     getSpaceCornerCoords = memoize(_getSpaceCornerCoords)
     isDrawn = memoize(_isDrawn)
     getSubdivisionDepth = memoize(_getSubdivisionDepth)
 
     const linesToRemove = []
     lines.forEach((l, i) => {
-      if (rand() < 0.00005 && i > 3) {
+      if (rand() < 0.0001 && i > 4) {
         killLine(l)
       }
 
       const startAnimating = l.parent === null || isDrawn(l.parent)
-      l.drawOffsetSpring.updateValue(startAnimating && !l.killed ? 1 : 0)
+      l.drawOffsetSpring.updateValue(startAnimating ? 1 : 0)
       l.drawOffset = l.type === 'extender' && !l.killed ? 1 : l.drawOffsetSpring.tick()
 
-      if (l.killed && isEqual(l.drawOffset, 0)) {
-        if (l.parent.subdivider) {
-          if (l.parent.subdivider !== l) throw new Error('expected subdividers parent to be equal to subdivider itself')
-          l.parent.subdivider = null
-        }
-        linesToRemove.push(l)
+      if (l.killed) {
+        l.velocity = l.velocity || 0
+        l.velocity += 0.5
+
+        l.coords.forEach(pt => { pt[1] += l.velocity })
+        if (l.velocity > 30) linesToRemove.push(l)
       }
 
       if (l.type === 'subdivider') {
-        if (rand() < 0.009) {
+        if (rand() < 0.005) {
           l.subdivisionOffsetSpring.updateValue(rand() * 0.5 + 0.25)
         }
         l.subdivisionOffset = l.subdivisionOffsetSpring.tick()
@@ -95,7 +95,7 @@ const sketch = () => {
       lines.splice(lines.indexOf(line), 1)
     }
 
-    if (rand() < 0.8) {
+    if (rand() < 0.5) {
       const s = spaces.filter(sp => sp.subdivider === null && !sp.killed && getSubdivisionDepth(sp) < MAX_SUBDIVISION_DEPTH)
       if (s.length) subdivideSpace(s[rand() * s.length | 0], rand() * 2 | 0, rand() * 0.5 + 0.25)
       if (rand() < 0.5) {
@@ -129,7 +129,8 @@ const sketch = () => {
     for (let line of lines) {
       if (isEqual(line.drawOffset, 0)) continue
       const opacity = (line.type === 'subdivider') ? ((LINE_OPACITY - 0.1) / (getSubdivisionDepth(line.parent) + 1) + 0.1) : LINE_OPACITY
-      const [pt1, pt2] = getLineCoords(line).map(pt => project([], pt, viewport, combined))
+      const coords = getLineCoords(line)
+      const [pt1, pt2] = coords.map(pt => project([], pt, viewport, combined))
 
       line.gradientOffset = line.gradientOffset || rand() * 0.8 + 0.1
       let gradient = context.createLinearGradient(pt1[0], pt1[1], pt2[0], pt2[1])
@@ -191,13 +192,19 @@ function _getSubdivisionDepth (space) {
 
 function killLine (line) {
   if (line.killed) return
+  line.coords = getLineCoords(line)
   line.killed = true
   line.spaces.forEach(killSpace)
   line.children.forEach(killLine)
+  if (line.type === 'subdivider') {
+    line.parent.subdivider = null
+  }
 }
 
 function killSpace (space) {
+  // TODO: clean up all the spaces lists this space appears in
   if (space.killed) return
+  space.cornerCoords = getSpaceCornerCoords(space)
   space.killed = true
   space.children.forEach(killSpace)
   space.bounds.forEach(l => {
@@ -209,9 +216,10 @@ function killSpace (space) {
 }
 
 function _getLineCoords (line) {
+  if (line.coords) return line.coords
   if (line.type === 'root') {
     const end = vec3.scaleAndAdd([], line.origin, line.dir, line.drawOffset)
-    return [ line.origin, end ]
+    return [ line.origin.slice(), end ]
   }
   // THOUGHT: maybe extenders should only be tied to their spaces?
   // and spaces should be, simply, extruders and their origins??
@@ -252,6 +260,7 @@ function _getLineCoords (line) {
 }
 
 function _getSpaceCornerCoords (space) {
+  if (space.cornerCoords) return space.cornerCoords
   if (!space.parent) {
     const extruder = space.bounds.filter(l => l.type === 'extruder')[0]
     const base = space.bounds[(space.bounds.indexOf(extruder) + 2) % 4]
