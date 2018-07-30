@@ -14,7 +14,8 @@ const settings = {
   friction: 0.02,
   holeCount: 50,
   holeSize: 20,
-  platformSize: 0.8
+  platformSize: 0.8,
+  platformSpeed: 2
 }
 
 const gui = new GUI()
@@ -24,6 +25,7 @@ gui.add(settings, 'gravity', 0, 1.5).step(0.01)
 gui.add(settings, 'friction', 0, 0.5).step(0.01)
 gui.add(settings, 'holeCount', 0, 200).step(1).onChange(setup)
 gui.add(settings, 'holeSize', 1, 100)
+gui.add(settings, 'platformSpeed', 0.1, 8)
 gui.add({ restart: setup }, 'restart')
 
 let rand, ball, platform, holes, cSketchCtx
@@ -74,16 +76,23 @@ css(messageDiv, {
   display: 'none'
 })
 
+const keysPressed = {
+  rightUp: false,
+  rightDown: false,
+  leftUp: false,
+  leftDown: false
+}
+
 // setup controls
 window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyI') {
-    platform.positionRight[1] -= 5
+    keysPressed.rightUp = true
   } else if (e.code === 'KeyK') {
-    platform.positionRight[1] += 5
+    keysPressed.rightDown = true
   } else if (e.code === 'KeyE') {
-    platform.positionLeft[1] -= 5
+    keysPressed.leftUp = true
   } else if (e.code === 'KeyD') {
-    platform.positionLeft[1] += 5
+    keysPressed.leftDown = true
   } else if (e.code === 'KeyR') {
     css(messageDiv, { display: 'none' })
     messageDiv.innerText = ''
@@ -92,11 +101,29 @@ window.addEventListener('keydown', (e) => {
   }
 })
 
+window.addEventListener('keyup', (e) => {
+  if (e.code === 'KeyI') {
+    keysPressed.rightUp = false
+  } else if (e.code === 'KeyK') {
+    keysPressed.rightDown = false
+  } else if (e.code === 'KeyE') {
+    keysPressed.leftUp = false
+  } else if (e.code === 'KeyD') {
+    keysPressed.leftDown = false
+  }
+})
+
 const sketch = (cSketchCtx) => {
   console.log(cSketchCtx)
   setup()
 
   function update () {
+    // update platform position based on keysPressed
+    if (keysPressed.rightUp) platform.positionRight[1] -= settings.platformSpeed
+    if (keysPressed.rightDown) platform.positionRight[1] += settings.platformSpeed
+    if (keysPressed.leftUp) platform.positionLeft[1] -= settings.platformSpeed
+    if (keysPressed.leftDown) platform.positionLeft[1] += settings.platformSpeed
+
     // calculate the ball position
     const ballAcceleration = [0, settings.gravity]
     const velocity = vec2.subtract([], ball.position, ball.lastPosition)
