@@ -1,7 +1,7 @@
 const canvasSketch = require('canvas-sketch')
 const { GUI } = require('dat-gui')
 const Alea = require('alea')
-const { polygonHull } = require('d3-polygon')
+const { polygonHull, polygonCentroid } = require('d3-polygon')
 const catRomSpline = require('cat-rom-spline')
 const vec2 = require('gl-vec2')
 
@@ -49,9 +49,12 @@ const sketch = ({ render }) => {
       ]
 
       const size = rand() * settings.blobSize
-      const blobOutline = makeBlob(rand, position, size, 1)
-      const colors = getGradients(context, rand, blobOutline)
-      drawLine(context, blobOutline, colors, settings.lineWidth)
+      const points = makePoints(rand, size, position)
+      const blobOutline = makeBlobFromPoints(points, 1)
+      fillBlob(context, rand, blobOutline, settings.hueStart, settings.hueStart + settings.hueSpread)
+
+      // const colors = getGradients(context, rand, blobOutline)
+      // drawLine(context, blobOutline, colors, settings.lineWidth)
     }
   }
 }
@@ -59,6 +62,36 @@ const sketch = ({ render }) => {
 canvasSketch(sketch, {
   dimensions: [ 2048, 2048 ]
 })
+
+function fillBlob (context, rand, outline, hueStart, hueEnd) {
+  const center = polygonCentroid(outline)
+  const rads = rand() * Math.PI * 2
+  const startPt = [
+    Math.cos(rads) * settings.blobSize + center[0],
+    Math.sin(rads) * settings.blobSize + center[1]
+  ]
+  const endPt = [
+    Math.cos(rads + Math.PI) * settings.blobSize + center[0],
+    Math.sin(rads + Math.PI) * settings.blobSize + center[1]
+  ]
+
+  const gradient = context.createLinearGradient(startPt[0], startPt[1], endPt[0], endPt[1])
+  let w = 50
+  while (w--) {
+    const t = w / 49
+    const h = (hueEnd - hueStart) * t + hueStart
+    gradient.addColorStop(t, `hsla(${h}, 50%, 50%, ${settings.alpha})`)
+  }
+
+  context.beginPath()
+  context.moveTo(outline[0][0], outline[0][1])
+  for (let pt of outline.slice(1)) {
+    context.lineTo(pt[0], pt[1])
+  }
+  context.lineTo(outline[0][0], outline[0][1])
+  context.fillStyle = gradient
+  context.fill()
+}
 
 function getGradients (context, rand, line) {
   const hues = getHueStops(line, settings.hueStart, settings.hueStart + settings.hueSpread, rand() * 1000)
@@ -116,18 +149,20 @@ function drawLine (context, points, colors, lineWidth = 1) {
   }
 }
 
-function makeBlob (rand, position, size, curviness) {
-  const points = new Array(settings.numDots).fill().map(() => {
+function makePoints (rand, size, position) {
+  return new Array(settings.numDots).fill().map(() => {
     const rad = rand() * Math.PI * 2
     const mag = Math.pow(rand(), settings.spreadPow) * size
     const x = Math.cos(rad) * mag + position[0]
     const y = Math.sin(rad) * mag + position[1]
     return [x, y]
   })
+}
 
+function makeBlobFromPoints (points, curviness) {
   const hull = polygonHull(points)
   const anchors = hull.slice()
   anchors.push(anchors[0], anchors[1], anchors[2])
   const spline = catRomSpline(anchors, { samples: 15, knot: curviness })
-  return spline //.slice(0, spline.length - 45)
+  return spline
 }
