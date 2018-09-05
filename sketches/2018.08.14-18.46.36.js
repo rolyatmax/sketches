@@ -5,31 +5,40 @@ const { polygonHull, polygonCentroid } = require('d3-polygon')
 const catRomSpline = require('cat-rom-spline')
 const vec2 = require('gl-vec2')
 
+const WIDTH = 2048
+const HEIGHT = 2048
+
 const settings = {
   seed: 0,
+  margin: 0.2,
   numBlobs: 5,
   blobSize: 300,
-  numDots: 20,
+  blobSpread: 0.15,
+  numDots: 200,
   spread: 600,
   spreadPow: 0.5,
   hueStart: 100,
   hueSpread: 50,
+  lSpread: 10,
   alpha: 0.8,
-  lineWidth: 4
+  showPoints: true
 }
 
 const sketch = ({ render }) => {
   const gui = new GUI()
   gui.add(settings, 'seed', 0, 1000).step(1).onChange(render)
-  gui.add(settings, 'numBlobs', 1, 100).step(1).onChange(render)
+  gui.add(settings, 'margin', 0, 0.45).step(0.01).onChange(render)
+  gui.add(settings, 'numBlobs', 2, 10).step(1).onChange(render)
   gui.add(settings, 'blobSize', 1, 1000).step(1).onChange(render)
+  gui.add(settings, 'blobSpread', 0, 0.5).step(0.01).onChange(render)
   gui.add(settings, 'numDots', 3, 150).step(1).onChange(render)
   gui.add(settings, 'spread', 10, 2000).step(10).onChange(render)
   gui.add(settings, 'spreadPow', -0.1, 3).step(0.01).onChange(render)
   gui.add(settings, 'hueStart', 0, 360).step(1).onChange(render)
   gui.add(settings, 'hueSpread', 0, 360).step(1).onChange(render)
+  gui.add(settings, 'lSpread', 0, 50).onChange(render)
   gui.add(settings, 'alpha', 0, 1).step(0.01).onChange(render)
-  gui.add(settings, 'lineWidth', 1, 20).onChange(render)
+  gui.add(settings, 'showPoints').onChange(render)
 
   return ({ context, width, height }) => {
     const rand = new Alea(settings.seed)
@@ -37,30 +46,28 @@ const sketch = ({ render }) => {
     context.fillStyle = 'white'
     context.fillRect(0, 0, width, height)
 
-    const center = [width / 2, height / 2]
+    const globalPoints = new Array(settings.numDots).fill().map(() => ([ rand() * WIDTH, rand() * HEIGHT ]))
 
-    let n = settings.numBlobs
-    while (n--) {
-      const rads = rand() * Math.PI * 2
-      const mag = Math.pow(rand(), 0.5) * settings.spread
-      const position = [
-        Math.cos(rads) * mag + center[0],
-        Math.sin(rads) * mag + center[1]
-      ]
+    const blobCanvasWidth = 0.5 - (settings.numBlobs - 1) * settings.blobSpread / 2
+    const blobPositions = new Array(settings.numBlobs).fill().map((_, i) => ([(blobCanvasWidth + i * settings.blobSpread) * WIDTH, 0.5 * HEIGHT]))
 
-      const size = rand() * settings.blobSize
-      const points = makePoints(rand, size, position)
-      const blobOutline = makeBlobFromPoints(points, 1)
-      fillBlob(context, rand, blobOutline, settings.hueStart, settings.hueStart + settings.hueSpread)
+    blobPositions.forEach((pos, i) => {
+      const prevHue = Math.max(0, (i - 1) / (blobPositions.length - 1)) * settings.hueSpread + settings.hueStart
+      const thisHue = i / (blobPositions.length - 1) * settings.hueSpread + settings.hueStart
+      const nextHue = Math.min(1, (i + 1) / (blobPositions.length - 1)) * settings.hueSpread + settings.hueStart
+      const thisHueStart = (prevHue + thisHue) / 2
+      const thisHueEnd = (nextHue + thisHue) / 2
 
-      // const colors = getGradients(context, rand, blobOutline)
-      // drawLine(context, blobOutline, colors, settings.lineWidth)
-    }
+      const pts = filterPointsByDist(globalPoints, pos, settings.blobSize)
+      if (pts.length < 3) return
+      const blobOutline = makeBlobFromPoints(pts, 1)
+      fillBlob(context, rand, blobOutline, thisHueStart, thisHueEnd)
+    })
   }
 }
 
 canvasSketch(sketch, {
-  dimensions: [ 2048, 2048 ]
+  dimensions: [ WIDTH, HEIGHT ]
 })
 
 function fillBlob (context, rand, outline, hueStart, hueEnd) {
@@ -77,10 +84,13 @@ function fillBlob (context, rand, outline, hueStart, hueEnd) {
 
   const gradient = context.createLinearGradient(startPt[0], startPt[1], endPt[0], endPt[1])
   let w = 50
+  let lStart = 50
+  let lEnd = (rand() * 2 - 1) * settings.lSpread + lStart
   while (w--) {
     const t = w / 49
     const h = (hueEnd - hueStart) * t + hueStart
-    gradient.addColorStop(t, `hsla(${h}, 50%, 50%, ${settings.alpha})`)
+    const l = (lEnd - lStart) * t + lStart
+    gradient.addColorStop(t, `hsla(${h}, 50%, ${l}%, ${settings.alpha})`)
   }
 
   context.beginPath()
@@ -91,23 +101,6 @@ function fillBlob (context, rand, outline, hueStart, hueEnd) {
   context.lineTo(outline[0][0], outline[0][1])
   context.fillStyle = gradient
   context.fill()
-}
-
-function getGradients (context, rand, line) {
-  const hues = getHueStops(line, settings.hueStart, settings.hueStart + settings.hueSpread, rand() * 1000)
-  const colorStops = hues.map((h) => `hsla(${h}, 50%, 50%, ${settings.alpha})`)
-  const colors = []
-  for (let k = 0; k < colorStops.length; k += 1) {
-    const pt1 = line[k]
-    const pt2 = line[(k + 1) % line.length]
-    const color1 = colorStops[k]
-    const color2 = colorStops[(k + 1) % colorStops.length]
-    const gradient = context.createLinearGradient(pt1[0], pt1[1], pt2[0], pt2[1])
-    gradient.addColorStop(0, color1)
-    gradient.addColorStop(1, color2)
-    colors.push(gradient)
-  }
-  return colors
 }
 
 function getHueStops (linePoints, startHue, endHue, lineHueOffset = 0) {
@@ -128,25 +121,8 @@ function getHueStops (linePoints, startHue, endHue, lineHueOffset = 0) {
   return hues
 }
 
-function drawLine (context, points, colors, lineWidth = 1) {
-  if (!Array.isArray(colors)) {
-    colors = new Array(points.length).fill(colors)
-  }
-
-  if (colors.length !== points.length) {
-    throw new Error('colors must either be a string or an array with a length equal to the points array')
-  }
-
-  for (let i = 0; i < points.length; i += 1) {
-    const pt1 = points[i]
-    const pt2 = points[(i + 1) % points.length]
-    context.beginPath()
-    context.moveTo(pt1[0], pt1[1])
-    context.lineTo(pt2[0], pt2[1])
-    context.strokeStyle = colors[i]
-    context.lineWidth = lineWidth
-    context.stroke()
-  }
+function filterPointsByDist (points, origin, radius) {
+  return points.filter((pt) => vec2.distance(origin, pt) <= radius)
 }
 
 function makePoints (rand, size, position) {
