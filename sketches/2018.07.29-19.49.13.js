@@ -12,35 +12,45 @@ const settings = {
   seed: 1,
   points: 100,
   size: 5,
+  gridSize: 1,
   blobs: 2,
   spread: 20,
   cameraDist: 3,
   blur: 0.15,
+  r: 0.6,
+  g: 0.6,
+  b: 0.6,
   roam: true
 }
 
-const WIDTH = 2048
-const HEIGHT = 2048
+const WIDTH = 800
+const HEIGHT = 800
 
 const sketch = ({ gl }) => {
   const gui = new GUI()
   gui.add(settings, 'seed', 0, 1000).step(1).onChange(update)
   gui.add(settings, 'points', 4, 1000).step(1).onChange(update)
   gui.add(settings, 'size', 1, 100).onChange(update)
+  gui.add(settings, 'gridSize', 1, 5).step(1).onChange(update)
   gui.add(settings, 'blobs', 1, 100).step(1).onChange(update)
   gui.add(settings, 'spread', 1, 200).onChange(update)
   gui.add(settings, 'cameraDist', 1, 20)
   gui.add(settings, 'blur', 0, 1).step(0.01)
+  gui.add(settings, 'r', 0, 1).step(0.01).onChange(update)
+  gui.add(settings, 'g', 0, 1).step(0.01).onChange(update)
+  gui.add(settings, 'b', 0, 1).step(0.01).onChange(update)
   gui.add(settings, 'roam')
 
   const regl = createRegl({ gl })
-  const camera = createCamera(gl.canvas, { zoomSpeed: 4 })
-
-  camera.lookAt(
-    [50, 50, 50],
-    [0, 0, 0],
-    [0, 0, 1]
-  )
+  const cameras = (new Array(settings.gridSize * settings.gridSize)).fill().map(() => {
+    const camera = createCamera(gl.canvas, { zoomSpeed: 4 })
+    camera.lookAt(
+      [50, 50, 50],
+      [0, 0, 0],
+      [0, 0, 1]
+    )
+    return camera
+  })
 
   const fbo = regl.framebuffer({
     color: regl.texture({
@@ -101,7 +111,7 @@ const sketch = ({ gl }) => {
       const normals = []
       hullMesh.forEach(faceIndices => {
         const p = faceIndices.map((i) => points[i])
-        const c = [1, 1, 1]
+        const c = [settings.r, settings.g, settings.b]
         const n = getNormal([], p[0], p[1], p[2])
         positions.push(p[0], p[1], p[2])
         colors.push(c, c, c)
@@ -121,13 +131,14 @@ const sketch = ({ gl }) => {
     render = regl({
       vert: `
       attribute vec3 position;
-      attribute vec3 color;
+      // attribute vec3 color;
       attribute vec3 normal;
   
       varying vec4 vFragColor;
 
       uniform mat4 projection;
       uniform mat4 view;
+      uniform vec3 color;
 
       void main() {
         vec3 lightDir = normalize(vec3(10, 20, 30));
@@ -153,6 +164,7 @@ const sketch = ({ gl }) => {
         normal: faces.normals
       },
       uniforms: {
+        color: regl.prop('color'),
         projection: ({ viewportWidth, viewportHeight }) => mat4.perspective(
           [],
           Math.PI / 4,
@@ -160,7 +172,7 @@ const sketch = ({ gl }) => {
           0.01,
           1000
         ),
-        view: () => camera.matrix
+        view: regl.prop('camera')
       },
       blend: {
         enable: true,
@@ -225,19 +237,29 @@ const sketch = ({ gl }) => {
   update()
   return ({ time, frame }) => {
     regl.poll()
-    camera.tick()
 
-    camera.up = [camera.up[0], camera.up[1], 999]
-    if (settings.roam) {
-      camera.center = [
-        Math.sin(time) * 20 * settings.cameraDist,
-        Math.cos(time) * 40 * settings.cameraDist,
-        (Math.sin(time) * 0.5 + 0.5) * 30 * settings.cameraDist
-      ]
-    }
+    cameras.forEach(camera => {
+      camera.tick()
+
+      camera.up = [camera.up[0], camera.up[1], 999]
+      if (settings.roam) {
+        camera.center = [
+          Math.sin(time) * 20 * settings.cameraDist,
+          Math.cos(time) * 40 * settings.cameraDist,
+          (Math.sin(time) * 0.5 + 0.5) * 30 * settings.cameraDist
+        ]
+      }
+    })
+
+    const color = [
+      Math.sin((time * 2 + 10) / 10) * 0.2 + settings.r,
+      Math.cos((time * 3 + 4) / 10) * 0.2 + settings.g,
+      Math.sin((time * 5 + 7) / 10) * 0.2 + settings.b
+    ]
+
     renderTo({ toFbo: fbo }, () => {
       renderBG({ bgColor: [ 0.18, 0.18, 0.18, settings.blur ] })
-      render()
+      cameras.forEach(camera => render({ color, camera: camera.matrix }))
     })
     renderFrom({ fromFbo: fbo })
   }

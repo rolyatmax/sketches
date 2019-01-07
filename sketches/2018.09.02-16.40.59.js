@@ -5,8 +5,8 @@ const { GUI } = require('dat-gui')
 const { createSpring } = require('spring-animator')
 const vec2 = require('gl-vec2')
 
-const WIDTH = 1024
-const HEIGHT = 1024
+const WIDTH = 2436
+const HEIGHT = 1125
 const FPS = 24
 
 const settings = {
