@@ -12,45 +12,43 @@ const settings = {
   seed: 1,
   points: 100,
   size: 5,
-  gridSize: 1,
-  blobs: 2,
+  gridSize: 20,
+  blobs: 16,
   spread: 20,
-  cameraDist: 3,
-  blur: 0.15,
-  r: 0.6,
-  g: 0.6,
-  b: 0.6,
+  cameraDist: 2,
+  cameraSpread: 0.75,
+  blur: 0.01,
+  blend: 0.5,
+  r: 0.1,
+  g: 0.1,
+  b: 0.95,
+  opacity: 1,
   roam: true
 }
 
-const WIDTH = 800
-const HEIGHT = 800
+const WIDTH = 600
+const HEIGHT = 600
 
 const sketch = ({ gl }) => {
   const gui = new GUI()
   gui.add(settings, 'seed', 0, 1000).step(1).onChange(update)
   gui.add(settings, 'points', 4, 1000).step(1).onChange(update)
   gui.add(settings, 'size', 1, 100).onChange(update)
-  gui.add(settings, 'gridSize', 1, 5).step(1).onChange(update)
+  gui.add(settings, 'gridSize', 1, 20).step(1).onChange(update)
   gui.add(settings, 'blobs', 1, 100).step(1).onChange(update)
   gui.add(settings, 'spread', 1, 200).onChange(update)
   gui.add(settings, 'cameraDist', 1, 20)
+  gui.add(settings, 'cameraSpread', 0, 2).step(0.01)
   gui.add(settings, 'blur', 0, 1).step(0.01)
+  gui.add(settings, 'blend', 0, 1).step(0.01)
   gui.add(settings, 'r', 0, 1).step(0.01).onChange(update)
   gui.add(settings, 'g', 0, 1).step(0.01).onChange(update)
   gui.add(settings, 'b', 0, 1).step(0.01).onChange(update)
+  gui.add(settings, 'opacity', 0, 1).step(0.01).onChange(update)
   gui.add(settings, 'roam')
 
   const regl = createRegl({ gl })
-  const cameras = (new Array(settings.gridSize * settings.gridSize)).fill().map(() => {
-    const camera = createCamera(gl.canvas, { zoomSpeed: 4 })
-    camera.lookAt(
-      [50, 50, 50],
-      [0, 0, 0],
-      [0, 0, 1]
-    )
-    return camera
-  })
+  let cells
 
   const fbo = regl.framebuffer({
     color: regl.texture({
@@ -96,6 +94,16 @@ const sketch = ({ gl }) => {
   let render
   function update () {
     const rand = new Alea(settings.seed)
+    cells = (new Array(settings.gridSize * settings.gridSize)).fill().map((_, i) => {
+      const position = [i % settings.gridSize, i / settings.gridSize | 0]
+      const camera = createCamera(gl.canvas, { zoomSpeed: 4 })
+      camera.lookAt(
+        [50, 50, 50],
+        [0, 0, 0],
+        [0, 0, 1]
+      )
+      return { camera, position }
+    })
 
     function createBlob () {
       const center = getRandomPtInSphere(rand, rand() * settings.spread)
@@ -139,13 +147,14 @@ const sketch = ({ gl }) => {
       uniform mat4 projection;
       uniform mat4 view;
       uniform vec3 color;
+      uniform float opacity;
 
       void main() {
         vec3 lightDir = normalize(vec3(10, 20, 30));
         float reflection = dot(normal, lightDir);
         vec3 c = mix(vec3(0.8), color, reflection);
 
-        vFragColor = vec4(c, reflection * 0.7);
+        vFragColor = vec4(c, reflection * opacity);
         gl_PointSize = 2.0;
         gl_Position = projection * view * vec4(position, 1);
       }
@@ -154,8 +163,20 @@ const sketch = ({ gl }) => {
       precision mediump float;
       varying vec4 vFragColor;
 
+      uniform vec2 gridPosition;
+      uniform vec2 resolution;
+      uniform float gridSize;
+      uniform float blend;
+
       void main() {
-        gl_FragColor = vFragColor;
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        vec2 start = gridPosition / gridSize;
+        float cellSize = 1.0 / gridSize;
+        if (uv.x < start.x || uv.x > start.x + cellSize || uv.y < start.y || uv.y > start.y + cellSize) {
+          discard;
+        }
+        vec3 color = mix(vFragColor.rgb, vec3(uv.x, uv.y, uv.y), blend);
+        gl_FragColor = vec4(color, vFragColor.a);
       }
       `,
       attributes: {
@@ -165,6 +186,8 @@ const sketch = ({ gl }) => {
       },
       uniforms: {
         color: regl.prop('color'),
+        opacity: () => settings.opacity,
+        blend: () => settings.blend,
         projection: ({ viewportWidth, viewportHeight }) => mat4.perspective(
           [],
           Math.PI / 4,
@@ -172,7 +195,10 @@ const sketch = ({ gl }) => {
           0.01,
           1000
         ),
-        view: regl.prop('camera')
+        view: regl.prop('camera'),
+        gridPosition: regl.prop('gridPosition'),
+        gridSize: () => settings.gridSize,
+        resolution: ({ viewportWidth, viewportHeight }) => [viewportWidth, viewportHeight]
       },
       blend: {
         enable: true,
@@ -238,15 +264,16 @@ const sketch = ({ gl }) => {
   return ({ time, frame }) => {
     regl.poll()
 
-    cameras.forEach(camera => {
+    cells.forEach(({ camera }, i) => {
       camera.tick()
 
       camera.up = [camera.up[0], camera.up[1], 999]
       if (settings.roam) {
+        // TODO: make this different for every camera
         camera.center = [
-          Math.sin(time) * 20 * settings.cameraDist,
-          Math.cos(time) * 40 * settings.cameraDist,
-          (Math.sin(time) * 0.5 + 0.5) * 30 * settings.cameraDist
+          Math.sin(time + i * settings.cameraSpread) * 20 * settings.cameraDist,
+          Math.cos(time + i * settings.cameraSpread) * 40 * settings.cameraDist,
+          (Math.sin(time + i * settings.cameraSpread) * 0.5 + 0.5) * 30 * settings.cameraDist
         ]
       }
     })
@@ -259,7 +286,11 @@ const sketch = ({ gl }) => {
 
     renderTo({ toFbo: fbo }, () => {
       renderBG({ bgColor: [ 0.18, 0.18, 0.18, settings.blur ] })
-      cameras.forEach(camera => render({ color, camera: camera.matrix }))
+      cells.forEach(({ camera, position }) => render({
+        color,
+        camera: camera.matrix,
+        gridPosition: position
+      }))
     })
     renderFrom({ fromFbo: fbo })
   }
