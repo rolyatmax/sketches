@@ -73,7 +73,9 @@ const sketch = () => {
       Math.sin(cameraRads) * settings.dist / 2,
       Math.sin(cameraRads) * settings.dist
     ]
-    cameras.slice(1, 1).forEach((camera, i) => {
+
+    camera = cameras[0]
+    // cameras.forEach((camera, i) => {
       camera.identity()
       camera.translate(cameraPosition)
       camera.lookAt([0, 0, 0])
@@ -121,7 +123,7 @@ const sketch = () => {
       context.clip()
       tris.forEach(({ points, litColor }) => drawTriangle(context, points, litColor))
       context.restore()
-    })
+    // })
   }
 }
 
