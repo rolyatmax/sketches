@@ -5,99 +5,157 @@ const loadImg = require('load-img')
 const fit = require('objectfit/cover')
 const { createSpring } = require('spring-animator')
 const vec2 = require('gl-vec2')
-// const createKDTree = require('static-kdtree')
-const { kdTree: KDTree } = require('kd-tree-javascript')
 
-const SIZE = 600
+const SIZE = 1024
 
-const sketch = ({ render }) => {
+const sketch = ({ context }) => {
   const settings = {
     seed: 1,
-    sampleSize: 3,
-    opacity: 0.3,
-    direction: 90,
-    image: 'pasture'
+    size: 6,
+    opacity: 1,
+    opacityDecay: 0.99,
+    startOffset: 0,
+    direction: 180,
+    chance: 0.1,
+    speed: 0.8,
+    dampening: 0.1,
+    stiffness: 0.1,
+    wander: 90,
+    image: 'skyline'
   }
-  
+
   const images = [
     'coffee', 'empire', 'flatiron', 'fruit', 'mosque', 'mountains',
     'palms', 'skyline', 'snowday', 'whitehouse', 'thinker', 'mary-arthur',
-    'pasture', 'venice'
+    'pasture', 'venice', 'dude', 'vase', 'woman', 'royal'
   ]
-  
+
   const gui = new GUI()
-  gui.add(settings, 'seed', 0, 9999).step(1)
-  gui.add(settings, 'sampleSize', 0, 10).step(1).onChange(setup)
+  gui.add(settings, 'seed', 0, 9999).step(1).onChange(setup)
+  gui.add(settings, 'size', 0, 10)
   gui.add(settings, 'opacity', 0, 1).step(0.01)
+  gui.add(settings, 'opacityDecay', 0.9, 1).step(0.001)
+  gui.add(settings, 'startOffset', 0, 1).step(0.01).onChange(setup)
   gui.add(settings, 'direction', 0, 360).onChange(setup)
+  gui.add(settings, 'chance', 0, 1).step(0.01)
+  gui.add(settings, 'speed', 0.5, 5)
+  gui.add(settings, 'dampening', 0, 20).step(0.01).onChange(setup)
+  gui.add(settings, 'stiffness', 0, 1).step(0.01).onChange(setup)
+  gui.add(settings, 'wander', 0, 360)
   gui.add(settings, 'image', images).onChange(setup)
-  
-  let rand, walkers, loadedImage
-  
+
+  let rand, walkers, loadedImage, pixelPicker
+
   function setup () {
     rand = random.createRandom(settings.seed)
-  
+
     loadImg(`src/images/${settings.image}.jpg`, (err, image) => {
       if (err) throw err
       loadedImage = image
-      const pixelPicker = makePixelPicker(image, [SIZE, SIZE])
+      pixelPicker = makePixelPicker(image, [SIZE, SIZE])
       walkers = []
       for (let n = 0; n < SIZE; n++) {
         walkers.push({
           position: [n, 0],
-          direction: settings.direction
+          direction: createSpring(settings.dampening, settings.stiffness, settings.direction),
+          opacity: settings.opacity,
+          size: settings.size
         }, {
           position: [n, SIZE],
-          direction: settings.direction
+          direction: createSpring(settings.dampening, settings.stiffness, settings.direction),
+          opacity: settings.opacity,
+          size: settings.size
         }, {
           position: [0, n],
-          direction: settings.direction
+          direction: createSpring(settings.dampening, settings.stiffness, settings.direction),
+          opacity: settings.opacity,
+          size: settings.size
         }, {
           position: [SIZE, n],
-          direction: settings.direction
+          direction: createSpring(settings.dampening, settings.stiffness, settings.direction),
+          opacity: settings.opacity,
+          size: settings.size
+        // }, {
+        //   position: [SIZE / 2, n],
+        //   direction: createSpring(settings.dampening, settings.stiffness, settings.direction),
+        //   opacity: settings.opacity,
+        //   size: settings.size
+        // }, {
+        //   position: [n, SIZE / 2],
+        //   direction: createSpring(settings.dampening, settings.stiffness, settings.direction),
+        //   opacity: settings.opacity,
+        //   size: settings.size
+        // }, {
+        //   position: [SIZE / 2, n],
+        //   direction: createSpring(settings.dampening, settings.stiffness, settings.direction + 180),
+        //   opacity: settings.opacity,
+        //   size: settings.size
+        // }, {
+        //   position: [n, SIZE / 2],
+        //   direction: createSpring(settings.dampening, settings.stiffness, settings.direction + 180),
+        //   opacity: settings.opacity,
+        //   size: settings.size
         })
       }
-      render()
+
+      // start them off by some random amount
+      walkers.forEach(w => {
+        const rads = (w.direction.tick()) / 180 * Math.PI
+        const headStart = rand.value() * SIZE * settings.startOffset
+        const dir = [Math.cos(rads) * headStart, Math.sin(rads) * headStart]
+        vec2.add(w.position, w.position, dir)
+      })
+      window.followMe = null
+      drawImageToCanvas(context, loadedImage)
     })
   }
 
   setup()
-  return ({ context, width, height }) => {
-    context.fillStyle = '#fff'
-    context.fillRect(0, 0, width, height)
-
+  return ({ width, height }) => {
     if (!loadedImage) return
-    drawImageToCanvas(context, loadedImage)
-    // for (let p of pixels) {
-    //   const t = p.spring.tick()
-    //   const position = vec2.lerp([], p.startPosition, p.endPosition, t)
-    //   const radius = settings.sampleSize * p.random * settings.circleSize
-    //   context.beginPath()
-    //   context.fillStyle = `rgba(${p.startColor.join(',')}, ${settings.opacity})`
-    //   context.arc(position[0], position[1], radius, 0, Math.PI * 2)
-    //   context.fill()
-    // }
+    walkers.forEach(w => {
+      const directionVal = w.direction.tick()
+      const rads = directionVal / 180 * Math.PI
+      const dir = [Math.cos(rads) * settings.speed, Math.sin(rads) * settings.speed]
+      const curPixel = pixelPicker(w.position[0], w.position[1])
+      if (rand.chance(settings.chance / 100) && !w.color) {
+        w.color = curPixel
+        w.opacity = settings.opacity
+        w.size = settings.size
+      } else if (w.color && toGrayscale(w.color) < toGrayscale(curPixel)) {
+        w.color = curPixel
+        w.opacity = settings.opacity
+        w.size = settings.size
+      }
+      if (rand.chance(settings.chance / 1000) && w.color && !w.changedCourse) {
+        const delta = rand.range(settings.wander) * rand.sign()
+        const newVal = delta + directionVal
+        w.direction.updateValue(newVal)
+        w.changedCourse = true
+      }
+      w.opacity *= settings.opacityDecay
+      w.size *= settings.opacityDecay
+      vec2.add(w.position, w.position, dir)
+      if (w.color) {
+        const {r, g, b} = w.color
+        const radius = w.size
+        context.beginPath()
+        context.fillStyle = `rgba(${[r, g, b].join(',')}, ${w.opacity})`
+        context.arc(w.position[0], w.position[1], radius, 0, Math.PI * 2)
+        context.fill()
+      }
+    })
+
+    walkers = walkers.filter(w => {
+      return w.position[0] >= 0 && w.position[1] >= 0 && w.position[0] <= SIZE && w.position[1] <= SIZE
+    })
   }
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ]
+  dimensions: [ SIZE, SIZE ],
+  animate: true
 })
-
-function generatePixelList (picker, size, sample) {
-  const pixels = []
-  let i = 0
-  for (let x = 0; x < size; x++) {
-    if (x % sample !== 0) continue
-    for (let y = 0; y < size; y++) {
-      if (y % sample !== 0) continue
-      const { r, g, b } = picker(x, y)
-      pixels.push({ x, y, r, g, b, i })
-      i += 1
-    }
-  }
-  return pixels
-}
 
 function drawImageToCanvas (context, img) {
   let imgWidth = img.naturalWidth || img.width
@@ -130,25 +188,6 @@ function makePixelPicker (img, dim) {
       a: imageData.data[i + 3]
     }
   }
-}
-
-function distance (a, b) {
-  const dr = a.r - b.r
-  const dg = a.g - b.g
-  const db = a.b - b.b
-  const dx = a.x - b.x
-  const dy = a.y - b.y
-
-  const dGrayscale = toGrayscale(a) - toGrayscale(b)
-
-  return (
-    dr * dr +
-    dg * dg +
-    db * db // +
-    // Math.sqrt(dx * dx) +
-    // Math.sqrt(dy * dy) +
-    // Math.sqrt(dGrayscale * dGrayscale)
-  )
 }
 
 function toGrayscale ({ r, g, b }) {
