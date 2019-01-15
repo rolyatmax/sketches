@@ -1,4 +1,5 @@
 const canvasSketch = require('canvas-sketch')
+const random = require('canvas-sketch-util/random')
 const { GUI } = require('dat-gui')
 const Color = require('color')
 const createCamera = require('perspective-camera')
@@ -7,41 +8,41 @@ const sortBy = require('lodash/sortBy')
 const getPlaneNormal = require('get-plane-normal')
 const { normalize, dot, subtract, add, scale } = require('gl-vec3')
 
-const WIDTH = 2048
-const HEIGHT = 2048
+const WIDTH = 1024
+const HEIGHT = 1024
 
 const settings = {
-  subdivisions: 0,
-  gridSize: 9,
+  seed: 442,
+  subdivisions: 2,
+  gridSize: 2,
   lightSpeed: 4,
   cameraSpeed: 1,
-  lineWidth: 3,
+  lineWidth: 1.5,
   showEdges: true,
-  opacity: 5,
-  dist: 3.5,
+  offsetSize: 0,
+  hideTriRate: 0.15,
+  opacity: 0,
+  dist: 3.1,
   color: '#6DA67A'
 }
 
 const gui = new GUI()
+// gui.add(settings, 'seed', 0, 9999).onChange(setup)
 gui.add(settings, 'subdivisions', 0, 3).step(1).onChange(setup)
 gui.add(settings, 'gridSize', 1, 10).step(1).onChange(setup)
 gui.add(settings, 'opacity', 0, 100).step(1)
 gui.add(settings, 'lightSpeed', 0, 10).step(1)
 gui.add(settings, 'cameraSpeed', 0, 10).step(1)
+gui.add(settings, 'offsetSize', 0, Math.PI * 2)
+gui.add(settings, 'hideTriRate', 0, 1)
 gui.add(settings, 'dist', 1, 10)
 gui.add(settings, 'lineWidth', 1, 10)
 gui.add(settings, 'showEdges')
 
-let cameras, tris
+let rand, cells, tris
 
 function setup () {
-  cameras = (new Array(settings.gridSize * settings.gridSize)).fill().map(() => {
-    const camera = createCamera({
-      viewport: [0, 0, WIDTH, HEIGHT]
-    })
-    camera.identity()
-    return camera
-  })
+  rand = random.createRandom(settings.seed)
 
   const mesh = icosphere(settings.subdivisions)
 
@@ -49,6 +50,15 @@ function setup () {
     positions: cell.map((i) => mesh.positions[i]),
     color: settings.color
   }))
+
+  cells = (new Array(settings.gridSize * settings.gridSize)).fill().map(() => {
+    const camera = createCamera({
+      viewport: [0, 0, WIDTH, HEIGHT]
+    })
+    camera.identity()
+    const randVal = rand.value()
+    return {camera, randVal}
+  })
 }
 
 const sketch = () => {
@@ -65,13 +75,14 @@ const sketch = () => {
       Math.sin(lightSrcRads) * settings.dist
     ]
 
-    cameras.forEach((camera, i) => {
+    cells.forEach((cell, i) => {
+      const {camera, randVal} = cell
       const cameraRads = millis / 10000 * settings.cameraSpeed
-      const offset = i * (Math.cos(time * 0.5 + Math.PI / 2) * 0.5 + 0.5) * 0.5
+      const offset = settings.gridSize * randVal * (Math.cos(time * 0.5 + Math.PI / 2) * 0.5 + 0.5) * 0.5 * settings.offsetSize
       const cameraPosition = [
         Math.cos(cameraRads + offset) * settings.dist,
         Math.sin(cameraRads + offset) * settings.dist / 2,
-        Math.sin(cameraRads + offset) * settings.dist
+        Math.sin(cameraRads + offset) * settings.dist * 1.5
       ]
 
       camera.identity()
@@ -79,14 +90,17 @@ const sketch = () => {
       camera.lookAt([0, 0, 0])
       camera.update()
 
-      tris = tris.map((tri) => ({
+      const r = random.createRandom(randVal)
+      let curTris = tris.filter(() => r.chance(settings.hideTriRate))
+
+      curTris = curTris.map((tri) => ({
         ...tri,
         points: tri.positions.map((positions) => camera.project(positions))
       }))
 
-      tris = sortBy(tris, ({ points }) => Math.min(...points.map(p => p[2])))
+      curTris = sortBy(curTris, ({ points }) => Math.min(...points.map(p => p[2] * -1)))
 
-      tris = tris.map((tri) => {
+      curTris = curTris.map((tri) => {
         const { color, positions } = tri
         const center = getCenterOfPlane(positions)
         const lightDirection = normalize([], subtract([], lightSource, center))
@@ -118,7 +132,7 @@ const sketch = () => {
         cellDimensions[0], cellDimensions[1]
       )
       context.clip()
-      tris.reverse().forEach(({ points, litColor }) => drawTriangle(context, points, litColor))
+      curTris.forEach(({ points, litColor }) => drawTriangle(context, points, litColor))
       context.restore()
     })
   }
