@@ -59,15 +59,16 @@ const sketch = () => {
     lines.forEach(line => {
       const curPosition = line.points[line.points.length - 1]
       const cell = [
-        Math.max(0, Math.min(curPosition[0], SIZE)) / cellDimensions[0] | 0,
-        Math.max(0, Math.min(curPosition[1], SIZE)) / cellDimensions[1] | 0
+        curPosition[0] / cellDimensions[0] | 0,
+        curPosition[1] / cellDimensions[1] | 0
       ]
+      cell[0] = Math.max(0, Math.min(cell[0], settings.gridSize - 1)) | 0
+      cell[1] = Math.max(0, Math.min(cell[1], settings.gridSize - 1)) | 0
       const cellIdx = cell[0] * settings.gridSize + cell[1]
-      console.log(cellIdx)
       const isOnInCell = cells[cellIdx].lines.includes(line)
       const angle = (rand.noise2D(
         curPosition[0], curPosition[1],
-        settings.noiseFreq / 10000000 * Math.pow(cellIdx, 2), settings.noiseAmp / 100
+        settings.noiseFreq / 10000, settings.noiseAmp / 100
       ) + 1) * Math.PI
       const magnitude = rand.noise2D(
         curPosition[0] + 10000, curPosition[1] + 10000,
