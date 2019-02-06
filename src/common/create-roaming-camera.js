@@ -2,9 +2,10 @@ const { createSpring } = require('spring-animator')
 const createCamera = require('3d-view-controls')
 
 module.exports = function createRoamingCamera (opts) {
-  const {canvas, zoomSpeed, center, eye, getCameraPosition, dampening, stiffness} = opts
+  const {canvas, zoomSpeed, center, eye, getCameraPosition, dampening, stiffness, moveEveryNFrames} = opts
+  const roamOnEveryNFrames = moveEveryNFrames || 600
   let isRoaming = true
-  let timeout
+  let frameCount = 0
 
   canvas.addEventListener('mousedown', stopRoaming)
 
@@ -19,8 +20,10 @@ module.exports = function createRoamingCamera (opts) {
   camera.lookAt(
     center,
     eye,
-    [0.52, -0.11, -99]
+    [1, 1, 1]
   )
+
+  setRandomCameraPosition()
 
   function setRandomCameraPosition () {
     const [x, y, z] = getCameraPosition()
@@ -29,17 +32,15 @@ module.exports = function createRoamingCamera (opts) {
     cameraZ.updateValue(z)
   }
 
-  cameraRoamLoop()
-  function cameraRoamLoop () {
-    clearTimeout(timeout)
-    timeout = setTimeout(cameraRoamLoop, 10000)
-    setRandomCameraPosition()
-  }
-
   function tick () {
+    frameCount += 1
     camera.tick()
     if (isRoaming) {
       camera.center = [cameraX.tick(), cameraY.tick(), cameraZ.tick()]
+    }
+    if (frameCount >= roamOnEveryNFrames) {
+      setRandomCameraPosition()
+      frameCount = 0
     }
   }
   function getMatrix () {
@@ -49,13 +50,13 @@ module.exports = function createRoamingCamera (opts) {
     return camera.center
   }
   function stopRoaming () {
-    clearTimeout(timeout)
-    timeout = null
     isRoaming = false
+    frameCount = 0
   }
   function startRoaming () {
     setSpringsToCurrentCameraValues()
-    cameraRoamLoop()
+    setRandomCameraPosition()
+    frameCount = 0
     isRoaming = true
   }
 
@@ -72,12 +73,6 @@ module.exports = function createRoamingCamera (opts) {
     getCenter,
     startRoaming,
     stopRoaming,
-    moveToNextPosition: () => {
-      if (!isRoaming) {
-        startRoaming()
-      } else {
-        cameraRoamLoop()
-      }
-    }
+    moveToNextPosition: startRoaming
   }
 }
