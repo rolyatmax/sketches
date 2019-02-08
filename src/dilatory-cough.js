@@ -70,7 +70,7 @@ function setup () {
 
   lightCamera = createPerspectiveCamera({
     fov: Math.PI / 16,
-    near: 0.01,
+    near: 10,
     far: 1000,
     viewport: [0, 0, settings.shadowBufferSize, settings.shadowBufferSize]
   })
@@ -88,7 +88,7 @@ function setup () {
       uniform mat4 view;
       void main() {
         gl_Position = projection * view * vec4(position, 1);
-        vDepth = gl_Position.z;
+        vDepth = (view * vec4(position, 1)).z;
       }
     `,
     frag: glsl`
@@ -134,7 +134,7 @@ function setup () {
       void main (void) {
         vBias = max(.002 * (1.0 - dot(normalize(normal), normalize(lightDirection))), .002);
         vNormal = normal;
-        vShadowCoord = biasMatrix * lightProjection * lightView * vec4(position, 1.0);
+        vShadowCoord = biasMatrix * lightView * vec4(position, 1.0);
         gl_Position = projection * view * vec4(position, 1.0);
       }
     `,
@@ -155,7 +155,7 @@ function setup () {
       }
 
       float sampleVisibility( vec3 coord, float bias ) {
-        float depth = texture2D(shadowMap, coord.xy).r;
+        float depth = texture2D(shadowMap, coord.xy * 0.5 + vec2(0.5)).r;
         float visibility  = (coord.z - depth > bias) ? 0. : 1.;
         return visibility;
       }
@@ -200,7 +200,7 @@ function setup () {
         [],
         Math.PI / 4,
         viewportWidth / viewportHeight,
-        0.01,
+        10,
         1000
       ),
       view: () => camera.matrix,
