@@ -6,7 +6,7 @@ const fit = require('objectfit/cover')
 const { createSpring } = require('spring-animator')
 const vec2 = require('gl-vec2')
 
-const SIZE = 1024
+const SIZE = 2048
 
 const sketch = ({ context }) => {
   const settings = {
@@ -32,7 +32,7 @@ const sketch = ({ context }) => {
 
   const gui = new GUI()
   gui.add(settings, 'seed', 0, 9999).step(1).onChange(setup)
-  gui.add(settings, 'size', 0, 10)
+  gui.add(settings, 'size', 0, 30)
   gui.add(settings, 'opacity', 0, 1).step(0.01)
   gui.add(settings, 'opacityDecay', 0.9, 1).step(0.001)
   gui.add(settings, 'startOffset', 0, 1).step(0.01).onChange(setup)
