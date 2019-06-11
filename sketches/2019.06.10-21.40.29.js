@@ -9,7 +9,7 @@ const mat4 = require('gl-mat4')
 const { csvParseRows } = require('d3-dsv')
 const { extent } = require('d3-array')
 
-const SIZE = 800
+const SIZE = Math.min(window.innerHeight, window.innerWidth) // 800
 
 const settings = {
   seed: 0,
@@ -97,20 +97,27 @@ const sketch = ({ gl, width, height }) => {
         }
       `,
       frag: `
-        #extension GL_OES_standard_derivatives : enable
-        precision highp float;
+        precision lowp float;
         void main() {
           vec3 color = vec3(0.2);
-          vec2 cxy = 2.0 * gl_PointCoord - 1.0;
-          float r = dot(cxy, cxy);
-          float delta = fwidth(r);
-          float alpha = 1.0 - smoothstep(1.0 - delta, 1.0 + delta, r);
-          if (r > 1.0) {
-            discard;
-          }
-          gl_FragColor = vec4(color * alpha, alpha);
+          gl_FragColor = vec4(color, 0.05);
         }
       `,
+      // frag: `
+      //   #extension GL_OES_standard_derivatives : enable
+      //   precision highp float;
+      //   void main() {
+      //     vec3 color = vec3(0.2);
+      //     vec2 cxy = 2.0 * gl_PointCoord - 1.0;
+      //     float r = dot(cxy, cxy);
+      //     float delta = fwidth(r);
+      //     float alpha = 1.0 - smoothstep(1.0 - delta, 1.0 + delta, r);
+      //     if (r > 1.0) {
+      //       discard;
+      //     }
+      //     gl_FragColor = vec4(color * alpha, alpha);
+      //   }
+      // `,
       uniforms: {
         view: camera.getMatrix,
         projection: projection,
@@ -133,7 +140,7 @@ const sketch = ({ gl, width, height }) => {
           alpha: 'add'
         }
       },
-      primitive: 'points',
+      primitive: 'lines',
       count: data.length
     })
   }
@@ -154,7 +161,7 @@ const sketch = ({ gl, width, height }) => {
   }
 }
 
-fetch('src/data/west-coast-lidar/west-coast-lidar-abridged.csv')
+fetch('src/data/west-coast-lidar/west-coast-lidar-filtered.csv')
   .then(res => res.text())
   .then(res => {
     console.log('loaded!')

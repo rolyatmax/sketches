@@ -7,6 +7,8 @@ let isFirstLine = true
 rl.on('line', (input) => {
   // prepare the columns map with the first line
   if (isFirstLine) {
+    process.stdout.write(input)
+    process.stdout.write('\n')
     isFirstLine = false
     return
   }
