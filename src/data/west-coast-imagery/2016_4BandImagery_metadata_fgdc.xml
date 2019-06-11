@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="https://www.ngdc.noaa.gov/metadata/published/xsd/ngdcSchema/schema.xsd">
+   <idinfo>
+      <datsetid>gov.noaa.nmfs.inport:53106</datsetid>
+      <citation>
+         <citeinfo>
+            <pubdate>20161025</pubdate>
+            <title>2016 Coastal California NAIP 4-Band 8 Bit Imagery</title>
+         </citeinfo>
+      </citation>
+      <descript>
+         <abstract>
+              This metadata record was derived from an ISO format record and may be missing components. See the ISO version for more information.
+                This data set contains imagery from the National Agriculture
+        Imagery Program (NAIP).  The NAIP program is administered by
+        USDA FSA and has been established to support two main FSA
+        strategic goals centered on agricultural production.
+        These are, increase stewardship of America's natural resources
+        while enhancing the environment, and to ensure commodities
+        are procured and distributed effectively and efficiently to
+        increase food security.  The NAIP program supports these goals by
+        acquiring and providing ortho imagery that has been collected
+        during the agricultural growing season in the U.S. The NAIP
+        ortho imagery is tailored to meet FSA requirements and is a
+        fundamental tool used to support FSA farm and conservation
+        programs.  Ortho imagery provides an effective, intuitive
+        means of communication about farm program administration
+        between FSA and stakeholders.  
+        New technology and innovation is identified by fostering and
+        maintaining a relationship with vendors and government
+        partners, and by keeping pace with the broader geospatial
+        community.  As a result of these efforts the NAIP program
+        provides three main products: DOQQ tiles,
+        Compressed County Mosaics (CCM), and Seamline shape files
+        The Contract specifications for NAIP imagery have changed
+        over time reflecting agency requirements and improving
+        technologies.  These changes include image resolution,
+        horizontal accuracy, coverage area, and number of bands.
+        In general, flying seasons are established by FSA and are
+        targeted for peak crop growing conditions.  The NAIP
+        acquisition cycle is based on a minimum 3 year refresh of base
+        ortho imagery.  The tiling format of the NAIP imagery is based
+        on a 3.75' x 3.75' quarter quadrangle with a 300 pixel buffer
+        on all four sides.  NAIP quarter quads are formatted to the UTM
+        coordinate system using the North American Datum of 1983.
+        NAIP imagery may contain as much as 10% cloud cover per tile.
+This data set is a raster file with 713 columns and 2004 rows and may have been mosaiced, reprojected, and clipped from the original tiles. The data set was generated from a larger data set and includes all valid data within the requested geographic bounds.
+		</abstract>
+         <purpose>NAIP imagery is available for distribution within 60 days
+of the end of a flying season and is intended to provide current
+information of agricultural conditions in support of USDA farm
+programs. For USDA Farm Service Agency, the 1 meter and 1/2 meter
+GSD product provides an ortho image base for Common Land Unit
+boundaries and other data sets.  The 1 meter and 1/2 meter NAIP
+imagery is generally acquired in projects covering full states in
+cooperation with state government and other federal agencies that
+use the imagery for a variety of purposes including land use
+planning and natural resource assessment.  The NAIP is also used
+for disaster response.  While suitable for a variety of uses,
+prior to 2007 the 2 meter GSD NAIP imagery was primarily intended
+to assess "crop condition and compliance" to USDA farm program
+conditions. The 2 meter imagery was generally acquired only
+for agricultural areas within state projects.</purpose>
+      </descript>
+      <status>
+         <progress>Complete</progress>
+         <update>irregular</update>
+      </status>
+      <spdom>
+         <bounding>
+            <westbc>
+		-122.48140549
+		</westbc>
+            <eastbc>
+		-122.47426813
+		</eastbc>
+            <northbc>38.901</northbc>
+            <southbc>33.055</southbc>
+         </bounding>
+      </spdom>
+      <keywords>
+         <theme>
+            <themekey>Aerial Compliance</themekey>
+            <themekey>Compliance</themekey>
+            <themekey>Digital Ortho rectified Image</themekey>
+            <themekey>farming</themekey>
+            <themekey>NAIP</themekey>
+            <themekey>Ortho Rectification</themekey>
+            <themekey>Quarter Quadrangle</themekey>
+         </theme>
+         <place>
+            <placekt>Geographic Names Information System</placekt>
+            <placekey>4512002</placekey>
+            <placekey>53039</placekey>
+            <placekey>CA</placekey>
+            <placekey>California</placekey>
+         </place>
+      </keywords>
+      <accconst>Restriction Code: otherRestrictions;  </accconst>
+      <useconst>Use Limitation: NOAA provides no warranty, nor accepts any liability occurring from any incomplete, incorrect, or misleading data, or from any incorrect, incomplete, or misleading use of the data. It is the responsibility of the user to determine whether or not the data is suitable for the intended purpose.;   Other: 
+		This data set was compiled dynamically, and will exist on https://chs.coast.noaa.gov/pickup/dav/474531/2016_4BandImagery.zip until 10 days after 06/10/2019. The file will then be deleted from the system.
+			Access Constraints: There are no limitations for access. | Use Constraints: None.  The USDA-FSA Aerial Photography Field office
+asks to be credited in derived products. | Distribution Liability: Users must assume responsibility to determine the appropriate use of these data. DATA SHOULD NOT BE USED FOR LEGALLY BINDING APPLICATIONS.;   </useconst>
+   </idinfo>
+   <distinfo>
+      <distrib>
+         <cntinfo>
+            <cntorgp>
+               <cntper>Coastal Management, NOAA Office for</cntper>
+            </cntorgp>
+            <cntaddr>
+               <addrtype>physical and mailing</addrtype>
+               <address>2234 South Hobson Ave</address>
+               <city>Charleston</city>
+               <state>SC</state>
+               <postal>29405-2413</postal>
+            </cntaddr>
+            <cntvoice>(843) 740-1202</cntvoice>
+            <cntemail>coastal.info@noaa.gov</cntemail>
+         </cntinfo>
+      </distrib>
+      <distliab>Unknown </distliab>
+   </distinfo>
+   <metainfo>
+      <metd>20190604</metd>
+      <metc>
+         <cntinfo>
+            <cntperp>
+               <cntorg>OCM Partners</cntorg>
+            </cntperp>
+            <cntaddr>
+               <addrtype>mailing and physical</addrtype>
+            </cntaddr>
+            <cntvoice>missing</cntvoice>
+         </cntinfo>
+      </metc>
+      <metc>
+         <cntinfo>
+            <cntperp>
+               <cntper>Coastal Management, NOAA Office for</cntper>
+            </cntperp>
+            <cntaddr>
+               <addrtype>mailing and physical</addrtype>
+               <address>2234 South Hobson Ave</address>
+               <city>Charleston</city>
+               <state>SC</state>
+               <postal>29405-2413</postal>
+            </cntaddr>
+            <cntvoice>(843) 740-1202</cntvoice>
+            <cntemail>coastal.info@noaa.gov</cntemail>
+         </cntinfo>
+      </metc>
+      <metstdn>Content Standard for Digital Geospatial Metadata: Extensions for Remote Sensing Metadata</metstdn>
+      <metstdv>FGDC-STD-012-2002</metstdv>
+   </metainfo>
+</metadata>

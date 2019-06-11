@@ -1,0 +1,1036 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gmi:MI_Metadata xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gsr="http://www.isotc211.org/2005/gsr" xmlns:gss="http://www.isotc211.org/2005/gss" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xsi:schemaLocation="http://www.isotc211.org/2005/gmi https://data.noaa.gov/resources/iso19139/schema.xsd">
+  <gmd:fileIdentifier>
+    <gco:CharacterString>gov.noaa.nmfs.inport:53106</gco:CharacterString>
+  </gmd:fileIdentifier>
+  <gmd:language>
+    <gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="eng">eng</gmd:LanguageCode>
+  </gmd:language>
+  <gmd:characterSet>
+    <gmd:MD_CharacterSetCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="UTF8">UTF8</gmd:MD_CharacterSetCode>
+  </gmd:characterSet>
+  <gmd:hierarchyLevel>
+    <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset">dataset</gmd:MD_ScopeCode>
+  </gmd:hierarchyLevel>
+  <gmd:contact>
+    <gmd:CI_ResponsibleParty>
+      <gmd:organisationName>
+        <gco:CharacterString>OCM Partners</gco:CharacterString>
+      </gmd:organisationName>
+      <gmd:contactInfo>
+        <gmd:CI_Contact>
+          <gmd:phone>
+            <gmd:CI_Telephone>
+              <gmd:voice gco:nilReason="missing"/>
+            </gmd:CI_Telephone>
+          </gmd:phone>
+          <gmd:address>
+            <gmd:CI_Address/>
+          </gmd:address>
+        </gmd:CI_Contact>
+      </gmd:contactInfo>
+      <gmd:role>
+        <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:CI_RoleCode" codeListValue="resourceProvider">resourceProvider</gmd:CI_RoleCode>
+      </gmd:role>
+    </gmd:CI_ResponsibleParty>
+  </gmd:contact>
+  <gmd:contact>
+    <gmd:CI_ResponsibleParty>
+      <gmd:individualName>
+        <gco:CharacterString>Coastal Management, NOAA Office for</gco:CharacterString>
+      </gmd:individualName>
+      <gmd:contactInfo>
+        <gmd:CI_Contact>
+          <gmd:phone>
+            <gmd:CI_Telephone>
+              <gmd:voice>
+                <gco:CharacterString>(843) 740-1202</gco:CharacterString>
+              </gmd:voice>
+            </gmd:CI_Telephone>
+          </gmd:phone>
+          <gmd:address>
+            <gmd:CI_Address>
+              <gmd:deliveryPoint>
+                <gco:CharacterString>2234 South Hobson Ave</gco:CharacterString>
+              </gmd:deliveryPoint>
+              <gmd:city>
+                <gco:CharacterString>Charleston</gco:CharacterString>
+              </gmd:city>
+              <gmd:administrativeArea>
+                <gco:CharacterString>SC</gco:CharacterString>
+              </gmd:administrativeArea>
+              <gmd:postalCode>
+                <gco:CharacterString>29405-2413</gco:CharacterString>
+              </gmd:postalCode>
+              <gmd:country gco:nilReason="missing"/>
+              <gmd:electronicMailAddress>
+                <gco:CharacterString>coastal.info@noaa.gov</gco:CharacterString>
+              </gmd:electronicMailAddress>
+            </gmd:CI_Address>
+          </gmd:address>
+        </gmd:CI_Contact>
+      </gmd:contactInfo>
+      <gmd:role>
+        <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:CI_RoleCode" codeListValue="pointOfContact">pointOfContact</gmd:CI_RoleCode>
+      </gmd:role>
+    </gmd:CI_ResponsibleParty>
+  </gmd:contact>
+  <gmd:dateStamp>
+    <gco:DateTime>2019-06-04T13:14:25</gco:DateTime>
+  </gmd:dateStamp>
+  <gmd:metadataStandardName>
+    <gco:CharacterString>ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data</gco:CharacterString>
+  </gmd:metadataStandardName>
+  <gmd:metadataStandardVersion>
+    <gco:CharacterString>ISO 19115-2:2009(E)</gco:CharacterString>
+  </gmd:metadataStandardVersion>
+  <gmd:MD_GridSpatialRepresentation>
+    <gmd:numberOfDimensions>
+      <gco:Integer>2</gco:Integer>
+    </gmd:numberOfDimensions>
+    <gmd:axisDimensionProperties>
+      <gmd:MD_Dimension>
+        <gmd:dimensionName>
+          <gmd:MD_DimensionNameTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:MD_DimensionNameTypeCode" codeListValue="column">column</gmd:MD_DimensionNameTypeCode>
+        </gmd:dimensionName>
+        <gmd:dimensionSize>
+          <gco:Integer>713</gco:Integer>
+        </gmd:dimensionSize>
+        <gmd:resolution>
+          <gco:Length uom="degree [deg]">1e-05</gco:Length>
+        </gmd:resolution>
+      </gmd:MD_Dimension>
+    </gmd:axisDimensionProperties>
+    <gmd:axisDimensionProperties>
+      <gmd:MD_Dimension>
+        <gmd:dimensionName>
+          <gmd:MD_DimensionNameTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:MD_DimensionNameTypeCode" codeListValue="row">row</gmd:MD_DimensionNameTypeCode>
+        </gmd:dimensionName>
+        <gmd:dimensionSize>
+          <gco:Integer>2004</gco:Integer>
+        </gmd:dimensionSize>
+        <gmd:resolution>
+          <gco:Length uom="degree [deg]">1e-05</gco:Length>
+        </gmd:resolution>
+      </gmd:MD_Dimension>
+    </gmd:axisDimensionProperties>
+    <gmd:cellGeometry>
+      <gmd:MD_CellGeometryCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:MD_CellGeometryCode" codeListValue="point">point</gmd:MD_CellGeometryCode>
+    </gmd:cellGeometry>
+    <gmd:transformationParameterAvailability>
+      <gco:Boolean>0</gco:Boolean>
+    </gmd:transformationParameterAvailability>
+  </gmd:MD_GridSpatialRepresentation>
+  <gmd:referenceSystemInfo>
+    <gmd:MD_ReferenceSystem>
+      <gmd:referenceSystemIdentifier>
+        <gmd:RS_Identifier>
+          <gmd:authority>
+            <gmd:CI_Citation>
+              <gmd:title>
+                <gco:CharacterString>European Petroleum Survey Group (EPSG) Geodetic Parameter Registry</gco:CharacterString>
+              </gmd:title>
+              <gmd:date>
+                <gmd:CI_Date>
+                  <gmd:date>
+                    <gco:Date>2008-11-12</gco:Date>
+                  </gmd:date>
+                  <gmd:dateType>
+                    <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">publication</gmd:CI_DateTypeCode>
+                  </gmd:dateType>
+                </gmd:CI_Date>
+              </gmd:date>
+              <gmd:citedResponsibleParty>
+                <gmd:CI_ResponsibleParty>
+                  <gmd:organisationName>
+                    <gco:CharacterString>European Petroleum Survey Group</gco:CharacterString>
+                  </gmd:organisationName>
+                  <gmd:contactInfo>
+                    <gmd:CI_Contact>
+                      <gmd:onlineResource>
+                        <gmd:CI_OnlineResource>
+                          <gmd:linkage>
+                            <gmd:URL>http://www.epsg-registry.org/</gmd:URL>
+                          </gmd:linkage>
+                        </gmd:CI_OnlineResource>
+                      </gmd:onlineResource>
+                    </gmd:CI_Contact>
+                  </gmd:contactInfo>
+                  <gmd:role gco:nilReason="missing"/>
+                </gmd:CI_ResponsibleParty>
+              </gmd:citedResponsibleParty>
+            </gmd:CI_Citation>
+          </gmd:authority>
+          <gmd:code>
+            <gco:CharacterString>urn:ogc:def:crs:EPSG:4326</gco:CharacterString>
+          </gmd:code>
+          <gmd:version>
+            <gco:CharacterString>6.18.3</gco:CharacterString>
+          </gmd:version>
+        </gmd:RS_Identifier>
+      </gmd:referenceSystemIdentifier>
+    </gmd:MD_ReferenceSystem>
+  </gmd:referenceSystemInfo>
+  <gmd:identificationInfo>
+    <gmd:MD_DataIdentification>
+      <gmd:citation>
+        <gmd:CI_Citation>
+          <gmd:title>
+            <gco:CharacterString>2016 Coastal California NAIP 4-Band 8 Bit Imagery</gco:CharacterString>
+          </gmd:title>
+          <gmd:date>
+            <gmd:CI_Date>
+              <gmd:date>
+                <gco:Date>2016-10-25</gco:Date>
+              </gmd:date>
+              <gmd:dateType>
+                <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/codeList.xml#CI_DateTypeCode" codeListValue="publication">publication</gmd:CI_DateTypeCode>
+              </gmd:dateType>
+            </gmd:CI_Date>
+          </gmd:date>
+          <gmd:identifier>
+            <gmd:MD_Identifier>
+              <gmd:authority>
+                <gmd:CI_Citation>
+                  <gmd:title>
+                    <gco:CharacterString>NOAA/NMFS/EDM</gco:CharacterString>
+                  </gmd:title>
+                  <gmd:date gco:nilReason="inapplicable"/>
+                </gmd:CI_Citation>
+              </gmd:authority>
+              <gmd:code>
+                <gmx:Anchor xlink:href="https://inport.nmfs.noaa.gov/inport/item/53106" xlink:actuate="onRequest" xlink:title="InPort Catalog ID">53106</gmx:Anchor>
+              </gmd:code>
+            </gmd:MD_Identifier>
+          </gmd:identifier>
+          <gmd:citedResponsibleParty>
+            <gmd:CI_ResponsibleParty>
+              <gmd:organisationName gco:nilReason="inapplicable"/>
+              <gmd:contactInfo>
+                <gmd:CI_Contact>
+                  <gmd:onlineResource>
+                    <gmd:CI_OnlineResource>
+                      <gmd:linkage>
+                        <gmd:URL>https://coast.noaa.gov/dataviewer/#/imagery/search/where:ID=8577</gmd:URL>
+                      </gmd:linkage>
+                      <gmd:protocol>
+                        <gco:CharacterString>WWW:LINK-1.0-http--link</gco:CharacterString>
+                      </gmd:protocol>
+                      <gmd:name>
+                        <gco:CharacterString>
+                                                                        Citation URL
+                                                                    </gco:CharacterString>
+                      </gmd:name>
+                      <gmd:description>
+                        <gco:CharacterString>Online Resource</gco:CharacterString>
+                      </gmd:description>
+                      <gmd:function>
+                        <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="download">download</gmd:CI_OnLineFunctionCode>
+                      </gmd:function>
+                    </gmd:CI_OnlineResource>
+                  </gmd:onlineResource>
+                </gmd:CI_Contact>
+              </gmd:contactInfo>
+              <gmd:role gco:nilReason="inapplicable"/>
+            </gmd:CI_ResponsibleParty>
+          </gmd:citedResponsibleParty>
+          <gmd:citedResponsibleParty>
+            <gmd:CI_ResponsibleParty>
+              <gmd:organisationName gco:nilReason="inapplicable"/>
+              <gmd:contactInfo>
+                <gmd:CI_Contact>
+                  <gmd:onlineResource>
+                    <gmd:CI_OnlineResource>
+                      <gmd:linkage>
+                        <gmd:URL>https://coast.noaa.gov/dataviewer</gmd:URL>
+                      </gmd:linkage>
+                      <gmd:protocol>
+                        <gco:CharacterString>WWW:LINK-1.0-http--link</gco:CharacterString>
+                      </gmd:protocol>
+                      <gmd:name>
+                        <gco:CharacterString>
+                                                                        Citation URL
+                                                                    </gco:CharacterString>
+                      </gmd:name>
+                      <gmd:description>
+                        <gco:CharacterString>Online Resource</gco:CharacterString>
+                      </gmd:description>
+                      <gmd:function>
+                        <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="download">download</gmd:CI_OnLineFunctionCode>
+                      </gmd:function>
+                    </gmd:CI_OnlineResource>
+                  </gmd:onlineResource>
+                </gmd:CI_Contact>
+              </gmd:contactInfo>
+              <gmd:role gco:nilReason="inapplicable"/>
+            </gmd:CI_ResponsibleParty>
+          </gmd:citedResponsibleParty>
+          <gmd:citedResponsibleParty>
+            <gmd:CI_ResponsibleParty>
+              <gmd:organisationName gco:nilReason="inapplicable"/>
+              <gmd:contactInfo>
+                <gmd:CI_Contact>
+                  <gmd:onlineResource>
+                    <gmd:CI_OnlineResource>
+                      <gmd:linkage>
+                        <gmd:URL>https://coast.noaa.gov/htdata/raster2/imagery/CA_NAIP_2016_8577</gmd:URL>
+                      </gmd:linkage>
+                      <gmd:protocol>
+                        <gco:CharacterString>WWW:LINK-1.0-http--link</gco:CharacterString>
+                      </gmd:protocol>
+                      <gmd:name>
+                        <gco:CharacterString>
+                                                                        Citation URL
+                                                                    </gco:CharacterString>
+                      </gmd:name>
+                      <gmd:description>
+                        <gco:CharacterString>Online Resource</gco:CharacterString>
+                      </gmd:description>
+                      <gmd:function>
+                        <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="download">download</gmd:CI_OnLineFunctionCode>
+                      </gmd:function>
+                    </gmd:CI_OnlineResource>
+                  </gmd:onlineResource>
+                </gmd:CI_Contact>
+              </gmd:contactInfo>
+              <gmd:role gco:nilReason="inapplicable"/>
+            </gmd:CI_ResponsibleParty>
+          </gmd:citedResponsibleParty>
+          <gmd:presentationForm>
+            <gmd:CI_PresentationFormCode codeList="https://data.noaa.gov/resources/iso19139/schema/resources/Codelist/gmxCodelists.xml#CI_PresentationFormCode" codeListValue="imageDigital">imageDigital</gmd:CI_PresentationFormCode>
+          </gmd:presentationForm>
+        </gmd:CI_Citation>
+      </gmd:citation>
+      <gmd:abstract>
+        <gco:CharacterString>This data set contains imagery from the National Agriculture
+        Imagery Program (NAIP).  The NAIP program is administered by
+        USDA FSA and has been established to support two main FSA
+        strategic goals centered on agricultural production.
+        These are, increase stewardship of America's natural resources
+        while enhancing the environment, and to ensure commodities
+        are procured and distributed effectively and efficiently to
+        increase food security.  The NAIP program supports these goals by
+        acquiring and providing ortho imagery that has been collected
+        during the agricultural growing season in the U.S. The NAIP
+        ortho imagery is tailored to meet FSA requirements and is a
+        fundamental tool used to support FSA farm and conservation
+        programs.  Ortho imagery provides an effective, intuitive
+        means of communication about farm program administration
+        between FSA and stakeholders.  
+        New technology and innovation is identified by fostering and
+        maintaining a relationship with vendors and government
+        partners, and by keeping pace with the broader geospatial
+        community.  As a result of these efforts the NAIP program
+        provides three main products: DOQQ tiles,
+        Compressed County Mosaics (CCM), and Seamline shape files
+        The Contract specifications for NAIP imagery have changed
+        over time reflecting agency requirements and improving
+        technologies.  These changes include image resolution,
+        horizontal accuracy, coverage area, and number of bands.
+        In general, flying seasons are established by FSA and are
+        targeted for peak crop growing conditions.  The NAIP
+        acquisition cycle is based on a minimum 3 year refresh of base
+        ortho imagery.  The tiling format of the NAIP imagery is based
+        on a 3.75' x 3.75' quarter quadrangle with a 300 pixel buffer
+        on all four sides.  NAIP quarter quads are formatted to the UTM
+        coordinate system using the North American Datum of 1983.
+        NAIP imagery may contain as much as 10% cloud cover per tile.
+This data set is a raster file with 713 columns and 2004 rows and may have been mosaiced, reprojected, and clipped from the original tiles. The data set was generated from a larger data set and includes all valid data within the requested geographic bounds.
+		</gco:CharacterString>
+      </gmd:abstract>
+      <gmd:purpose>
+        <gco:CharacterString>NAIP imagery is available for distribution within 60 days
+of the end of a flying season and is intended to provide current
+information of agricultural conditions in support of USDA farm
+programs. For USDA Farm Service Agency, the 1 meter and 1/2 meter
+GSD product provides an ortho image base for Common Land Unit
+boundaries and other data sets.  The 1 meter and 1/2 meter NAIP
+imagery is generally acquired in projects covering full states in
+cooperation with state government and other federal agencies that
+use the imagery for a variety of purposes including land use
+planning and natural resource assessment.  The NAIP is also used
+for disaster response.  While suitable for a variety of uses,
+prior to 2007 the 2 meter GSD NAIP imagery was primarily intended
+to assess "crop condition and compliance" to USDA farm program
+conditions. The 2 meter imagery was generally acquired only
+for agricultural areas within state projects.</gco:CharacterString>
+      </gmd:purpose>
+      <gmd:status>
+        <gmd:MD_ProgressCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:MD_ProgressCode" codeListValue="completed">completed</gmd:MD_ProgressCode>
+      </gmd:status>
+      <gmd:pointOfContact>
+        <gmd:CI_ResponsibleParty>
+          <gmd:individualName>
+            <gco:CharacterString>Coastal Management, NOAA Office for</gco:CharacterString>
+          </gmd:individualName>
+          <gmd:contactInfo>
+            <gmd:CI_Contact>
+              <gmd:phone>
+                <gmd:CI_Telephone>
+                  <gmd:voice>
+                    <gco:CharacterString>(843) 740-1202</gco:CharacterString>
+                  </gmd:voice>
+                </gmd:CI_Telephone>
+              </gmd:phone>
+              <gmd:address>
+                <gmd:CI_Address>
+                  <gmd:deliveryPoint>
+                    <gco:CharacterString>2234 South Hobson Ave</gco:CharacterString>
+                  </gmd:deliveryPoint>
+                  <gmd:city>
+                    <gco:CharacterString>Charleston</gco:CharacterString>
+                  </gmd:city>
+                  <gmd:administrativeArea>
+                    <gco:CharacterString>SC</gco:CharacterString>
+                  </gmd:administrativeArea>
+                  <gmd:postalCode>
+                    <gco:CharacterString>29405-2413</gco:CharacterString>
+                  </gmd:postalCode>
+                  <gmd:country gco:nilReason="missing"/>
+                  <gmd:electronicMailAddress>
+                    <gco:CharacterString>coastal.info@noaa.gov</gco:CharacterString>
+                  </gmd:electronicMailAddress>
+                </gmd:CI_Address>
+              </gmd:address>
+            </gmd:CI_Contact>
+          </gmd:contactInfo>
+          <gmd:role>
+            <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:CI_RoleCode" codeListValue="pointOfContact">pointOfContact</gmd:CI_RoleCode>
+          </gmd:role>
+        </gmd:CI_ResponsibleParty>
+      </gmd:pointOfContact>
+      <gmd:pointOfContact>
+        <gmd:CI_ResponsibleParty>
+          <gmd:individualName>
+            <gco:CharacterString>Coastal Management, NOAA Office for</gco:CharacterString>
+          </gmd:individualName>
+          <gmd:contactInfo>
+            <gmd:CI_Contact>
+              <gmd:phone>
+                <gmd:CI_Telephone>
+                  <gmd:voice>
+                    <gco:CharacterString>(843) 740-1202</gco:CharacterString>
+                  </gmd:voice>
+                </gmd:CI_Telephone>
+              </gmd:phone>
+              <gmd:address>
+                <gmd:CI_Address>
+                  <gmd:deliveryPoint>
+                    <gco:CharacterString>2234 South Hobson Ave</gco:CharacterString>
+                  </gmd:deliveryPoint>
+                  <gmd:city>
+                    <gco:CharacterString>Charleston</gco:CharacterString>
+                  </gmd:city>
+                  <gmd:administrativeArea>
+                    <gco:CharacterString>SC</gco:CharacterString>
+                  </gmd:administrativeArea>
+                  <gmd:postalCode>
+                    <gco:CharacterString>29405-2413</gco:CharacterString>
+                  </gmd:postalCode>
+                  <gmd:country gco:nilReason="missing"/>
+                  <gmd:electronicMailAddress>
+                    <gco:CharacterString>coastal.info@noaa.gov</gco:CharacterString>
+                  </gmd:electronicMailAddress>
+                </gmd:CI_Address>
+              </gmd:address>
+            </gmd:CI_Contact>
+          </gmd:contactInfo>
+          <gmd:role>
+            <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:CI_RoleCode" codeListValue="custodian">custodian</gmd:CI_RoleCode>
+          </gmd:role>
+        </gmd:CI_ResponsibleParty>
+      </gmd:pointOfContact>
+      <gmd:resourceMaintenance>
+        <gmd:MD_MaintenanceInformation>
+          <gmd:maintenanceAndUpdateFrequency>
+            <gmd:MD_MaintenanceFrequencyCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#MD_MaintenanceFrequencyCode" codeListValue="irregular">irregular</gmd:MD_MaintenanceFrequencyCode>
+          </gmd:maintenanceAndUpdateFrequency>
+        </gmd:MD_MaintenanceInformation>
+      </gmd:resourceMaintenance>
+      <gmd:descriptiveKeywords>
+        <gmd:MD_Keywords>
+          <gmd:keyword>
+            <gco:CharacterString>Aerial Compliance</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>Compliance</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>Digital Ortho rectified Image</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>farming</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>NAIP</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>Ortho Rectification</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>Quarter Quadrangle</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:type>
+            <gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:MD_KeywordTypeCode" codeListValue="theme">theme</gmd:MD_KeywordTypeCode>
+          </gmd:type>
+        </gmd:MD_Keywords>
+      </gmd:descriptiveKeywords>
+      <gmd:descriptiveKeywords>
+        <gmd:MD_Keywords>
+          <gmd:keyword>
+            <gco:CharacterString>4512002</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>53039</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>CA</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>California</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:type>
+            <gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:MD_KeywordTypeCode" codeListValue="place">place</gmd:MD_KeywordTypeCode>
+          </gmd:type>
+          <gmd:thesaurusName>
+            <gmd:CI_Citation>
+              <gmd:title>
+                <gco:CharacterString>Geographic Names Information System</gco:CharacterString>
+              </gmd:title>
+              <gmd:date gco:nilReason="missing"/>
+            </gmd:CI_Citation>
+          </gmd:thesaurusName>
+        </gmd:MD_Keywords>
+      </gmd:descriptiveKeywords>
+      <gmd:descriptiveKeywords>
+        <gmd:MD_Keywords>
+          <gmd:keyword>
+            <gco:CharacterString>Imagery - partner (no harvest)</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:type>
+            <gmd:MD_KeywordTypeCode codeList="https://data.noaa.gov/resources/iso19139/schema/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="project">project</gmd:MD_KeywordTypeCode>
+          </gmd:type>
+          <gmd:thesaurusName>
+            <gmd:CI_Citation>
+              <gmd:title>
+                <gco:CharacterString>InPort</gco:CharacterString>
+              </gmd:title>
+              <gmd:date gco:nilReason="inapplicable"/>
+            </gmd:CI_Citation>
+          </gmd:thesaurusName>
+        </gmd:MD_Keywords>
+      </gmd:descriptiveKeywords>
+      <gmd:resourceConstraints>
+        <gmd:MD_Constraints>
+          <gmd:useLimitation>
+            <gco:CharacterString>NOAA provides no warranty, nor accepts any liability occurring from any incomplete, incorrect, or misleading data, or from any incorrect, incomplete, or misleading use of the data. It is the responsibility of the user to determine whether or not the data is suitable for the intended purpose.</gco:CharacterString>
+          </gmd:useLimitation>
+        </gmd:MD_Constraints>
+      </gmd:resourceConstraints>
+      <gmd:resourceConstraints>
+        <gmd:MD_LegalConstraints>
+          <gmd:accessConstraints>
+            <gmd:MD_RestrictionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:MD_RestrictionCode" codeListValue="otherRestrictions">otherRestrictions</gmd:MD_RestrictionCode>
+          </gmd:accessConstraints>
+          <gmd:useConstraints>
+            <gmd:MD_RestrictionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:MD_RestrictionCode" codeListValue="otherRestrictions">otherRestrictions</gmd:MD_RestrictionCode>
+          </gmd:useConstraints>
+          <gmd:otherConstraints>
+            <gco:CharacterString>
+		This data set was compiled dynamically, and will exist on https://chs.coast.noaa.gov/pickup/dav/474531/2016_4BandImagery.zip until 10 days after 06/10/2019. The file will then be deleted from the system.
+			Access Constraints: There are no limitations for access. | Use Constraints: None.  The USDA-FSA Aerial Photography Field office
+asks to be credited in derived products. | Distribution Liability: Users must assume responsibility to determine the appropriate use of these data. DATA SHOULD NOT BE USED FOR LEGALLY BINDING APPLICATIONS.</gco:CharacterString>
+          </gmd:otherConstraints>
+        </gmd:MD_LegalConstraints>
+      </gmd:resourceConstraints>
+      <gmd:resourceConstraints>
+        <gmd:MD_SecurityConstraints>
+          <gmd:classification>
+            <gmd:MD_ClassificationCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:MD_ClassificationCode" codeListValue="unclassified">unclassified</gmd:MD_ClassificationCode>
+          </gmd:classification>
+          <gmd:classificationSystem gco:nilReason="missing"/>
+          <gmd:handlingDescription gco:nilReason="missing"/>
+        </gmd:MD_SecurityConstraints>
+      </gmd:resourceConstraints>
+      <gmd:spatialRepresentationType>
+        <gmd:MD_SpatialRepresentationTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:MD_SpatialRepresentationTypeCode" codeListValue="grid">grid</gmd:MD_SpatialRepresentationTypeCode>
+      </gmd:spatialRepresentationType>
+      <gmd:language>
+        <gco:CharacterString>eng; US</gco:CharacterString>
+      </gmd:language>
+      <gmd:topicCategory>
+        <gmd:MD_TopicCategoryCode>imageryBaseMapsEarthCover</gmd:MD_TopicCategoryCode>
+      </gmd:topicCategory>
+      <gmd:environmentDescription>
+        <gco:CharacterString>None</gco:CharacterString>
+      </gmd:environmentDescription>
+      <gmd:extent>
+        <gmd:EX_Extent>
+          <gmd:geographicElement>
+            <gmd:EX_GeographicBoundingBox>
+              <gmd:westBoundLongitude>
+                <gco:Decimal>
+		-122.48140549
+		</gco:Decimal>
+              </gmd:westBoundLongitude>
+              <gmd:eastBoundLongitude>
+                <gco:Decimal>
+		-122.47426813
+		</gco:Decimal>
+              </gmd:eastBoundLongitude>
+              <gmd:southBoundLatitude>
+                <gco:Decimal>33.055</gco:Decimal>
+              </gmd:southBoundLatitude>
+              <gmd:northBoundLatitude>
+                <gco:Decimal>38.901</gco:Decimal>
+              </gmd:northBoundLatitude>
+            </gmd:EX_GeographicBoundingBox>
+          </gmd:geographicElement>
+          <gmd:temporalElement>
+            <gmd:EX_TemporalExtent>
+              <gmd:extent>
+                <gml:TimeInstant gml:id="boundingTemporalExtent-1-1">
+                  <gml:description> | Currentness: Ground Condition</gml:description>
+                  <gml:timePosition>2016-06-10</gml:timePosition>
+                </gml:TimeInstant>
+              </gmd:extent>
+            </gmd:EX_TemporalExtent>
+          </gmd:temporalElement>
+        </gmd:EX_Extent>
+      </gmd:extent>
+    </gmd:MD_DataIdentification>
+  </gmd:identificationInfo>
+  <gmd:contentInfo>
+    <gmd:MD_FeatureCatalogueDescription>
+      <gmd:complianceCode>
+        <gco:Boolean>false</gco:Boolean>
+      </gmd:complianceCode>
+      <gmd:language>
+        <gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="eng">eng</gmd:LanguageCode>
+      </gmd:language>
+      <gmd:includedWithDataset>
+        <gco:Boolean>false</gco:Boolean>
+      </gmd:includedWithDataset>
+      <gmd:featureCatalogueCitation>
+        <gmd:CI_Citation>
+          <gmd:title>
+            <gco:CharacterString>None</gco:CharacterString>
+          </gmd:title>
+          <gmd:date gco:nilReason="unavailable"/>
+        </gmd:CI_Citation>
+      </gmd:featureCatalogueCitation>
+    </gmd:MD_FeatureCatalogueDescription>
+  </gmd:contentInfo>
+  <gmd:distributionInfo>
+    <gmd:MD_Distribution>
+      <gmd:distributionFormat>
+        <gmd:MD_Format>
+          <gmd:name>
+            <gco:CharacterString>Erdas Imagine (.img) and TIFF / BigTIFF / GeoTIFF (.tif)</gco:CharacterString>
+          </gmd:name>
+          <gmd:version gco:nilReason="missing"/>
+        </gmd:MD_Format>
+      </gmd:distributionFormat>
+      <gmd:distributor>
+        <gmd:MD_Distributor>
+          <gmd:distributorContact>
+            <gmd:CI_ResponsibleParty>
+              <gmd:individualName>
+                <gco:CharacterString>Coastal Management, NOAA Office for</gco:CharacterString>
+              </gmd:individualName>
+              <gmd:contactInfo>
+                <gmd:CI_Contact>
+                  <gmd:phone>
+                    <gmd:CI_Telephone>
+                      <gmd:voice>
+                        <gco:CharacterString>(843) 740-1202</gco:CharacterString>
+                      </gmd:voice>
+                    </gmd:CI_Telephone>
+                  </gmd:phone>
+                  <gmd:address>
+                    <gmd:CI_Address>
+                      <gmd:deliveryPoint>
+                        <gco:CharacterString>2234 South Hobson Ave</gco:CharacterString>
+                      </gmd:deliveryPoint>
+                      <gmd:city>
+                        <gco:CharacterString>Charleston</gco:CharacterString>
+                      </gmd:city>
+                      <gmd:administrativeArea>
+                        <gco:CharacterString>SC</gco:CharacterString>
+                      </gmd:administrativeArea>
+                      <gmd:postalCode>
+                        <gco:CharacterString>29405-2413</gco:CharacterString>
+                      </gmd:postalCode>
+                      <gmd:country gco:nilReason="missing"/>
+                      <gmd:electronicMailAddress>
+                        <gco:CharacterString>coastal.info@noaa.gov</gco:CharacterString>
+                      </gmd:electronicMailAddress>
+                    </gmd:CI_Address>
+                  </gmd:address>
+                </gmd:CI_Contact>
+              </gmd:contactInfo>
+              <gmd:role>
+                <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:CI_RoleCode" codeListValue="distributor">distributor</gmd:CI_RoleCode>
+              </gmd:role>
+            </gmd:CI_ResponsibleParty>
+          </gmd:distributorContact>
+        </gmd:MD_Distributor>
+      </gmd:distributor>
+      <gmd:transferOptions>
+        <gmd:MD_DigitalTransferOptions>
+          <gmd:onLine>
+            <gmd:CI_OnlineResource>
+              <gmd:linkage>
+                <gmd:URL>https://coast.noaa.gov/dataregistry/</gmd:URL>
+              </gmd:linkage>
+              <gmd:protocol>
+                <gco:CharacterString>WWW:LINK-1.0-http--link</gco:CharacterString>
+              </gmd:protocol>
+              <gmd:name>
+                <gco:CharacterString>https://coast.noaa.gov/dataregistry/</gco:CharacterString>
+              </gmd:name>
+              <gmd:description>
+                <gco:CharacterString>Downloadable Data</gco:CharacterString>
+              </gmd:description>
+              <gmd:function>
+                <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="download">download</gmd:CI_OnLineFunctionCode>
+              </gmd:function>
+            </gmd:CI_OnlineResource>
+          </gmd:onLine>
+        </gmd:MD_DigitalTransferOptions>
+      </gmd:transferOptions>
+    </gmd:MD_Distribution>
+  </gmd:distributionInfo>
+  <gmd:dataQualityInfo>
+    <gmd:DQ_DataQuality>
+      <gmd:scope>
+        <gmd:DQ_Scope>
+          <gmd:level>
+            <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset">dataset</gmd:MD_ScopeCode>
+          </gmd:level>
+        </gmd:DQ_Scope>
+      </gmd:scope>
+      <gmd:report>
+        <gmd:DQ_AbsoluteExternalPositionalAccuracy>
+          <gmd:nameOfMeasure>
+            <gco:CharacterString>Horizontal Positional Accuracy</gco:CharacterString>
+          </gmd:nameOfMeasure>
+          <gmd:evaluationMethodDescription>
+            <gco:CharacterString>NAIP horizontal accuracy specifications have evolved over
+          the life of the program.  From 2003 to 2004 the
+          specifications were as follows: 1-meter GSD imagery was
+          to match within 3-meters, and 2-meter GSD to match within 10
+          meters of reference imagery.  For 2005 the 1-meter GSD
+          specification was changed to 5 meters matching the reference
+          imagery.  In 2006 a pilot project was performed using true
+          ground specifications rather than reference imagery.  All
+          states used the same specifications as 2005 except Utah,
+          which required a match of +/- 6 meters to true ground.
+          In 2007 all specifications were the same as 2006 except
+          Arizona used true ground specifications and all other states
+          used reference imagery.  In 2008 and subsequent years
+          no 2-meter GSD imagery was acquired and all specifications
+          were the same as 2007 except approximately half of the
+          states acquired used true ground specifications and the
+          other half used reference imagery.  The 2008 states that
+          used absolute ground control where; Indiana, Minnesota,
+          New Hampshire, North Carolina, Texas, Vermont, and Virginia.
+          From 2009 to present all NAIP imagery acquisitions used
+          the +/- 6 meters to ground specification.</gco:CharacterString>
+          </gmd:evaluationMethodDescription>
+          <gmd:result gco:nilReason="missing"/>
+        </gmd:DQ_AbsoluteExternalPositionalAccuracy>
+      </gmd:report>
+      <gmd:report>
+        <gmd:DQ_CompletenessCommission>
+          <gmd:nameOfMeasure>
+            <gco:CharacterString>Completeness Report</gco:CharacterString>
+          </gmd:nameOfMeasure>
+          <gmd:evaluationMethodDescription>
+            <gco:CharacterString>None</gco:CharacterString>
+          </gmd:evaluationMethodDescription>
+          <gmd:result gco:nilReason="missing"/>
+        </gmd:DQ_CompletenessCommission>
+      </gmd:report>
+      <gmd:report>
+        <gmd:DQ_ConceptualConsistency>
+          <gmd:nameOfMeasure>
+            <gco:CharacterString>Conceptual Consistency</gco:CharacterString>
+          </gmd:nameOfMeasure>
+          <gmd:evaluationMethodDescription>
+            <gco:CharacterString>NAIP 3.75 minute tile file names are based
+on the USGS quadrangle naming convention.</gco:CharacterString>
+          </gmd:evaluationMethodDescription>
+          <gmd:result gco:nilReason="missing"/>
+        </gmd:DQ_ConceptualConsistency>
+      </gmd:report>
+      <gmd:lineage>
+        <gmd:LI_Lineage>
+          <gmd:statement gco:nilReason="missing"/>
+          <gmd:processStep>
+            <gmd:LI_ProcessStep>
+              <gmd:description>
+                <gco:CharacterString>Digital imagery was collected at a nominal GSD of 80cm
+
+                  or 40cm using nine Cessna 441 aircraft flying at
+
+                  an average flight height of 8400m AGL for 80cm acquistion
+
+                  and 4400m AGL for 40cm acquisition. Aircraft flew with
+
+                  Leica Geosystem's ADS100/SH100 digital sensors with
+
+                  firmware 4.54 or ADS100/SH120 digital sensors with 
+
+                  firmware 4.54. Each sensor collected 12 image bands
+
+                  Red,Green,Blue and Near-infrared at each of three
+
+                  look angles; Backward 19 degrees, Forward 26 degrees
+
+                  and Nadir for the SH100.  Backward 10 degrees, Forward
+
+                  14 degrees, and Nadir for the SH120. The Nadir Green
+
+                  band was collected in high resolution mode effectively
+
+                  doubling the resolution for that band.  The ADS100
+
+                  spectral ranges are; Red 619-651nm,Green 525-585nm, Blue
+
+                  435-495nm and Near-infrared at 808-882nm. The CCD arrays
+
+                  have a pixel size of 5.0 microns in a 20000x1 format at
+
+                  nadir; a 18000x1 format at the backward look angle
+
+                  and a 16000x1 format at the forward look angle.
+
+                  The CCD's have a dynamic range of 72db and the A/D
+
+                  converters have a resolution of 14bits.  The ADS is
+
+                  a push-broom sensor the ground footprint of the imagery
+
+                  is approximately 8km wide at a nominal 40cm GSD and 16km
+
+                  wide at a nominal 80cm GSD by the length flightline.
+
+                  The maximum flightline length is limited to approximately
+
+                  240km. The factory calibrations and IMU alignments for
+
+                  each sensor (Serial Numbers: 10511,10512,10514,10522,
+
+                  10527,10530,10531,10534,10540,10554,12502 ) were tested
+
+                  and verified by in-situ test flights before the start
+
+                  of the project. The Leica MissionPro Flight Planning
+
+                  Software is used to develop the flight acquisition plans.     
+
+                  Flight acquisition sub blocks are designed first to
+
+                  define the GNSS base station logistics, and to break
+
+                  the project up into manageable acquisition units. The
+
+                  flight acquisition sub blocks are designed based on
+
+                  the specified acquisition season, native UTM zone of
+
+                  the DOQQs, flight line length limitations (to ensure
+
+                  sufficient performance of the IMU solution) as well
+
+                  as air traffic restrictions in the area. Once the sub
+
+                  blocks have been delineated they are brought into
+
+                  MissionPro for flight line design. The design
+
+                  parameters used in MissionPro will be 30% lateral
+
+                  overlap and 40cm or 80cm resolution.  The flight lines
+
+                  have been designed with a north/south orientation.
+</gco:CharacterString>
+              </gmd:description>
+              <gmd:dateTime>
+                <gco:DateTime>2016-10-25T00:00:00</gco:DateTime>
+              </gmd:dateTime>
+            </gmd:LI_ProcessStep>
+          </gmd:processStep>
+          <gmd:processStep>
+            <gmd:LI_ProcessStep>
+              <gmd:description>
+                <gco:CharacterString>The design takes into account the latitude of the
+
+                  state, which affects line spacing due to convergence
+
+                  as well as the terrain. SRTM elevation data is
+
+                  used in the MissionPro design to ensure the 50cm
+
+                  GSD is achieved over all types of terrain.  The raw
+
+                  data was downloaded from the sensors after each
+
+                  flight using Leica XPro software. The imagery was
+
+                  then georeferenced using the 200Hz GPS/INS data
+
+                  creating an exterior orientation for each scan line
+
+                  (x/y/z/o/p/k). Leica Xpro APM software was used to
+
+                  automatically generate tiepoint measurements between
+
+                  the foward, nadir and backward look angles for each line
+
+                  and to tie all flight lines together. The resulting point
+
+                  data and exterior orientation data were used to perform
+
+                  a full bundle adjustment using ORIMA software. Blunders
+
+                  were removed, and additional tie points measured in weak
+
+                  areas to ensure a robust solution. Once the point data
+
+                  was clean and point coverage was acceptable,
+
+                  photo-identifiable GPS-surveyed ground control points
+
+                  were introduced into the block adjustment. The bundle
+
+                  adjustment process produces revised exterior orientation
+
+                  data for the sensor with GPS/INS, datum, and sensor
+
+                  calibration errors modeled and removed. Using the
+
+                  revised exterior orientation from the bundle adjustment,
+
+                  orthorectified image strips were created with Xpro
+
+                  software and the June 2014 USGS 10m NED DEM. The Xpro
+
+                  orthorectification software applies an atmospheric-BRDF
+
+                  radiometric correction to the imagery. This correction
+
+                  compensates for atmospheric absorption, solar
+
+                  illumination angle and bi-directional reflectance. The
+
+                  orthorectified strips were then overlaid with each other
+
+                  and the ground control to check accuracy. Once the accuracy
+
+                  of the orthorectified image strips were validated the
+
+                  strips were then imported into Inpho's OrthoVista 7.0
+
+                  package which was used for the final radiometric
+
+                  balance, mosaic, and DOQQ sheet creation. The final
+
+                  DOQQ sheets, with a 300m buffer and a ground pixel
+
+                  resolution of 1m or 60cm were then combined and compressed
+
+                  to create the county wide CCMs</gco:CharacterString>
+              </gmd:description>
+              <gmd:dateTime>
+                <gco:DateTime>2016-10-25T00:00:00</gco:DateTime>
+              </gmd:dateTime>
+            </gmd:LI_ProcessStep>
+          </gmd:processStep>
+          <gmd:source>
+            <gmd:LI_Source>
+              <gmd:description>
+                <gco:CharacterString>Source Contribution: Digital Georectified Image. | Source Geospatial Form: remote-sensing image | Type of Source Media: UnKnown</gco:CharacterString>
+              </gmd:description>
+              <gmd:sourceCitation>
+                <gmd:CI_Citation>
+                  <gmd:title>
+                    <gco:CharacterString>LINCOLN RIDGE, NW</gco:CharacterString>
+                  </gmd:title>
+                  <gmd:date>
+                    <gmd:CI_Date>
+                      <gmd:date>
+                        <gco:Date>2016-10-25</gco:Date>
+                      </gmd:date>
+                      <gmd:dateType>
+                        <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">publication</gmd:CI_DateTypeCode>
+                      </gmd:dateType>
+                    </gmd:CI_Date>
+                  </gmd:date>
+                  <gmd:citedResponsibleParty>
+                    <gmd:CI_ResponsibleParty>
+                      <gmd:organisationName>
+                        <gco:CharacterString>USDA-FSA-APFO Aerial Photography Field Office</gco:CharacterString>
+                      </gmd:organisationName>
+                      <gmd:role gco:nilReason="inapplicable"/>
+                    </gmd:CI_ResponsibleParty>
+                  </gmd:citedResponsibleParty>
+                </gmd:CI_Citation>
+              </gmd:sourceCitation>
+              <gmd:sourceExtent>
+                <gmd:EX_Extent>
+                  <gmd:temporalElement>
+                    <gmd:EX_TemporalExtent>
+                      <gmd:extent>
+                        <gml:TimeInstant gml:id="sourceExtent-763076">
+                          <gml:timePosition>2016-06-10</gml:timePosition>
+                        </gml:TimeInstant>
+                      </gmd:extent>
+                    </gmd:EX_TemporalExtent>
+                  </gmd:temporalElement>
+                </gmd:EX_Extent>
+              </gmd:sourceExtent>
+            </gmd:LI_Source>
+          </gmd:source>
+          <gmd:processStep>
+            <gmd:LI_ProcessStep>
+              <gmd:description>
+                <gco:CharacterString>
+							
+The dataset has been mosaiced, reprojected, and clipped as needed from the original input files using the gdalwarp command (version GDAL 2.4.0, released 2018/12/14). Gdalwarp options included -t_srs EPSG:4326 -of GTiff -co COMPRESS=DEFLATE -co TILED=YES -co ALPHA=NO -co BIGTIFF=IF_SAFER -co TFW=YES -mo TIFFTAG_SOFTWARE='Digital Coast Data Access Viewer' -r near. 
+
+						</gco:CharacterString>
+              </gmd:description>
+              <gmd:dateTime>
+                <gco:DateTime>2019-06-10T21:25:43
+</gco:DateTime>
+              </gmd:dateTime>
+              <gmd:processor>
+                <gmd:CI_ResponsibleParty>
+                  <gmd:individualName>
+                    <gco:CharacterString>NOAA Office for Coastal Management</gco:CharacterString>
+                  </gmd:individualName>
+                  <gmd:contactInfo>
+                    <gmd:CI_Contact>
+                      <gmd:address>
+                        <gmd:CI_Address>
+                          <gmd:electronicMailAddress>
+                            <gco:CharacterString>coastal.info@noaa.gov</gco:CharacterString>
+                          </gmd:electronicMailAddress>
+                        </gmd:CI_Address>
+                      </gmd:address>
+                    </gmd:CI_Contact>
+                  </gmd:contactInfo>
+                  <gmd:role>
+                    <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#gmd:CI_RoleCode" codeListValue="processor">processor</gmd:CI_RoleCode>
+                  </gmd:role>
+                </gmd:CI_ResponsibleParty>
+              </gmd:processor>
+            </gmd:LI_ProcessStep>
+          </gmd:processStep>
+        </gmd:LI_Lineage>
+      </gmd:lineage>
+    </gmd:DQ_DataQuality>
+  </gmd:dataQualityInfo>
+</gmi:MI_Metadata>

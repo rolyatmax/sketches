@@ -73,6 +73,7 @@ module.exports = function createRoamingCamera (opts) {
     getCenter,
     startRoaming,
     stopRoaming,
+    _camera: camera,
     moveToNextPosition: startRoaming
   }
 }
