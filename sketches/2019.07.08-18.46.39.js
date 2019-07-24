@@ -25,7 +25,7 @@ const settings = {
   subdivisions: 3,
   colorNoiseMultiplier: 0.05,
   size: 31,
-  wireframeThreshold: 0.01
+  wireframeThreshold: 0.045
 }
 
 const gui = new GUI()
@@ -168,7 +168,8 @@ function getColors (mesh) {
 
 const sketch = () => {
   setup()
-  return () => {
+  return ({ time }) => {
+    camera.center = [70 * Math.sin(time / 10), 70 * Math.cos(time / 10), Math.cos(time / 8) * 70]
     camera.tick()
     pico.clear()
     pico.viewport(0, 0, canvas.width, canvas.height)
