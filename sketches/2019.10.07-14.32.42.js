@@ -92,11 +92,11 @@ function setup () {
     vs: `#version 300 es
     precision highp float;
 
-    in vec2 position;
-    in vec3 iPreStart;
-    in vec3 iStart;
-    in vec3 iEnd;
-    in vec3 iPostEnd;
+    layout(location=0) in vec2 position;
+    layout(location=1) in vec3 iPreStart;
+    layout(location=2) in vec3 iStart;
+    layout(location=3) in vec3 iEnd;
+    layout(location=4) in vec3 iPostEnd;
 
     out float vAlpha;
 
@@ -174,7 +174,7 @@ function setup () {
       float widthMult1;
       if (iPreStart.x > 999.0) {
         vec3 n = normalize(iEnd - iStart);
-        normal1 = vec3(-n.y, n.x, 0);
+        normal1 = vec3(-n.y, n.x, n.z);
         widthMult1 = 1.0;
       } else {
         vec3 a = iPreStart - iStart;
@@ -190,7 +190,7 @@ function setup () {
       float widthMult2;
       if (iPostEnd.x > 999.0) {
         vec3 n = normalize(iStart - iEnd);
-        normal2 = vec3(-n.y, n.x, 0);
+        normal2 = vec3(-n.y, n.x, n.z);
         widthMult2 = 1.0;
       } else {
         vec3 a = iStart - iEnd;
@@ -204,14 +204,16 @@ function setup () {
 
       vec3 p = mix(p1, p2, position.x);
       
-      vec3 planeNormal = normalize(cross(p1 - p2, p2 - iStart));
-      float dProd = dot(lightDir, planeNormal);
-      vAlpha = max(pow(max(0.0, dProd), 0.75) * 0.9, 0.2);
+      // vec3 planeNormal = normalize(cross(p1 - p2, p2 - iStart));
+      // float dProd = dot(lightDir, planeNormal);
+      // vAlpha = max(pow(max(0.0, dProd), 0.75) * 0.9, 0.2);
+      vAlpha = 0.8;
 
       float mag = snoiseFractal((p + vec3(noiseOffset)) * noiseFreq * 2.0) * 0.5 + 0.5;
       p *= (mag * noiseMag * (snoise(p) * 0.5 + 0.5) + 0.2);
 
       gl_Position = projection * view * vec4(p, 1);
+      gl_PointSize = 2.0;
     }
     `,
     fs: `#version 300 es
