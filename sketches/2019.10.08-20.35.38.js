@@ -8,14 +8,14 @@ const vec3 = require('gl-vec3')
 
 const settings = {
   seed: 2,
-  lineWidth: 0.008,
-  points: 5000,
-  meanStep: 0.05,
-  stdStep: 0.01,
-  freqStep: 0.542,
-  noiseMag: 0.3,
-  noiseOffset: 0.1,
-  cameraDist: 4,
+  lineWidth: 0.003,
+  points: 8600,
+  meanStep: 0.025,
+  stdStep: 0.027,
+  freqStep: 0,
+  noiseMag: 2,
+  noiseOffset: 1.29,
+  cameraDist: 1.3,
   lineWidthPow: 0,
   animate: true
 }
@@ -24,11 +24,11 @@ const rico = window.rico = createRico()
 
 const gui = new GUI()
 gui.add(settings, 'seed', 0, 9999).step(1).onChange(setup)
-gui.add(settings, 'points', 200, 10000).step(1).onChange(setup)
+gui.add(settings, 'points', 2, 100000).step(1).onChange(setup)
 gui.add(settings, 'meanStep', 0, 0.1).step(0.0001).onChange(setup)
 gui.add(settings, 'stdStep', 0, 0.1).step(0.0001).onChange(setup)
 gui.add(settings, 'freqStep', 0, 2).step(0.0001).onChange(setup)
-gui.add(settings, 'noiseMag', 0.01, 2)
+gui.add(settings, 'noiseMag', 0, 2)
 gui.add(settings, 'noiseOffset', 0.1, 2)
 gui.add(settings, 'lineWidth', 0.001, 0.1).step(0.001)
 gui.add(settings, 'lineWidthPow', 0.001, 10).step(0.001)
@@ -84,16 +84,16 @@ function setup () {
 
     line.push(...curPosition)
     const stepSize = rand.gaussian(settings.meanStep, settings.stdStep)
-    const step = rand.onSphere(stepSize * 0.1, [])
+    const step = rand.onSphere(stepSize, [])
     vec3.add(velocity, velocity, step)
     // vec3.normalize(velocity, velocity)
     vec3.add(curPosition, curPosition, velocity)
     vec3.normalize(curPosition, curPosition)
   }
 
-  // add "null" indicators to beginning and end of line
-  line.unshift(99999, 99999, 99999)
-  line.push(99999, 99999, 99999)
+  // repeat the first and last points to show when the line is done
+  line.unshift(line[0], line[1], line[2])
+  line.push(line[line.length - 3], line[line.length - 2], line[line.length - 1])
 
   const lineData = new Float32Array(line)
 
@@ -112,6 +112,7 @@ function setup () {
 
     out float vAlpha;
 
+    uniform float aspect;
     uniform float time;
     uniform float lineWidth;
     uniform float lineWidthPow;
@@ -122,48 +123,72 @@ function setup () {
     uniform mat4 view;
 
     void main() {
-      // TODO: come up with a way to do this with just angles, because mixing vecs like this won't work
-      // when mixing two vecs that point equally in opposite directions
-      vec3 normal1;
-      float widthMult1;
-      if (iPreStart.x > 999.0) {
-        vec3 n = normalize(iEnd - iStart);
-        normal1 = vec3(-n.y, n.x, n.z);
-        widthMult1 = 1.0;
+      vec3 preStart = iPreStart;
+      vec3 start = iStart;
+      vec3 end = iEnd;
+      vec3 postEnd = iPostEnd;
+
+      preStart *= ((snoiseFractal((preStart + vec3(noiseOffset)) * noiseFreq * 2.0) * 0.5 + 0.5) * noiseMag * (snoise(preStart) * 0.5 + 0.5) + 0.2);
+      start *= ((snoiseFractal((start + vec3(noiseOffset)) * noiseFreq * 2.0) * 0.5 + 0.5) * noiseMag * (snoise(start) * 0.5 + 0.5) + 0.2);
+      end *= ((snoiseFractal((end + vec3(noiseOffset)) * noiseFreq * 2.0) * 0.5 + 0.5) * noiseMag * (snoise(end) * 0.5 + 0.5) + 0.2);
+      postEnd *= ((snoiseFractal((postEnd + vec3(noiseOffset)) * noiseFreq * 2.0) * 0.5 + 0.5) * noiseMag * (snoise(postEnd) * 0.5 + 0.5) + 0.2);
+
+      vec2 aspectVec = vec2(aspect, 1);
+      mat4 projView = projection * view;
+      vec4 aProj = projView * vec4(preStart, 1);
+      vec4 bProj = projView * vec4(start, 1);
+      vec4 cProj = projView * vec4(end, 1);
+      vec4 dProj = projView * vec4(postEnd, 1);
+
+      vec2 aScreen = aProj.xy / aProj.w * aspectVec;
+      vec2 bScreen = bProj.xy / bProj.w * aspectVec;
+      vec2 cScreen = cProj.xy / cProj.w * aspectVec;
+      vec2 dScreen = dProj.xy / dProj.w * aspectVec;
+
+      float len1 = lineWidth;
+      vec2 dir1 = vec2(0);
+      if (aScreen == bScreen) {
+        dir1 = normalize(cScreen - bScreen);
       } else {
-        vec3 a = iPreStart - iStart;
-        vec3 b = iEnd - iStart;
-        normal1 = normalize(mix(normalize(a), normalize(b), 0.5));
-        widthMult1 = mix(length(a), length(b), 0.5);
+        vec2 a = normalize(bScreen - aScreen);
+        vec2 b = normalize(cScreen - bScreen);
+        vec2 tangent = normalize(a + b);
+        vec2 perp = vec2(-a.y, a.x);
+        vec2 miter = vec2(-tangent.y, tangent.x);
+        dir1 = tangent;
+        len1 = lineWidth / dot(miter, perp);
       }
-      
-      vec3 offset1 = normal1 * position.y * lineWidth * pow(widthMult1, lineWidthPow);
-      vec3 p1 = offset1 + iStart;
 
-      vec3 normal2;
-      float widthMult2;
-      if (iPostEnd.x > 999.0) {
-        vec3 n = normalize(iStart - iEnd);
-        normal2 = vec3(-n.y, n.x, n.z);
-        widthMult2 = 1.0;
+      vec2 normal1 = vec2(-dir1.y, dir1.x);
+      normal1 *= len1;
+      normal1.x /= aspect;
+      vec4 offset1 = vec4(normal1 * position.y, 0, 1);
+      vec4 p1 = bProj + offset1;
+
+
+      float len2 = lineWidth;
+      vec2 dir2 = vec2(0);
+      if (cScreen == dScreen) {
+        dir2 = normalize(dScreen - cScreen);
       } else {
-        vec3 a = iStart - iEnd;
-        vec3 b = iPostEnd - iEnd;
-        normal2 = normalize(mix(normalize(a), normalize(b), 0.5));
-        widthMult2 = mix(length(a), length(b), 0.5);
+        vec2 a = normalize(cScreen - bScreen);
+        vec2 b = normalize(dScreen - cScreen);
+        vec2 tangent = normalize(a + b);
+        vec2 perp = vec2(-a.y, a.x);
+        vec2 miter = vec2(-tangent.y, tangent.x);
+        dir2 = tangent;
+        len2 = lineWidth / dot(miter, perp);
       }
+
+      vec2 normal2 = vec2(-dir2.y, dir2.x);
+      normal2 *= len2;
+      normal2.x /= aspect;
+      vec4 offset2 = vec4(normal2 * position.y, 0, 1);
+      vec4 p2 = cProj + offset2;
       
-      vec3 offset2 = normal2 * position.y * lineWidth * pow(widthMult2, lineWidthPow);
-      vec3 p2 = offset2 + iEnd;
+      vAlpha = 0.7;
 
-      vec3 p = mix(p1, p2, position.x);
-      
-      vAlpha = 0.8;
-
-      float mag = snoiseFractal((p + vec3(noiseOffset)) * noiseFreq * 2.0) * 0.5 + 0.5;
-      p *= (mag * noiseMag * (snoise(p) * 0.5 + 0.5) + 0.2);
-
-      gl_Position = projection * view * vec4(p, 1);
+      gl_Position = mix(p1, p2, position.x);
       gl_PointSize = 2.0;
     }
     `, NOISE_GLSL),
@@ -210,6 +235,7 @@ const sketch = () => {
       view: camera.getMatrix(),
       noiseFreq: settings.freqStep,
       time: time,
+      aspect: width / height,
       projection: mat4.perspective([], Math.PI / 4, width / height, 0.01, 1000)
     }
 
