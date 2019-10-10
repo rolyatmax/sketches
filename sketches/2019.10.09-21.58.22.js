@@ -11,7 +11,7 @@ const createRoamingCamera = require('../lib/create-roaming-camera')
 const mat4 = require('gl-mat4')
 const { createSpring } = require('spring-animator-2')
 
-const paletteSpring = createPaletteAnimator(0.001, 0.1, [
+const paletteSpring = createPaletteAnimator(0.001, 0.3, [
   [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1]
 ])
 
@@ -20,18 +20,26 @@ const rico = window.rico = createRico()
 const settings = {
   seed: 0,
   palette: 0,
-  points: 100000,
+  points: 10000,
+  granularity: 100,
+  tail: 1,
   pointSize: 2,
-  colorVariance: 0.5,
-  primitive: 'lines',
+  colorVariance: 1.5,
+  rotationFreq: 0.1,
+  opacity: 0.95,
+  primitive: 'points',
   cameraDist: 5
 }
 
 const gui = new GUI()
 gui.add(settings, 'seed', 0, 9999).step(1).onChange(setup)
 gui.add(settings, 'palette', 0, 99).step(1)
-gui.add(settings, 'points', 1, 1000000).step(1).onChange(setup)
+gui.add(settings, 'points', 1, 100000).step(1).onChange(setup)
+gui.add(settings, 'granularity', 2, 500).step(1).onChange(setup)
+gui.add(settings, 'tail', 0, 3)
 gui.add(settings, 'colorVariance', 0, 2)
+gui.add(settings, 'rotationFreq', 0.01, 2).step(0.01)
+gui.add(settings, 'opacity', 0, 1)
 gui.add(settings, 'pointSize', 0, 10)
 gui.add(settings, 'cameraDist', 0, 20)
 gui.add(settings, 'primitive', ['points', 'lines', 'line loop', 'triangles', 'triangle strip'])
@@ -49,11 +57,6 @@ const camera = createRoamingCamera({
   stiffness: 0.00001,
   getCameraPosition: () => rand.onSphere(settings.cameraDist)
 })
-
-// function makeQuaternion (angle, axis) {
-//   const sinHalfAngle = Math.sin(angle / 2)
-//   return [Math.cos(angle / 2), sinHalfAngle * axis[0], sinHalfAngle * axis[1], sinHalfAngle * axis[2]]
-// }
 
 function setup () {
   rand = random.createRandom(settings.seed)
@@ -75,16 +78,26 @@ function setup () {
     rotationsData[i * 4 + 3] = axis[2]
   }
 
+  let n = settings.granularity - 1
+  let j = 0
+  const offsetData = new Float32Array(n * 2)
+  while (n--) {
+    offsetData[j++] = n / settings.granularity
+    offsetData[j++] = (n + 1) / settings.granularity
+  }
+
   draw = rico({
     vertexArray: rico.createVertexArray()
-      .vertexAttributeBuffer(0, rico.createVertexBuffer(rico.gl.FLOAT, 3, positionsData))
-      .vertexAttributeBuffer(1, rico.createVertexBuffer(rico.gl.FLOAT, 4, rotationsData)),
-    count: settings.points,
+      .vertexAttributeBuffer(0, rico.createVertexBuffer(rico.gl.FLOAT, 1, offsetData))
+      .instanceAttributeBuffer(1, rico.createVertexBuffer(rico.gl.FLOAT, 3, positionsData))
+      .instanceAttributeBuffer(2, rico.createVertexBuffer(rico.gl.FLOAT, 4, rotationsData)),
+    instanceCount: settings.points,
     vs: inject(HSL_GLSL, inject(NOISE_GLSL, `#version 300 es
     precision highp float;
 
-    layout(location=0) in vec3 position;
-    layout(location=1) in vec4 rotation;
+    layout(location=0) in float offsetPosition;
+    layout(location=1) in vec3 iPosition;
+    layout(location=2) in vec4 iRotation;
 
     out vec4 vColor;
 
@@ -93,6 +106,9 @@ function setup () {
     uniform vec3 color3;
     uniform vec3 color4;
     uniform vec3 color5;
+    uniform float opacity;
+    uniform float rotationFreq;
+    uniform float tail;
     uniform float time;
     uniform float colorVariance;
     uniform float randomVal;
@@ -122,24 +138,23 @@ function setup () {
     }
 
     void main() {
-      float colorT = snoise(position * colorVariance + vec3((time + randomVal * 100.0) * 0.01, 0, 0)) * 0.5 + 0.5;
+      float timeOffset = snoise(iPosition * rotationFreq) * 2.0;
+      float t = sin(time + timeOffset + offsetPosition * tail) * 0.5 + 0.5;
+      float angle = mix(0.0, iRotation.x, t);
+      vec4 q = makeQuaternion(angle, iRotation.yzw);
+
+      float offsetMag = snoise(iPosition + vec3(time * 0.01)) * 2.0;
+      vec3 offset = iPosition * offsetMag;
+
+      vec3 p = transform(iPosition - offset, q) + offset;
+
+      float colorT = snoise(iPosition * colorVariance + vec3((time + randomVal * 100.0) * 0.01, 0, 0)) * 0.5 + 0.5;
       // vec3 color = hsl2rgb(vec3(colorT, 0.5, 0.5));
       vec3 color = getColorFromPalette(colorT);
-      vColor = vec4(color, 1);
-
-      float timeOffset = snoise(position * 0.1) * 2.0;
-
-      float t = sin(time + timeOffset) * 0.5 + 0.5;
-      float angle = mix(0.0, rotation.x, t);
-      vec4 q = makeQuaternion(angle, rotation.yzw);
-
-      float offsetMag = snoise(position + vec3(time * 0.1)) * 2.0;
-      vec3 offset = position * offsetMag;
-
-      vec3 p = transform(position - offset, q) + offset;
+      vColor = vec4(color, opacity);
 
       gl_Position = projection * view * vec4(p, 1);
-      gl_PointSize = pointSize * (snoise(position + vec3(time * 0.1)) * 0.5 + 0.5);
+      gl_PointSize = pointSize * (snoise(iPosition + vec3(time * 0.1)) * 0.5 + 0.5);
     }
     `)),
     fs: `#version 300 es
@@ -151,7 +166,17 @@ function setup () {
     void main() {
       fragColor = vColor;
     }
-    `
+    `,
+    blend: {
+      csrc: 'src alpha',
+      asrc: 'one',
+      cdest: 'one minus src alpha',
+      adest: 'one minus src alpha'
+      // csrc: 'src alpha',
+      // asrc: 'src alpha',
+      // cdest: 'one',
+      // adest: 'one'
+    }
   })
 }
 
@@ -174,6 +199,9 @@ const sketch = () => {
         rand: randomVal,
         pointSize: settings.pointSize,
         colorVariance: settings.colorVariance,
+        rotationFreq: settings.rotationFreq,
+        opacity: settings.opacity,
+        tail: settings.tail,
         color1: palette[0],
         color2: palette[1],
         color3: palette[2],
