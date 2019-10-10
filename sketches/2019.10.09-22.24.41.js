@@ -51,11 +51,6 @@ const camera = createRoamingCamera({
   getCameraPosition: () => rand.onSphere(settings.cameraDist)
 })
 
-// function makeQuaternion (angle, axis) {
-//   const sinHalfAngle = Math.sin(angle / 2)
-//   return [Math.cos(angle / 2), sinHalfAngle * axis[0], sinHalfAngle * axis[1], sinHalfAngle * axis[2]]
-// }
-
 function setup () {
   rand = random.createRandom(settings.seed)
   randomVal = rand.value()
@@ -86,7 +81,7 @@ function setup () {
       .vertexAttributeBuffer(0, rico.createVertexBuffer(rico.gl.FLOAT, 3, positionsData))
       .vertexAttributeBuffer(1, rico.createVertexBuffer(rico.gl.FLOAT, 4, rotationsData)),
     count: pointsCount,
-    vs: inject(HSL_GLSL, inject(NOISE_GLSL, `#version 300 es
+    vs: inject(NOISE_GLSL, `#version 300 es
     precision highp float;
 
     layout(location=0) in vec3 position;
@@ -129,28 +124,26 @@ function setup () {
     }
 
     void main() {
-      float colorT = snoise(position * colorVariance + vec3((time + randomVal * 10.0) * 0.01, 0, 0)) * 0.5 + 0.5;
-      // vec3 color = hsl2rgb(vec3(colorT, 0.5, 0.5));
+      float colorT = noise3D(position * colorVariance + vec3((time + randomVal * 10.0) * 0.01, 0, 0), 1.0, vec2(0, 1));
       vec3 color = getColorFromPalette(colorT);
       vColor = vec4(color, 1);
 
-      float timeOffset = snoise(position * 0.1) * 2.0;
+      float timeOffset = noise3D(position, 0.1, vec2(-2, 2));
 
       float t = sin(time + timeOffset) * 0.5 + 0.5;
       float angle = mix(0.0, rotation.x, t);
       vec4 q = makeQuaternion(angle, rotation.yzw);
 
-      float offsetMag = snoise(position + vec3(time * 0.02)) * 0.5 + 0.5;
-      // float magRangeSize = 0.4;
-      float magRangeSize = (snoise(position * 50.0) * 0.5 + 0.5) * 2.0;
+      float offsetMag = noise3D(position + vec3(time * 0.02), 1.0, vec2(0, 1));
+      float magRangeSize = noise3D(position, 50.0, vec2(0, 2));
       vec3 offset = position * (offsetMag * magRangeSize + 1.0 - magRangeSize / 2.0);
 
       vec3 p = transform(position - offset, q) + offset;
 
       gl_Position = projection * view * vec4(p, 1);
-      gl_PointSize = pointSize * (snoise(position + vec3(time * 0.1)) * 0.5 + 0.5);
+      gl_PointSize = pointSize * noise3D(position + time * 0.01, 2.0, vec2(0.01, 1));
     }
-    `)),
+    `),
     fs: `#version 300 es
     precision highp float;
     
@@ -200,49 +193,17 @@ canvasSketch(sketch, {
   animate: true
 })
 
-/**
- * Converts an HSL color value to RGB. Conversion formula
- * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes h, s, and l are contained in the set [0, 1] and
- * returns r, g, and b in the set [0, 1].
- *
- * @param   {number}  h       The hue
- * @param   {number}  s       The saturation
- * @param   {number}  l       The lightness
- * @return  {Array}           The RGB representation in 0->1
- */
-// function hslToRgb (h, s, l) {
-//   let r, g, b
-
-//   function hue2rgb (p, q, t) {
-//     if (t < 0) t += 1
-//     if (t > 1) t -= 1
-//     if (t < 1 / 6) return p + (q - p) * 6 * t
-//     if (t < 1 / 2) return q
-//     if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6
-//     return p
-//   }
-
-//   if (s === 0) {
-//     r = g = b = l // achromatic
-//   } else {
-//     const q = l < 0.5 ? l * (1 + s) : l + s - l * s
-//     const p = 2 * l - q
-//     r = hue2rgb(p, q, h + 1 / 3)
-//     g = hue2rgb(p, q, h)
-//     b = hue2rgb(p, q, h - 1 / 3)
-//   }
-
-//   return [r, g, b]
-// }
-
-function inject (injection, glsl) {
+function inject (...args) {
   const RETURN = `
 `
+  const glsl = args.pop()
+  const codeChunks = args
   const splitAt = glsl.startsWith('#version 300 es') ? glsl.indexOf(RETURN) + 1 : 0
   const head = glsl.slice(0, splitAt)
   const body = glsl.slice(splitAt)
-  return head + RETURN + injection + RETURN + body
+  codeChunks.unshift(head)
+  codeChunks.push(body)
+  return codeChunks.join(RETURN)
 }
 
 const NOISE_GLSL = `
@@ -264,7 +225,6 @@ vec3 random3(vec3 c) {
 const float F3 =  0.3333333;
 const float G3 =  0.1666667;
 float snoise(vec3 p) {
-
   vec3 s = floor(p + dot(p, vec3(F3)));
   vec3 x = p - s + dot(s, vec3(G3));
    
@@ -298,49 +258,96 @@ float snoise(vec3 p) {
 }
 
 float snoiseFractal(vec3 m) {
-  return   0.5333333* snoise(m)
+  return 0.5333333* snoise(m)
         +0.2666667* snoise(2.0*m)
         +0.1333333* snoise(4.0*m)
         +0.0666667* snoise(8.0*m);
 }
-`
 
-const HSL_GLSL = `
-float hue2rgb(float f1, float f2, float hue) {
-  if (hue < 0.0)
-    hue += 1.0;
-  else if (hue > 1.0)
-    hue -= 1.0;
-  float res;
-  if ((6.0 * hue) < 1.0)
-    res = f1 + (f2 - f1) * 6.0 * hue;
-  else if ((2.0 * hue) < 1.0)
-    res = f2;
-  else if ((3.0 * hue) < 2.0)
-    res = f1 + (f2 - f1) * ((2.0 / 3.0) - hue) * 6.0;
-  else
-    res = f1;
-  return res;
+float noise3D(vec3 xyz, float freq, vec2 range) {
+  float value = snoise(xyz * freq) * 0.5 + 0.5;
+  return mix(range.x, range.y, value);
 }
 
-vec3 hsl2rgb(vec3 hsl) {
-  vec3 rgb;
-  if (hsl.y == 0.0) {
-    rgb = vec3(hsl.z); // Luminance
-  } else {
-    float f2;
-    if (hsl.z < 0.5) {
-      f2 = hsl.z * (1.0 + hsl.y);
-    } else {
-      f2 = hsl.z + hsl.y - hsl.y * hsl.z;
-    }
-    float f1 = 2.0 * hsl.z - f2;
-    rgb.r = hue2rgb(f1, f2, hsl.x + (1.0/3.0));
-    rgb.g = hue2rgb(f1, f2, hsl.x);
-    rgb.b = hue2rgb(f1, f2, hsl.x - (1.0/3.0));
-  }
-  return rgb;
+float noise2D(vec2 xy, float freq, vec2 range) {
+  return noise3D(vec3(xy, 0), freq, range);
 }
+
+float noise1D(float x, float freq, vec2 range) {
+  return noise3D(vec3(x, 0, 0), freq, range);
+}
+
+float noiseFractal3D(vec3 xyz, float freq, vec2 range) {
+  float value = snoiseFractal(xyz * freq) * 0.5 + 0.5;
+  return mix(range.x, range.y, value);
+}
+
+float noiseFractal2D(vec2 xy, float freq, vec2 range) {
+  return noiseFractal3D(vec3(xy, 0), freq, range);
+}
+
+float noiseFractal1D(float x, float freq, vec2 range) {
+  return noiseFractal3D(vec3(x, 0, 0), freq, range);
+}
+
+float noise3D(vec3 xyz, float freq) {
+  vec2 range = vec2(-1, 1);
+  float value = snoise(xyz * freq) * 0.5 + 0.5;
+  return mix(range.x, range.y, value);
+}
+
+float noise2D(vec2 xy, float freq) {
+  return noise3D(vec3(xy, 0), freq);
+}
+
+float noise1D(float x, float freq) {
+  return noise3D(vec3(x, 0, 0), freq);
+}
+
+float noiseFractal3D(vec3 xyz, float freq) {
+  vec2 range = vec2(-1, 1);
+  float value = snoiseFractal(xyz * freq) * 0.5 + 0.5;
+  return mix(range.x, range.y, value);
+}
+
+float noiseFractal2D(vec2 xy, float freq) {
+  return noiseFractal3D(vec3(xy, 0), freq);
+}
+
+float noiseFractal1D(float x, float freq) {
+  return noiseFractal3D(vec3(x, 0, 0), freq);
+}
+
+float noise3D(vec3 xyz) {
+  float freq = 1.0;
+  vec2 range = vec2(-1, 1);
+  float value = snoise(xyz * freq) * 0.5 + 0.5;
+  return mix(range.x, range.y, value);
+}
+
+float noise2D(vec2 xy) {
+  return noise3D(vec3(xy, 0));
+}
+
+float noise1D(float x) {
+  return noise3D(vec3(x, 0, 0));
+}
+
+float noiseFractal3D(vec3 xyz) {
+  float freq = 1.0;
+  vec2 range = vec2(-1, 1);
+  float value = snoiseFractal(xyz * freq) * 0.5 + 0.5;
+  return mix(range.x, range.y, value);
+}
+
+float noiseFractal2D(vec2 xy) {
+  return noiseFractal3D(vec3(xy, 0));
+}
+
+float noiseFractal1D(float x) {
+  return noiseFractal3D(vec3(x, 0, 0));
+}
+
 `
 
 function hexToRgb (hex) {
