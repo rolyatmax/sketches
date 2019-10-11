@@ -3,11 +3,11 @@
  */
 
 const canvasSketch = require('canvas-sketch')
-const { createRico } = require('../lib/dlite-0.0.9')
+const { createRico } = require('../lib/dlite/dlite-0.0.9')
 const random = require('canvas-sketch-util/random')
 const palettes = require('nice-color-palettes')
 const { GUI } = require('dat-gui')
-const createRoamingCamera = require('../lib/create-roaming-camera')
+const createRoamingCamera = require('../lib/roaming-camera/roaming-camera-0.0.1')
 const mat4 = require('gl-mat4')
 const { createSpring } = require('spring-animator-2')
 

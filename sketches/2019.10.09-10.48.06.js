@@ -4,7 +4,7 @@
  */
 
 const canvasSketch = require('canvas-sketch')
-const { createRico } = require('../lib/dlite-0.0.9')
+const { createRico } = require('../lib/dlite/dlite-0.0.9')
 const { GUI } = require('dat-gui')
 const createCamera = require('3d-view-controls')
 const mat4 = require('gl-mat4')

@@ -1,8 +1,8 @@
 const canvasSketch = require('canvas-sketch')
 const random = require('canvas-sketch-util/random')
 const { GUI } = require('dat-gui')
-const { createRico } = require('../lib/dlite-0.0.8')
-const createRoamingCamera = require('../lib/create-roaming-camera')
+const { createRico } = require('../lib/dlite/dlite-0.0.8')
+const createRoamingCamera = require('../lib/roaming-camera/roaming-camera-0.0.1')
 const mat4 = require('gl-mat4')
 const vec3 = require('gl-vec3')
 
