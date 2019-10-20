@@ -146,13 +146,9 @@ function setup () {
       position += velocity;
 
       if (wrap == 1.0) {
-        if (position.x < -1.0) position.x += 2.0;
-        if (position.y < -1.0) position.y += 2.0;
-        if (position.x > 1.0) position.x -= 2.0;
-        if (position.y > 1.0) position.y -= 2.0;
-
-        // position = (random3(agent.zwx * time) + random3(agent.zyy * time).x).yz * 2.0;
-        // heading = (random3(agent.yxw * time).z + 0.5) * TWO_PI;
+        if (length(position) > 0.8) {
+          position = normalize(position) * -0.8;
+        }
       }
 
       vAgent = vec4(position, heading, randVal);

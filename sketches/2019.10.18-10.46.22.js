@@ -109,26 +109,31 @@ function setup () {
       float heading = agent.z;
       float randVal = agent.w;
 
-      float sAngle = sensorAngle / 360.0 * TWO_PI;
+      float mult = position.x > position.y ? 1.0 : 0.4;
+      float sAngle = sensorAngle / 360.0 * TWO_PI; // * mult;
 
       float aspect = dimensions.x / dimensions.y;
 
-      vec2 fSensorVec = vec2(cos(heading), sin(heading)) * sensorDist;
+      vec2 fSensorVec = vec2(cos(heading), sin(heading)) * sensorDist * mult;
       fSensorVec.x /= aspect;
-      vec2 lSensorVec = vec2(cos(heading - sAngle), sin(heading - sAngle)) * sensorDist;
+      vec2 lSensorVec = vec2(cos(heading - sAngle), sin(heading - sAngle)) * sensorDist * mult;
       lSensorVec.x /= aspect;
-      vec2 rSensorVec = vec2(cos(heading + sAngle), sin(heading + sAngle)) * sensorDist;
+      vec2 rSensorVec = vec2(cos(heading + sAngle), sin(heading + sAngle)) * sensorDist * mult;
       rSensorVec.x /= aspect;
 
       vec2 fUV = ((position + fSensorVec) + 1.0) / 2.0;
       vec2 lUV = ((position + lSensorVec) + 1.0) / 2.0;
       vec2 rUV = ((position + rSensorVec) + 1.0) / 2.0;
 
-      float fVal = texture(trailMap, fUV).x;
-      float lVal = texture(trailMap, lUV).x;
-      float rVal = texture(trailMap, rUV).x;
+      vec4 fPixel = texture(trailMap, fUV);
+      vec4 lPixel = texture(trailMap, lUV);
+      vec4 rPixel = texture(trailMap, rUV);
 
-      float hAngleStep = headingStepSize / 360.0 * TWO_PI;
+      float fVal = randVal > 0.5 ? fPixel.x : fPixel.y;
+      float lVal = randVal > 0.5 ? lPixel.x : lPixel.y;
+      float rVal = randVal > 0.5 ? rPixel.x : rPixel.y;
+
+      float hAngleStep = headingStepSize / 360.0 * TWO_PI; // * mult;
 
       if (fVal > lVal && fVal > rVal) {
         heading += 0.0;
@@ -182,7 +187,8 @@ function setup () {
     out vec4 vColor;
 
     void main() {
-      vColor = vec4(1);
+      float randVal = agent.w;
+      vColor = randVal > 0.5 ? vec4(1, 0, 0, 1) : vec4(0, 1, 0, 1);
       if (dot(agent.xy, agent.xy) > 2.0) {
         gl_Position = vec4(0);
         gl_PointSize = 0.0;
@@ -243,19 +249,19 @@ function setup () {
     uniform float diffuse;
     void main() {
       float totalPixels = pow(diffuse * 2.0 + 1.0, 2.0);
-      float sum = texture(trailMap, vUV).x / totalPixels;
+      vec2 sum = texture(trailMap, vUV).xy / totalPixels;
       for (float w = -diffuse; w <= diffuse; w += 1.0) {
         for (float h = -diffuse; h <= diffuse; h += 1.0) {
           vec2 pixel = vUV + vec2(w, h) / dimensions;
           if (pixel == vUV || pixel.x < 0.0 || pixel.x > 1.0 || pixel.y < 0.0 || pixel.y > 1.0) {
             continue;
           }
-          sum += texture(trailMap, pixel).x / totalPixels * decay;
+          sum += texture(trailMap, pixel).xy / totalPixels * decay;
         }
       }
 
-      float value = sum;
-      fragColor = vec4(value, value, value, 1);
+      vec2 value = sum;
+      fragColor = vec4(value, 0, 1);
     }
     `,
     blend: false
@@ -281,8 +287,14 @@ function setup () {
     out vec4 fragColor;
     uniform sampler2D trailMap;
     void main() {
-      float val = texture(trailMap, vUV).x;
-      vec3 color = getColorFromPalette(val);
+      vec2 val = texture(trailMap, vUV).xy;
+      float t;
+      if (val.x > val.y) {
+        t = val.x * 0.5;
+      } else {
+        t = val.y;
+      }
+      vec3 color = getColorFromPalette(t);
       fragColor = vec4(color, 1);
     }
     `),
