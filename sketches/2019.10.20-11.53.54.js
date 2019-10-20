@@ -13,29 +13,26 @@ const createPaletteAnimator = require('../lib/palette-animator/palette-animator-
 const injectGLSL = require('../lib/inject-glsl/inject-glsl-0.0.1')
 const NOISE_GLSL = require('../lib/noise-glsl/noise-glsl-0.0.1')
 
-const paletteAnimator = createPaletteAnimator(palettes, 0.001, 0.1, [1, 1, 1])
-const { PALETTE_ANIMATOR_GLSL } = paletteAnimator
-
-const DIMENSIONS = [128, 128, 128]
+const DIMENSIONS = [256, 256, 256]
 
 const rico = window.rico = createRico()
 
 const settings = {
   seed: 0,
   palette: 15,
-  agentCount: 200000,
+  agentCount: 300000,
   pointSize: 0.01,
-  renderPointSize: 2.5,
-  renderPointOpacity: 0.25,
-  trailMapOpacity: 0.25,
-  stepSize: 0.0045,
-  headingStepSpread: 0.1,
-  sensorSpread: 0.1,
-  sensorDist: 0.1,
-  decay: 0.95,
+  renderPointSize: 1.4,
+  renderPointOpacity: 0.15,
+  trailMapOpacity: 0.05,
+  stepSize: 0.045,
+  headingStepSpread: 0.28,
+  sensorSpread: 0.4,
+  sensorDist: 0.03,
+  decay: 0.99,
   diffuse: 1,
-  trailIntensity: 0.01,
-  cameraDist: 10,
+  trailIntensity: 0.055,
+  cameraDist: 4,
   wrap: true,
   renderPoints: true,
   renderTrails: true
@@ -43,15 +40,15 @@ const settings = {
 
 const gui = new GUI()
 gui.add(settings, 'seed', 0, 9999).step(1).onChange(setup)
-gui.add(settings, 'palette', 0, 99).step(1)
-gui.add(settings, 'agentCount', 1000, 4000000).step(1).onChange(setup)
+gui.add(settings, 'palette', 10, 20).step(1)
+gui.add(settings, 'agentCount', 1000, 800000).step(1).onChange(setup)
 gui.add(settings, 'pointSize', 0.01, 8)
 gui.add(settings, 'renderPointSize', 0.01, 8)
 gui.add(settings, 'renderPointOpacity', 0.01, 1).step(0.01)
 gui.add(settings, 'trailMapOpacity', 0.01, 1)
-gui.add(settings, 'stepSize', 0.0001, 0.005).step(0.0001)
-gui.add(settings, 'headingStepSpread', 0.01, 2).step(0.01)
-gui.add(settings, 'sensorSpread', 0.01, 2).step(0.01)
+gui.add(settings, 'stepSize', 0.001, 0.05).step(0.0001)
+gui.add(settings, 'headingStepSpread', 0.01, 5).step(0.01)
+gui.add(settings, 'sensorSpread', 0.01, 5).step(0.01)
 gui.add(settings, 'sensorDist', 0.0001, 0.5)
 gui.add(settings, 'decay', 0.3, 0.999).step(0.001)
 gui.add(settings, 'diffuse', 0, 4).step(1)
@@ -61,6 +58,10 @@ gui.add(settings, 'wrap')
 gui.add(settings, 'renderPoints')
 gui.add(settings, 'renderTrails')
 gui.add({ next: () => camera.moveToNextPosition() }, 'next')
+gui.add({ restart: setup }, 'restart')
+
+const paletteAnimator = createPaletteAnimator(palettes, 0.001, 0.1, settings.palette - 1)
+const { PALETTE_ANIMATOR_GLSL } = paletteAnimator
 
 let updateAgents, agentsPositionsBuffers, agentsHeadingsBuffers, trailMapFramebuffers, layTrails, renderTrails, processTrails, drawPoints
 let rand = random.createRandom(settings.seed)
@@ -68,7 +69,7 @@ let rand = random.createRandom(settings.seed)
 const camera = createRoamingCamera({
   canvas: rico.canvas,
   zoomSpeed: 4,
-  center: [settings.cameraDist, settings.cameraDist, settings.cameraDist],
+  center: [settings.cameraDist, -settings.cameraDist, -settings.cameraDist],
   eye: [0, 0, 0],
   damping: 0.003,
   stiffness: 0.00001,
@@ -151,21 +152,10 @@ function setup () {
     // SENSORS_COUNT - not including the front sensor
     #define SENSORS_COUNT 3.0
 
-    vec3 getPoint(vec3 heading, float angleSize, float ptIdx) {
+    vec3 getPoint(mat3 m, float angleSize, float ptIdx, float offset) {
       float rads = ptIdx * TWO_PI;
       vec2 position = vec2(cos(rads), sin(rads));
-      vec3 p = vec3(position * angleSize, 1.0);
-
-      vec3 a = heading;
-      vec3 r = vec3(dot(a, a) / a.x, 0, 0);
-      vec3 ar = normalize(r - a);
-      r = a + ar;
-      vec3 oa = a;
-      vec3 an = cross(ar, oa);
-
-      mat3 m = mat3(ar, an, oa);
-
-      p = m * p;
+      vec3 p = m * vec3(position * angleSize, 1.0);
       return normalize(p);
     }
 
@@ -173,10 +163,20 @@ function setup () {
       vec3 position = p;
       vec3 heading = h;
 
+      vec3 a = heading;
+      vec3 r = vec3(dot(a, a) / a.x, 0, 0);
+      vec3 ar = normalize(r - a);
+      r = a + ar;
+      vec3 oa = a;
+      vec3 an = cross(ar, oa);
+      mat3 m = mat3(ar, an, oa);
+
+      float angleOffset = random3((heading.yzx + position) * time * randVal).x * TWO_PI * 0.5;
+
       vec3 sensor0Vec = heading * sensorDist;
-      vec3 sensor1Vec = getPoint(heading, sensorSpread, 0.0) * sensorDist;
-      vec3 sensor2Vec = getPoint(heading, sensorSpread, 1.0 / SENSORS_COUNT) * sensorDist;
-      vec3 sensor3Vec = getPoint(heading, sensorSpread, 2.0 / SENSORS_COUNT) * sensorDist;
+      vec3 sensor1Vec = getPoint(m, sensorSpread, 0.0, angleOffset) * sensorDist;
+      vec3 sensor2Vec = getPoint(m, sensorSpread, 1.0 / SENSORS_COUNT, angleOffset) * sensorDist;
+      vec3 sensor3Vec = getPoint(m, sensorSpread, 2.0 / SENSORS_COUNT, angleOffset) * sensorDist;
 
       vec3 uv0 = ((position + sensor0Vec) + 1.0) / 2.0;
       vec3 uv1 = ((position + sensor1Vec) + 1.0) / 2.0;
@@ -193,30 +193,32 @@ function setup () {
       } else if (val0 < val1 && val0 < val2 && val0 < val3) {
         float r = random3((position.yzx + heading) * time * randVal).x + 0.5;
         if (r < 0.33) {
-          heading = getPoint(heading, headingStepSpread, 0.0);
+          heading = getPoint(m, headingStepSpread, 0.0, angleOffset);
         } else if (r < 0.66) {
-          heading = getPoint(heading, headingStepSpread, 1.0 / SENSORS_COUNT);
+          heading = getPoint(m, headingStepSpread, 1.0 / SENSORS_COUNT, angleOffset);
         } else {
-          heading = getPoint(heading, headingStepSpread, 2.0 / SENSORS_COUNT);
+          heading = getPoint(m, headingStepSpread, 2.0 / SENSORS_COUNT, angleOffset);
         }
       } else if (val1 > val2 && val1 > val3) {
-        heading = getPoint(heading, headingStepSpread, 0.0);
+        heading = getPoint(m, headingStepSpread, 0.0, angleOffset);
       } else if (val2 > val1 && val2 > val3) {
-        heading = getPoint(heading, headingStepSpread, 1.0 / SENSORS_COUNT);
+        heading = getPoint(m, headingStepSpread, 1.0 / SENSORS_COUNT, angleOffset);
       } else if (val3 > val1 && val3 > val2) {
-        heading = getPoint(heading, headingStepSpread, 2.0 / SENSORS_COUNT);
+        heading = getPoint(m, headingStepSpread, 2.0 / SENSORS_COUNT, angleOffset);
       }
 
       vec3 velocity = heading * stepSize * 0.1;
       position += velocity;
 
-      if (wrap == 1.0) {
-        if (position.x < -1.0) position.x += 2.0;
-        if (position.y < -1.0) position.y += 2.0;
-        if (position.z < -1.0) position.z += 2.0;
-        if (position.x > 1.0) position.x -= 2.0;
-        if (position.y > 1.0) position.y -= 2.0;
-        if (position.z > 1.0) position.z -= 2.0;
+      if (wrap == 1.0 && dot(position, position) > 1.0) {
+        position *= -1.0;
+        position = normalize(position);
+        // if (position.x < -1.0) position.x += 2.0;
+        // if (position.y < -1.0) position.y += 2.0;
+        // if (position.z < -1.0) position.z += 2.0;
+        // if (position.x > 1.0) position.x -= 2.0;
+        // if (position.y > 1.0) position.y -= 2.0;
+        // if (position.z > 1.0) position.z -= 2.0;
       }
 
       vPosition = position;
@@ -475,11 +477,12 @@ const sketch = () => {
       }
     })
 
+    agentsVertexArray.vertexAttributeBuffer(0, agentsPositionsBuffers[1])
     for (let i = 0; i < DIMENSIONS[2]; i++) {
       trailMapFramebuffers[0].colorTarget(0, trailMapFramebuffers[0].colorAttachments[0], i)
       layTrails({
         framebuffer: trailMapFramebuffers[0],
-        vertexArray: agentsVertexArray.vertexAttributeBuffer(0, agentsPositionsBuffers[1]),
+        vertexArray: agentsVertexArray,
         uniforms: {
           layerIdx: i,
           dimensions: DIMENSIONS,
