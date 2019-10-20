@@ -1,6 +1,5 @@
 /**
- * This sketch is about calculating the distance of a point to a line (and find the corresponding
- * intersection on that line)
+ * Drawing a circle on a plane that is perpendicular to a given heading
  */
 
 const canvasSketch = require('canvas-sketch')

@@ -1,5 +1,5 @@
 /**
- * This sketch is about trying to wrap my head around quaternions
+ * Trying implement some of the ideas here: https://www.sagejenson.com/physarum
  */
 
 const canvasSketch = require('canvas-sketch')
