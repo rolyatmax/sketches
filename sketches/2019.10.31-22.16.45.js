@@ -83,22 +83,18 @@ function setup () {
   let meshes = [mesh.cells.map(cell => cell.map(idx => mesh.positions[idx]))]
 
   let n = settings.cuts
+  const planeNormal = rand.onSphere(1)
   while (n--) {
-    meshes = meshes.map(m => {
-      return subdivideMeshes(m)
-    }).flat()
-  }
-
-  function subdivideMeshes (mesh) {
-    const planeNormal = rand.onSphere(1)
     const planePt = rand.insideSphere(5)
-    const [mesh1, mesh2] = clipMeshWithPlane(mesh, planeNormal, planePt)
-    const offset1 = vec3.scale([], planeNormal, settings.offset)
-    const offset2 = vec3.scale([], planeNormal, -settings.offset)
-    return [
-      mesh1.map(points => points.map(pt => vec3.add([], pt, offset1))),
-      mesh2.map(points => points.map(pt => vec3.add([], pt, offset2)))
-    ]
+    meshes = meshes.map(m => {
+      const [mesh1, mesh2] = clipMeshWithPlane(m, planeNormal, planePt)
+      const offset1 = vec3.scale([], planeNormal, settings.offset)
+      const offset2 = vec3.scale([], planeNormal, -settings.offset)
+      return [
+        mesh1.map(points => points.map(pt => vec3.add([], pt, offset1))),
+        mesh2.map(points => points.map(pt => vec3.add([], pt, offset2)))
+      ]
+    }).flat()
   }
 
   const positions = []
@@ -106,8 +102,8 @@ function setup () {
   const rotationAxes = []
   const rotationOffsets = []
   for (const triangles of meshes) {
-    const rotationAxis = rand.onSphere(1)
-    const center = getMeshCenter(triangles)
+    const rotationAxis = planeNormal // rand.onSphere(1)
+    const center = meshCenter // getMeshCenter(triangles)
     const rotationOffset = center
     for (const points of triangles) {
       const n = normal(scratch, ...points)
@@ -184,7 +180,7 @@ const draw = rico({
     vec3 translation = normalize(rotationOffset - meshCenter);
     vec3 offset = t * translationAmount * translation;
     vec3 n = transform(normal, quat);
-    float average = (n.x + n.y + n.z) / 3.0 + 0.05;
+    float average = clamp((n.x + n.y + n.z) / 3.0 + 0.05, 0.0, 1.0);
     vec3 color = getColorFromPalette(average) + vec3(0.15);
     float occ = lightFromInside ? ao + 0.1 : 1.0 - ao + 0.1;
     color *= pow(occ, aoPower);
