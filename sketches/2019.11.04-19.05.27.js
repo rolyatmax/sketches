@@ -14,10 +14,10 @@ const palettes = require('nice-color-palettes')
 const createPaletteAnimator = require('../lib/palette-animator/palette-animator-0.0.1')
 const NOISE_GLSL = require('../lib/noise-glsl/noise-glsl-0.0.1')
 const injectGLSL = require('../lib/inject-glsl/inject-glsl-0.0.1')
-const clipMeshWithPlane = require('../lib/clip-mesh-with-plane/clip-mesh-with-plane-0.0.1')
+const clipMeshWithPlane = require('../lib/clip-mesh-with-plane/clip-mesh-with-plane-0.0.2')
 const geoao = require('geo-ambient-occlusion')
-// const mesh = require('primitive-icosphere')(10, { subdivisions: 0 })
-const mesh = require('bunny')
+const mesh = require('primitive-icosphere')(10, { subdivisions: 1 })
+// const mesh = require('bunny')
 // const mesh = require('snowden')
 
 const meshCenter = mesh.positions.reduce((av, pt) => [
@@ -30,7 +30,7 @@ const rico = window.rico = createRico()
 
 const settings = {
   seed: 26,
-  palette: 80,
+  palette: 84,
   primitive: 'triangles',
   offset: 0.412,
   cuts: 1,
@@ -51,7 +51,7 @@ gui.add(settings, 'seed', 0, 9999).step(1).onChange(setup)
 gui.add(settings, 'palette', 0, 100).step(1)
 gui.add(settings, 'offset', 0, 2).onChange(setup)
 gui.add(settings, 'cuts', 0, 28).step(1).onChange(setup)
-gui.add(settings, 'smoothingIterations', 0, 8).step(1).onChange(setup)
+gui.add(settings, 'smoothingIterations', 0, 20).step(1).onChange(setup)
 gui.add(settings, 'sampleCount', 1, 10000).step(1).onChange(setup)
 gui.add(settings, 'resolution', 1, 2048).step(1).onChange(setup)
 gui.add(settings, 'bias', 0, 0.5).step(0.001).onChange(setup)
@@ -81,13 +81,7 @@ const scratch = []
 function setup () {
   rand = random.createRandom(settings.seed)
 
-  let smoothMesh = mesh
-  let k = settings.smoothingIterations
-  while (k--) {
-    smoothMesh = smoothenMesh(smoothMesh)
-  }
-
-  let meshes = [smoothMesh.cells.map(cell => cell.map(idx => smoothMesh.positions[idx]))]
+  let meshes = [mesh]
 
   let n = settings.cuts
   while (n--) {
@@ -100,26 +94,29 @@ function setup () {
     const [mesh1, mesh2] = clipMeshWithPlane(mesh, planeNormal, planePt)
     const offset1 = vec3.scale([], planeNormal, settings.offset)
     const offset2 = vec3.scale([], planeNormal, -settings.offset)
-    return [
-      mesh1.map(points => points.map(pt => vec3.add([], pt, offset1))),
-      mesh2.map(points => points.map(pt => vec3.add([], pt, offset2)))
-    ]
+    mesh1.positions = mesh1.positions.map(pt => vec3.add([], pt, offset1))
+    mesh2.positions = mesh2.positions.map(pt => vec3.add([], pt, offset2))
+    return [mesh1, mesh2]
   }
 
   const positions = []
   const normals = []
   const rotationAxes = []
   const rotationOffsets = []
-  for (const triangles of meshes) {
+  for (let m of meshes) {
+    let k = settings.smoothingIterations
+    while (k--) {
+      m = smoothenMesh(m)
+    }
     const rotationAxis = rand.onSphere(1)
-    const center = getMeshCenter(triangles)
+    const center = getMeshCenter(m.cells.map(cell => cell.map(idx => m.positions[idx])))
     const rotationOffset = center
-    for (const points of triangles) {
-      const n = normal(scratch, ...points)
-      vec3.scale(n, n, 0.8)
-      vec3.add(n, n, [0.5, 0.5, 0.5])
-      for (const pt of points) {
-        positions.push(...pt)
+    for (const pointIdxs of m.cells) {
+      const n = normal(scratch, ...pointIdxs.map(idx => m.positions[idx]))
+      // vec3.scale(n, n, 0.5)
+      // vec3.add(n, n, [0.5, 0.5, 0.5])
+      for (const idx of pointIdxs) {
+        positions.push(...m.positions[idx])
         normals.push(...n)
         rotationAxes.push(...rotationAxis)
         rotationOffsets.push(...rotationOffset)
@@ -188,9 +185,9 @@ const draw = rico({
     vec4 quat = makeQuaternion(3.1415 * t * rotationAmount, rotationAxis);
     vec3 translation = normalize(rotationOffset - meshCenter);
     vec3 offset = t * translationAmount * translation;
-    vec3 n = transform(normal, quat);
-    float average = (n.x + n.y + n.z) / 3.0 + 0.05;
-    vec3 color = getColorFromPalette(average) + vec3(0.15);
+    vec3 n = transform(normal * 0.8 + 0.5, quat);
+    float average = (n.x + n.y + n.z) / 3.0;
+    vec3 color = getColorFromPalette(average) + 0.1;
     float occ = lightFromInside ? ao + 0.1 : 1.0 - ao + 0.1;
     color *= pow(occ, aoPower);
     vColor = vec4(color, 1);
@@ -286,15 +283,14 @@ function createNodeGraph (mesh) {
 }
 
 function smoothenMesh (mesh) {
-  const scratch = []
   const nodeGraph = createNodeGraph(mesh)
   const newPositions = []
   for (const vertex of Object.keys(nodeGraph)) {
     const p = mesh.positions[vertex].slice()
     const neighborCount = nodeGraph[vertex].length
-    for (const neighbor of nodeGraph[vertex]) {
-      const v = vec3.subtract(scratch, mesh.positions[neighbor], p)
-      vec3.scaleAndAdd(p, p, v, 1 / neighborCount)
+    const neighborVectors = nodeGraph[vertex].map(neighbor => vec3.subtract([], mesh.positions[neighbor], p))
+    for (const vec of neighborVectors) {
+      vec3.scaleAndAdd(p, p, vec, 1 / neighborCount)
     }
     newPositions[vertex] = p
   }
