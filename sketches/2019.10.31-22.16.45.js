@@ -16,8 +16,8 @@ const NOISE_GLSL = require('../lib/noise-glsl/noise-glsl-0.0.1')
 const injectGLSL = require('../lib/inject-glsl/inject-glsl-0.0.1')
 const clipMeshWithPlane = require('../lib/clip-mesh-with-plane/clip-mesh-with-plane-0.0.1')
 const geoao = require('geo-ambient-occlusion')
-// const mesh = require('primitive-icosphere')(10, { subdivisions: 0 })
-const mesh = require('bunny')
+const mesh = require('primitive-icosphere')(10, { subdivisions: 0 })
+// const mesh = require('bunny')
 // const mesh = require('snowden')
 
 const meshCenter = mesh.positions.reduce((av, pt) => [
@@ -82,10 +82,11 @@ function setup () {
   rand = random.createRandom(settings.seed)
   let meshes = [mesh.cells.map(cell => cell.map(idx => mesh.positions[idx]))]
 
-  let n = settings.cuts
   const planeNormal = rand.onSphere(1)
+
+  let n = settings.cuts
   while (n--) {
-    const planePt = rand.insideSphere(5)
+    const planePt = rand.insideSphere(10)
     meshes = meshes.map(m => {
       const [mesh1, mesh2] = clipMeshWithPlane(m, planeNormal, planePt)
       const offset1 = vec3.scale([], planeNormal, settings.offset)
@@ -103,7 +104,7 @@ function setup () {
   const rotationOffsets = []
   for (const triangles of meshes) {
     const rotationAxis = planeNormal // rand.onSphere(1)
-    const center = meshCenter // getMeshCenter(triangles)
+    const center = getMeshCenter(triangles)
     const rotationOffset = center
     for (const points of triangles) {
       const n = normal(scratch, ...points)
@@ -176,6 +177,7 @@ const draw = rico({
     float tOffset = random3(rotationOffset).x + 0.5;
     float t = sin(time * 0.8) * 0.5 + 0.5;
     t *= 1.0 + tOffset * 5.0;
+    t *= random3(rotationOffset).y * 2.0;
     vec4 quat = makeQuaternion(3.1415 * t * rotationAmount, rotationAxis);
     vec3 translation = normalize(rotationOffset - meshCenter);
     vec3 offset = t * translationAmount * translation;
