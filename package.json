@@ -67,6 +67,7 @@
     "luma.gl": "^6.4.0",
     "mapbox-gl": "^1.4.0",
     "memoizee": "^0.4.14",
+    "merge-vertices": "^1.0.1",
     "mesh-mean-curvature": "^1.0.1",
     "mesh-reindex": "^1.0.0",
     "meyda": "^4.1.3",

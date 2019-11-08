@@ -1,5 +1,5 @@
 /**
- * Drawing a circle on a plane that is perpendicular to a given heading
+ * Smooth a mesh by relaxing the vertices
  */
 
 const canvasSketch = require('canvas-sketch')
@@ -16,6 +16,7 @@ const NOISE_GLSL = require('../lib/noise-glsl/noise-glsl-0.0.1')
 const injectGLSL = require('../lib/inject-glsl/inject-glsl-0.0.1')
 const clipMeshWithPlane = require('../lib/clip-mesh-with-plane/clip-mesh-with-plane-0.0.2')
 const geoao = require('geo-ambient-occlusion')
+const mergeVertices = require('merge-vertices')
 const mesh = require('primitive-icosphere')(10, { subdivisions: 1 })
 // const mesh = require('bunny')
 // const mesh = require('snowden')
@@ -33,7 +34,7 @@ const settings = {
   palette: 84,
   primitive: 'triangles',
   offset: 0.412,
-  cuts: 1,
+  cuts: 0,
   smoothingIterations: 1,
   rotationAmount: 0,
   translationAmount: 0,
@@ -283,6 +284,7 @@ function createNodeGraph (mesh) {
 }
 
 function smoothenMesh (mesh) {
+  mesh = mergeVertices(mesh.cells, mesh.positions)
   const nodeGraph = createNodeGraph(mesh)
   const newPositions = []
   for (const vertex of Object.keys(nodeGraph)) {

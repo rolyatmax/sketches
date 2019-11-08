@@ -1,5 +1,5 @@
 /**
- * Drawing a circle on a plane that is perpendicular to a given heading
+ * Clip a mesh with a plane
  */
 
 const canvasSketch = require('canvas-sketch')

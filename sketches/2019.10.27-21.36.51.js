@@ -1,5 +1,5 @@
 /**
- * Drawing a circle on a plane that is perpendicular to a given heading
+ * Clip a mesh with a plane
  */
 
 const canvasSketch = require('canvas-sketch')
@@ -13,8 +13,6 @@ const createCamera = require('3d-view-controls')
 const palettes = require('nice-color-palettes')
 const createPaletteAnimator = require('../lib/palette-animator/palette-animator-0.0.1')
 const injectGLSL = require('../lib/inject-glsl/inject-glsl-0.0.1')
-// const earcut = require('earcut')
-// const quickhull = require('quickhull3d')
 // const mesh = require('primitive-icosphere')(10, { subdivisions: 1 })
 // const mesh = require('bunny')
 const mesh = require('snowden')

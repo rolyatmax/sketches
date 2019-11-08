@@ -10,8 +10,6 @@ const createCamera = require('3d-view-controls')
 const mat4 = require('gl-mat4')
 const vec3 = require('gl-vec3')
 const normal = require('get-plane-normal')
-const earcut = require('earcut')
-const quickhull = require('quickhull3d')
 // const mesh = require('primitive-icosphere')(10, { subdivisions: 1 })
 const mesh = require('bunny')
 
