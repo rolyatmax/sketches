@@ -16,7 +16,7 @@
   "author": "Taylor Baldwin",
   "license": "MIT",
   "dependencies": {
-    "3d-view-controls": "^2.2.0",
+    "3d-view-controls": "^2.2.2",
     "alea": "0.0.9",
     "b-spline": "^2.0.1",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
