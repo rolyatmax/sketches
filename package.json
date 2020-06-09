@@ -1,16 +1,13 @@
 {
   "name": "sketches",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "a starting point for sketches",
   "main": "src/index.js",
   "scripts": {
-    "dev-legacy": "node scripts/dev.js",
     "build": "node scripts/build.js",
     "start": "open http://localhost:8080 && cd docs && python -m SimpleHTTPServer 8080",
     "lint": "standard",
-    "postinstall": "cp node_modules/standard/eslintrc.json .eslintrc || true",
-    "create": "NAME=$(node scripts/gen_name.js) && touch src/$NAME.js && npm run dev src/$NAME.js",
-    "new": "canvas-sketch --new --output=tmp --template=./sketch-template.js",
+    "new": "canvas-sketch --new --output=tmp --template=./.sketch-template.js",
     "dev": "canvas-sketch --output=tmp"
   },
   "author": "Taylor Baldwin",
