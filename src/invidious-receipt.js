@@ -15,8 +15,8 @@ const maxSpeed = 10
 // let angle = 0
 let camera = [600, 200]
 let lastCamera = vec2.subtract([], camera, [10000, -100])
-let mouseStart = []
-let cameraStart = []
+const mouseStart = []
+const cameraStart = []
 let destPos = [] // only for visualization
 let dragging = false
 

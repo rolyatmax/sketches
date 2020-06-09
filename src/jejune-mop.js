@@ -1,3 +1,5 @@
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
 const createRegl = require('regl')
 const glsl = require('glslify')
 const mat4 = require('gl-mat4')
@@ -8,8 +10,6 @@ const { GUI } = require('dat-gui')
 const array = require('new-array')
 const Alea = require('alea')
 const createRenderBloom = require('./common/render-bloom')
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
 
 title('jejune-mop', '#555')
 
@@ -120,7 +120,7 @@ function setup () {
     uniforms: {
       particleTexture: particleTexture,
       stateTexture: regl.prop('stateTexture'),
-      projection: ({viewportWidth, viewportHeight}) => mat4.perspective(
+      projection: ({ viewportWidth, viewportHeight }) => mat4.perspective(
         [],
         Math.PI / 4,
         viewportWidth / viewportHeight,
@@ -216,7 +216,7 @@ function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
   css(gui.domElement.parentElement, { zIndex: 11 })
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui
       .add(settingsObj, key, settings[key][1], settings[key][2])
@@ -259,7 +259,7 @@ function createRenderBlur () {
       }
     `,
     uniforms: {
-      iResolution: ({viewportWidth, viewportHeight}) => [viewportWidth, viewportHeight],
+      iResolution: ({ viewportWidth, viewportHeight }) => [viewportWidth, viewportHeight],
       iChannel0: regl.prop('iChannel0'), // sampler2D
       direction: regl.prop('direction')
     },

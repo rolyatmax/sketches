@@ -4,7 +4,7 @@ import Color from 'color'
 import lerp from 'lerp'
 import shuffle from 'shuffle-array'
 import * as THREE from 'three'
-import {GUI} from 'dat-gui'
+import { GUI } from 'dat-gui'
 
 const settings = {
   dotCount: 1200,

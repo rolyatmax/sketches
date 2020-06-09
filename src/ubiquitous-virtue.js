@@ -52,7 +52,7 @@ function main () {
   const step = 5
 
   let squareStartY = 0
-  let squareEndY = canvas.height - squareSize
+  const squareEndY = canvas.height - squareSize
   while (squareStartY < squareEndY) {
     let squareStartX = 0
     while (squareStartX < canvas.width - squareSize) {
@@ -66,8 +66,8 @@ function main () {
   }
 
   function createGrid (start, end, step, camera) {
-    const [ startX, startY ] = start
-    const [ endX, endY ] = end
+    const [startX, startY] = start
+    const [endX, endY] = end
 
     let y = startY + step
 
@@ -81,8 +81,8 @@ function main () {
       let x = startX
       ctx.moveTo(...camera.project([x, y, 0]).map(v => v | 0))
       while (x < endX) {
-        let randomY = Math.sin(y) * rand() + Math.sin(x) * Math.sqrt(y * x) / 50 * rand() + y
-        let randomZ = Math.sin(y) * rand() + Math.sin(x) * Math.sqrt(y * x) / 20 * rand()
+        const randomY = Math.sin(y) * rand() + Math.sin(x) * Math.sqrt(y * x) / 50 * rand() + y
+        const randomZ = Math.sin(y) * rand() + Math.sin(x) * Math.sqrt(y * x) / 20 * rand()
         ctx.lineTo(...camera.project([x, randomY, randomZ]).map(v => v | 0))
         x += step
       }

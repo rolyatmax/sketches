@@ -8,7 +8,7 @@ const HEIGHT = 500
 const WIDTH = 500
 
 const config = {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true,
   fps: 30
 }

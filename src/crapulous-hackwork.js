@@ -1,9 +1,9 @@
-const { GUI } = require('dat-gui')
 import canvasFit from 'canvas-fit'
 import fit from 'objectfit/cover'
 import loadImg from 'load-img'
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
+const { GUI } = require('dat-gui')
 const css = require('dom-css')
 
 title('crapulous-hackwork', '#555')
@@ -63,7 +63,7 @@ function setup () {
 
 function draw () {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
-  for (let points of lines) {
+  for (const points of lines) {
     for (let i = 0; i < points.length - 1; i += 1) {
       const pt1 = points[i]
       const pt2 = points[i + 1]
@@ -95,7 +95,7 @@ function getSquareSize () {
 function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui
       .add(settingsObj, key, settings[key][1], settings[key][2])
@@ -146,9 +146,9 @@ function getSource (container, img) {
 }
 
 function drawImageToCanvas (context, img) {
-  let imgWidth = img.naturalWidth || img.width
-  let imgHeight = img.naturalHeight || img.height
-  let bounds = fit(
+  const imgWidth = img.naturalWidth || img.width
+  const imgHeight = img.naturalHeight || img.height
+  const bounds = fit(
     [0, 0, context.canvas.width, context.canvas.height],
     [0, 0, imgWidth, imgHeight]
   )

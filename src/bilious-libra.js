@@ -1,12 +1,12 @@
 /* global requestAnimationFrame, Audio */
 
+// const { createSpring } = require('spring-animator')
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
 const { GUI } = require('dat-gui')
 const fit = require('canvas-fit')
 const beats = require('beats')
 const createAnalyser = require('web-audio-analyser')
-// const { createSpring } = require('spring-animator')
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
 const css = require('dom-css')
 
 title('bilious-libra', '#555')
@@ -214,7 +214,7 @@ function drawLine (ctx, pts, color) {
 function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui
       .add(settingsObj, key, settings[key][1], settings[key][2])

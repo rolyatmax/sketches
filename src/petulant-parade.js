@@ -1,10 +1,10 @@
+import { triangulate } from 'delaunay'
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
 const { GUI } = require('dat-gui')
 const css = require('dom-css')
 const glsl = require('glslify')
 const createContext = require('pex-context')
-import { triangulate } from 'delaunay'
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
 
 title('petulant-parade', '#555')
 
@@ -258,7 +258,7 @@ function draw () {
 function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui
       .add(settingsObj, key, settings[key][1], settings[key][2])

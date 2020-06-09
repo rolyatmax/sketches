@@ -1,5 +1,7 @@
 /* global requestAnimationFrame, Audio */
 
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
 const css = require('dom-css')
 const fit = require('canvas-fit')
 const { GUI } = require('dat-gui')
@@ -8,8 +10,6 @@ const shuffle = require('shuffle-array')
 const Alea = require('alea')
 const { createSpring } = require('spring-animator')
 const Delaunator = require('delaunator')
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
 const createAnalyser = require('web-audio-analyser')
 const createAudioControls = require('./common/audio-controls')
 const createAudioTrackSelector = require('./common/audio-track-selector')
@@ -199,7 +199,7 @@ function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
   css(gui.domElement.parentElement, { zIndex: 11 })
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui
       .add(settingsObj, key, settings[key][1], settings[key][2])

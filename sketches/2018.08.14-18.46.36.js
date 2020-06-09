@@ -46,7 +46,7 @@ const sketch = ({ render }) => {
     context.fillStyle = 'white'
     context.fillRect(0, 0, width, height)
 
-    const globalPoints = new Array(settings.numDots).fill().map(() => ([ rand() * WIDTH, rand() * HEIGHT ]))
+    const globalPoints = new Array(settings.numDots).fill().map(() => ([rand() * WIDTH, rand() * HEIGHT]))
 
     const blobCanvasWidth = 0.5 - (settings.numBlobs - 1) * settings.blobSpread / 2
     const blobPositions = new Array(settings.numBlobs).fill().map((_, i) => ([(blobCanvasWidth + i * settings.blobSpread) * WIDTH, 0.5 * HEIGHT]))
@@ -67,7 +67,7 @@ const sketch = ({ render }) => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ]
+  dimensions: [WIDTH, HEIGHT]
 })
 
 function fillBlob (context, rand, outline, hueStart, hueEnd) {
@@ -84,8 +84,8 @@ function fillBlob (context, rand, outline, hueStart, hueEnd) {
 
   const gradient = context.createLinearGradient(startPt[0], startPt[1], endPt[0], endPt[1])
   let w = 50
-  let lStart = 50
-  let lEnd = (rand() * 2 - 1) * settings.lSpread + lStart
+  const lStart = 50
+  const lEnd = (rand() * 2 - 1) * settings.lSpread + lStart
   while (w--) {
     const t = w / 49
     const h = (hueEnd - hueStart) * t + hueStart
@@ -95,7 +95,7 @@ function fillBlob (context, rand, outline, hueStart, hueEnd) {
 
   context.beginPath()
   context.moveTo(outline[0][0], outline[0][1])
-  for (let pt of outline.slice(1)) {
+  for (const pt of outline.slice(1)) {
     context.lineTo(pt[0], pt[1])
   }
   context.lineTo(outline[0][0], outline[0][1])

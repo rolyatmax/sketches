@@ -1,10 +1,10 @@
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
 const Alea = require('alea')
 const { GUI } = require('dat-gui')
 const fit = require('canvas-fit')
 const css = require('dom-css')
 const d3 = require('d3-scale-chromatic')
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
 
 window.d3 = d3
 
@@ -132,7 +132,7 @@ function drawCell (cell) {
     if (settings.fillCircles) {
       const spreadValue = getSpreadValue(points.slice(1)) / cell.size
       let color = d3.interpolateBuPu(Math.pow(spreadValue, 4) * 4)
-      let opacity = 0.8
+      const opacity = 0.8
       color = color.replace('rgb(', 'rgba(').replace(')', `, ${opacity})`)
       ctx.fillStyle = color
       ctx.fill()
@@ -151,8 +151,8 @@ function drawCell (cell) {
 function getSpreadValue (pts) {
   let total = 0
   let denom = 0
-  for (let ptA of pts) {
-    for (let ptB of pts) {
+  for (const ptA of pts) {
+    for (const ptB of pts) {
       total += dist(ptA, ptB)
       denom += 1
     }
@@ -182,7 +182,7 @@ function drawCircle (ctx, center, radius) {
 function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui
       .add(settingsObj, key, settings[key][1], settings[key][2])

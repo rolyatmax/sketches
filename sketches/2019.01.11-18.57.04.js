@@ -125,12 +125,12 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true
 })
 
 function getCenterOfPlane (pts) {
-  let total = [0, 0, 0]
+  const total = [0, 0, 0]
   pts.forEach(pt => add(total, total, pt))
   return scale(total, total, 1 / pts.length)
 }

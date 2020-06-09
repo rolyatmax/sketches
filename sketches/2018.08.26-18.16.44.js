@@ -59,7 +59,7 @@ function update (time) {
     }
   }
 
-  for (let dot of dots) {
+  for (const dot of dots) {
     const v = vec2.subtract([], dot.position, dot.lastPosition)
 
     const angle = dot.color * Math.PI * 2 + time
@@ -81,7 +81,7 @@ function update (time) {
 }
 
 function render (context, time) {
-  for (let dot of dots) {
+  for (const dot of dots) {
     const { position, size, stroke, color } = dot
     const colorOffset = position[0] > WIDTH / 2 ? settings.colorOffset : 0
     const c = `hsla(${color * 50 + time + colorOffset}, 50%, 50%, 0.5)`

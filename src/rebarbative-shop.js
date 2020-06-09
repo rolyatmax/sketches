@@ -70,7 +70,7 @@ function setup () {
     }
   }
 
-  this.triangles.forEach(({mesh}) => { this.scene.add(mesh) })
+  this.triangles.forEach(({ mesh }) => { this.scene.add(mesh) })
   this.camera.position.x = this.center[0] // + Math.cos(this.rads) * cameraDistance
   this.camera.position.z = 2000
   this.camera.position.y = this.center[1] // + Math.sin(this.rads) * cameraDistance

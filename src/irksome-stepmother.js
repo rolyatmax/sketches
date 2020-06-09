@@ -129,7 +129,7 @@ function render () {
       const k = j
       const token = requestIdleCallback(() => {
         console.log(k)
-        let batchSize = Math.min(BATCH_SIZE, dots.length - k)
+        const batchSize = Math.min(BATCH_SIZE, dots.length - k)
         renderBatch(k, batchSize)
         if (k + batchSize >= dots.length) {
           console.log('Done rendering!', performance.now() - startTs)

@@ -8,7 +8,7 @@ const normal = require('get-plane-normal')
 const { createSpring } = require('spring-animator')
 
 const settings = {
-  dimensions: [ 800, 800 ],
+  dimensions: [800, 800],
   animate: true,
   fps: 24
 }
@@ -38,8 +38,8 @@ const rootLine = {
   drawOffsetSpring: createSpring(DAMPENING, STIFFNESS, 0)
 }
 
-let lines = window.lines = [rootLine]
-let spaces = window.spaces = []
+const lines = window.lines = [rootLine]
+const spaces = window.spaces = []
 
 let getLineCoords, getSpaceCornerCoords, isDrawn, getSubdivisionDepth, rand
 
@@ -91,7 +91,7 @@ const sketch = () => {
       }
     })
 
-    for (let line of linesToRemove) {
+    for (const line of linesToRemove) {
       lines.splice(lines.indexOf(line), 1)
     }
 
@@ -126,14 +126,14 @@ const sketch = () => {
     const combined = mat4.multiply([], proj, view)
 
     // render
-    for (let line of lines) {
+    for (const line of lines) {
       if (isEqual(line.drawOffset, 0)) continue
       const opacity = (line.type === 'subdivider') ? ((LINE_OPACITY - 0.1) / (getSubdivisionDepth(line.parent) + 1) + 0.1) : LINE_OPACITY
       const coords = getLineCoords(line)
       const [pt1, pt2] = coords.map(pt => project([], pt, viewport, combined))
 
       line.gradientOffset = line.gradientOffset || rand() * 0.8 + 0.1
-      let gradient = context.createLinearGradient(pt1[0], pt1[1], pt2[0], pt2[1])
+      const gradient = context.createLinearGradient(pt1[0], pt1[1], pt2[0], pt2[1])
       gradient.addColorStop(0, `rgba(${LINE_COLOR.join(', ')}, ${opacity})`)
       gradient.addColorStop(line.gradientOffset, `rgba(${LINE_COLOR.join(', ')}, 0)`)
       gradient.addColorStop(1, `rgba(${LINE_COLOR.join(', ')}, ${opacity})`)
@@ -146,13 +146,13 @@ const sketch = () => {
       context.stroke()
     }
 
-    for (let space of spaces) {
+    for (const space of spaces) {
       if (space.killed || space.parent) continue
       const pts = getSpaceCornerCoords(space).map(pt => project([], pt, viewport, combined))
 
       space.color = space.color || SPACE_COLOR.map(v => v * rand())
 
-      let gradient = context.createLinearGradient(pts[0][0], pts[0][1], pts[2][0], pts[2][1])
+      const gradient = context.createLinearGradient(pts[0][0], pts[0][1], pts[2][0], pts[2][1])
       gradient.addColorStop(0, `rgba(${space.color.join(', ')}, ${SPACE_OPACITY})`)
       gradient.addColorStop(0.5, `rgba(${LINE_COLOR.join(', ')}, ${Math.max(SPACE_OPACITY - 0.1, 0)})`)
       gradient.addColorStop(1, `rgba(${space.color.join(', ')}, ${SPACE_OPACITY})`)
@@ -219,7 +219,7 @@ function _getLineCoords (line) {
   if (line.coords) return line.coords
   if (line.type === 'root') {
     const end = vec3.scaleAndAdd([], line.origin, line.dir, line.drawOffset)
-    return [ line.origin.slice(), end ]
+    return [line.origin.slice(), end]
   }
   // THOUGHT: maybe extenders should only be tied to their spaces?
   // and spaces should be, simply, extruders and their origins??
@@ -231,13 +231,13 @@ function _getLineCoords (line) {
     const start = extruderOriginCoords[line.connection]
     const dir = vec3.subtract([], parentCoords[line.connection], start)
     const end = vec3.scaleAndAdd([], start, dir, line.drawOffset)
-    return [ start, end ]
+    return [start, end]
   }
   if (line.type === 'extruder') {
     const parentCoords = getLineCoords(line.parent)
     const start = vec3.scaleAndAdd([], parentCoords[0], line.dir, line.drawOffset)
     const end = vec3.scaleAndAdd([], parentCoords[1], line.dir, line.drawOffset)
-    return [ start, end ]
+    return [start, end]
   }
   if (line.type === 'subdivider') {
     // We should be able to determine space boundaries by looking recursively
@@ -248,12 +248,12 @@ function _getLineCoords (line) {
       const start = vec3.lerp([], spaceCornerCoords[0], spaceCornerCoords[3], line.subdivisionOffset)
       const end = vec3.lerp([], spaceCornerCoords[1], spaceCornerCoords[2], line.subdivisionOffset)
       vec3.lerp(end, start, end, line.drawOffset)
-      return [ start, end ]
+      return [start, end]
     } else {
       const start = vec3.lerp([], spaceCornerCoords[0], spaceCornerCoords[1], line.subdivisionOffset)
       const end = vec3.lerp([], spaceCornerCoords[3], spaceCornerCoords[2], line.subdivisionOffset)
       vec3.lerp(end, start, end, line.drawOffset)
-      return [ start, end ]
+      return [start, end]
     }
   }
   throw new Error(`line type not recognized: ${line.type}`)

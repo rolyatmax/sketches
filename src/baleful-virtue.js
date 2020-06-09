@@ -50,8 +50,8 @@ function main () {
   }
 
   function createGrid (start, end, step) {
-    const [ startX, startY ] = start
-    const [ endX, endY ] = end
+    const [startX, startY] = start
+    const [endX, endY] = end
 
     let y = startY + step
 
@@ -65,7 +65,7 @@ function main () {
       let x = startX
       ctx.moveTo(x, y)
       while (x < endX) {
-        let randomY = Math.sin(y) * rand() + Math.sin(x) * Math.sqrt(y * x) / 20 * rand() + y
+        const randomY = Math.sin(y) * rand() + Math.sin(x) * Math.sqrt(y * x) / 20 * rand() + y
         ctx.lineTo(x, randomY)
         x += step
       }

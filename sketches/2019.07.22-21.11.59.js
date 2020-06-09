@@ -118,8 +118,8 @@ function setup () {
 function getPositions (mesh) {
   let j = 0
   const positions = new Float32Array(mesh.cells.length * 3 * 3)
-  for (let cell of mesh.cells) {
-    for (let i of cell) {
+  for (const cell of mesh.cells) {
+    for (const i of cell) {
       positions[j++] = mesh.positions[i][0]
       positions[j++] = mesh.positions[i][1]
       positions[j++] = mesh.positions[i][2]
@@ -131,7 +131,7 @@ function getPositions (mesh) {
 function getBarys (mesh) {
   let j = 0
   const barys = new Float32Array(mesh.cells.length * 3 * 3)
-  for (let cell of mesh.cells) {
+  for (const cell of mesh.cells) {
     barys[j++] = 1
     barys[j++] = 0
     barys[j++] = 0
@@ -149,8 +149,8 @@ function getColors (mesh) {
   let j = 0
   const colors = new Float32Array(mesh.cells.length * 3 * 3)
   const colorsByPosition = []
-  for (let cell of mesh.cells) {
-    for (let i of cell) {
+  for (const cell of mesh.cells) {
+    for (const i of cell) {
       let color = colorsByPosition[i]
       if (!color) {
         const t = rand.noise3D(
@@ -202,18 +202,18 @@ canvasSketch(sketch, {
   animate: true
 })
 
-function createRender(pico, { vert, frag, attributes, uniforms, primitive, count, offset = 0 }) {
+function createRender (pico, { vert, frag, attributes, uniforms, primitive, count, offset = 0 }) {
   const program = pico.createProgram(vert, frag)
   const drawCall = pico
     .createDrawCall(program, attributes)
     .drawRanges([offset, count])
     .primitive(primitive)
 
-    if (uniforms) {
-      for (const blockName in uniforms) {
-        drawCall.uniformBlock(blockName, uniforms[blockName])
-      }
+  if (uniforms) {
+    for (const blockName in uniforms) {
+      drawCall.uniformBlock(blockName, uniforms[blockName])
     }
+  }
 
   return function render (opts) {
     // implement attributes updates?
@@ -296,7 +296,6 @@ render({
 
 // ALSO: WHAT DOES THIS LOOK LIKE WITH INSTANCED ATTRIBUTES?
 
-
 // ------ UNIFORMS
 
 // creation
@@ -325,7 +324,5 @@ render({
     fragmentUniformBlock: [settings.wireframeThreshold]
   }
 })
-
-
 
 */

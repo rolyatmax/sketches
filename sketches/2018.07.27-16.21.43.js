@@ -6,7 +6,7 @@ const createAnalyser = require('web-audio-analyser')
 const Meyda = require('meyda')
 
 const config = {
-  dimensions: [ 1024, 1024 ],
+  dimensions: [1024, 1024],
   animate: true
 }
 
@@ -137,7 +137,7 @@ const sketch = () => {
 
 function getCompositeHue (weightedHues, opacity) {
   const total = [0, 0]
-  for (let [hue, weight] of weightedHues) {
+  for (const [hue, weight] of weightedHues) {
     total[0] += Math.cos(hue / 180 * Math.PI) * weight
     total[1] += Math.sin(hue / 180 * Math.PI) * weight
   }

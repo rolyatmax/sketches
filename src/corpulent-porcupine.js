@@ -12,7 +12,7 @@ const lineColors = [
 ]
 
 let drawers
-let pathsTaken = {}
+const pathsTaken = {}
 
 const ctx = Sketch.create({
   autoclear: false
@@ -70,7 +70,7 @@ function createDrawer (position) {
 function getNextPoint (curPosition) {
   const points = getPossiblePoints(curPosition)
   if (!points.length) return null
-  let next = points[(Math.random() * points.length) | 0]
+  const next = points[(Math.random() * points.length) | 0]
   pathsTaken[key(curPosition, next)] = true
   if (!isInViewport(next)) return null
 

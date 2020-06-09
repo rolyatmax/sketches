@@ -123,7 +123,7 @@ ctx.draw = function () {
 }
 
 function getCenterOfPlane (pts) {
-  let total = [0, 0, 0]
+  const total = [0, 0, 0]
   pts.forEach(pt => add(total, total, pt))
   return scale(total, total, 1 / (pts.length))
 }

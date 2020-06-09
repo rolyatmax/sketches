@@ -1,10 +1,10 @@
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
 const Alea = require('alea')
 const { GUI } = require('dat-gui')
 const fit = require('canvas-fit')
 const css = require('dom-css')
 const d3 = require('d3-scale-chromatic')
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
 
 window.d3 = d3
 
@@ -100,7 +100,7 @@ function drawRay (ray, size, offset, t) {
   ]
   ray.points.push(origin)
   ray.direction = (ray.direction + settings.speed / 2000 * t + 0.001) % (Math.PI * 2)
-  let directionAngle = [
+  const directionAngle = [
     Math.cos(ray.direction),
     Math.sin(ray.direction)
   ]
@@ -258,7 +258,7 @@ function drawLine (ctx, points, color) {
 function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui
       .add(settingsObj, key, settings[key][1], settings[key][2])

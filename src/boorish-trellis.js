@@ -1,3 +1,5 @@
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
 const Alea = require('alea')
 const SimplexNoise = require('simplex-noise')
 const { GUI } = require('dat-gui')
@@ -9,8 +11,6 @@ const mat4 = require('gl-mat4')
 const vec2 = require('gl-vec2')
 const createCamera = require('3d-view-controls')
 const array = require('new-array')
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
 const css = require('dom-css')
 
 title('boorish-trellis', '#ddd')
@@ -93,7 +93,7 @@ function setup () {
     adjacentIsBaseA: [],
     adjacentIsBaseB: []
   }
-  for (let tile of tiles) {
+  for (const tile of tiles) {
     // top face
     attributes.position.push(tile[0], tile[1], tile[2])
     attributes.adjacentPositionA.push(tile[1], tile[2], tile[0])
@@ -167,7 +167,7 @@ function setup () {
 
 const drawGlobal = regl({
   uniforms: {
-    projection: ({viewportWidth, viewportHeight}) => (
+    projection: ({ viewportWidth, viewportHeight }) => (
       mat4.perspective([],
         Math.PI / 8,
         viewportWidth / viewportHeight,
@@ -205,7 +205,7 @@ regl.frame(({ time }) => {
 function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui
       .add(settingsObj, key, settings[key][1], settings[key][2])

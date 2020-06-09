@@ -46,7 +46,7 @@ function setup () {
     vec2.add(position, position, center)
     const angle = rand.range(Math.PI * 2)
     const lightness = 50
-    return {position, angle, lightness}
+    return { position, angle, lightness }
   })
   isFirstDraw = true
 }
@@ -135,6 +135,6 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ],
+  dimensions: [SIZE, SIZE],
   animate: true
 })

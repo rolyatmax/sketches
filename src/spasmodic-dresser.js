@@ -7,7 +7,7 @@ import createResizableCanvas from './common/resizable-canvas'
 import colorPalettes from './common/color-palettes.json'
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
-import {GUI} from 'dat-gui'
+import { GUI } from 'dat-gui'
 
 const seed = Math.random()
 const rand = new Alea(seed)

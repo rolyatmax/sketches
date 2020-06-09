@@ -57,7 +57,7 @@ function setup () {
     })
     camera.identity()
     const randVal = rand.value()
-    return {camera, randVal}
+    return { camera, randVal }
   })
 }
 
@@ -76,7 +76,7 @@ const sketch = () => {
     ]
 
     cells.forEach((cell, i) => {
-      const {camera, randVal} = cell
+      const { camera, randVal } = cell
       const cameraRads = millis / 10000 * settings.cameraSpeed
       const offset = settings.gridSize * randVal * (Math.cos(time * 0.5 + Math.PI / 2) * 0.5 + 0.5) * 0.5 * settings.offsetSize
       const cameraPosition = [
@@ -139,12 +139,12 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true
 })
 
 function getCenterOfPlane (pts) {
-  let total = [0, 0, 0]
+  const total = [0, 0, 0]
   pts.forEach(pt => add(total, total, pt))
   return scale(total, total, 1 / pts.length)
 }

@@ -25,7 +25,7 @@ createProject({
   tiles: [],
 
   main: (canvas, settings, scale = 1) => {
-    let { seed } = settings
+    const { seed } = settings
     const ctx = window.ctx = canvas.getContext('2d')
     ctx.globalCompositeOperation = 'darker'
     const center = [canvas.width / 2 | 0, canvas.height / 2 | 0]

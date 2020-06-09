@@ -1,7 +1,7 @@
+import Delaunator from 'delaunator'
 const canvasSketch = require('canvas-sketch')
 const { GUI } = require('dat-gui')
 const Alea = require('alea')
-import Delaunator from 'delaunator'
 const vec2 = require('gl-vec2')
 
 const WIDTH = 2048
@@ -77,7 +77,7 @@ function setup () {
     circle3.radii.push(z)
   }
 
-  for (let circle of circles) {
+  for (const circle of circles) {
     circle.r = circle.radii.reduce((tot, r) => tot + r, 0) / circle.radii.length
   }
 
@@ -94,7 +94,7 @@ const sketch = () => {
 
     const hasDrawn = {}
 
-    for (let circle of circles) {
+    for (const circle of circles) {
       const color = `hsla(${circle.hue}, ${circle.sat}%, ${circle.light}%, ${settings.opacity})`
       drawCircle(context, circle.pos, 5, color, settings.fill)
       drawCircle(context, circle.pos, circle.r, color, settings.fill)
@@ -130,7 +130,7 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true
 })
 

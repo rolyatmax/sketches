@@ -140,7 +140,7 @@ const sketch = ({ gl, width, height }) => {
     camera.tick()
 
     regl.clear({
-      color: [ 1.0, 1.0, 1.0, 1.0 ],
+      color: [1.0, 1.0, 1.0, 1.0],
       depth: 1
     })
 

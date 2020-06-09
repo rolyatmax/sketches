@@ -1,14 +1,14 @@
 /* global requestAnimationFrame */
 
+// import tinycolor from 'tinycolor2'
+// import colorPalettes from './common/color-palettes'
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
 const Alea = require('alea')
 const { GUI } = require('dat-gui')
 const fit = require('canvas-fit')
 const memoize = require('memoizee')
 const { createSpring } = require('spring-animator')
-// import tinycolor from 'tinycolor2'
-// import colorPalettes from './common/color-palettes'
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
 const css = require('dom-css')
 
 title('equanimous-hackwork', '#555')
@@ -36,7 +36,7 @@ const settings = guiSettings(
 )
 
 let rand, lines, spaces
-function setup() {
+function setup () {
   rand = new Alea(settings.seed)
   // a list of open spaces that can be subdivided
   // each space is defined as an array of [top, right, bottom, left] line boundaries
@@ -78,7 +78,7 @@ function setup() {
   setNewLineOffsets()
 }
 
-function draw() {
+function draw () {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   const color = '#555'
   const center = [canvas.width, canvas.height].map(v => (v / 2) | 0)
@@ -158,7 +158,7 @@ function draw() {
     })
 }
 
-function setNewLineOffsets() {
+function setNewLineOffsets () {
   Object.keys(lines).forEach((k, i) => {
     const line = lines[k]
     const newValue = rand() * 0.8 + 0.1
@@ -173,20 +173,20 @@ canvas.addEventListener('click', setNewLineOffsets)
 setup()
 loop()
 
-function loop() {
+function loop () {
   requestAnimationFrame(loop)
   draw()
 }
 
 // ------------- helpers -------------
 
-function drawRect(ctx, startX, startY, width, height, color) {
+function drawRect (ctx, startX, startY, width, height, color) {
   ctx.beginPath()
   ctx.strokeStyle = color
   ctx.strokeRect(startX, startY, width, height)
 }
 
-function drawLine(ctx, ptA, ptB, color) {
+function drawLine (ctx, ptA, ptB, color) {
   ctx.beginPath()
   ctx.strokeStyle = color
   ctx.moveTo(ptA[0], ptA[1])
@@ -194,10 +194,10 @@ function drawLine(ctx, ptA, ptB, color) {
   ctx.stroke()
 }
 
-function guiSettings(settings, onChange) {
+function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui.add(
       settingsObj,
@@ -216,7 +216,7 @@ function guiSettings(settings, onChange) {
   return settingsObj
 }
 
-function title(name, color) {
+function title (name, color) {
   includeFont({
     fontFamily: '"Space Mono", sans-serif',
     url: 'https://fonts.googleapis.com/css?family=Space+Mono:700'

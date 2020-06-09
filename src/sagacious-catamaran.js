@@ -300,7 +300,7 @@ function setup () {
 
 const drawGlobal = regl({
   uniforms: {
-    projection: ({viewportWidth, viewportHeight}) => (
+    projection: ({ viewportWidth, viewportHeight }) => (
       mat4.perspective([],
         Math.PI / 8,
         viewportWidth / viewportHeight,
@@ -496,7 +496,7 @@ function createTileManager (regl, tiles, settings) {
 function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui
       .add(settingsObj, key, settings[key][1], settings[key][2])

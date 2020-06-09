@@ -1,11 +1,11 @@
-const Sketch = require('sketch-js')
-const Alea = require('alea')
-const { GUI } = require('dat-gui')
-const { createSpring } = require('spring-animator')
 import fit from 'objectfit/cover'
 import loadImg from 'load-img'
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
+const Sketch = require('sketch-js')
+const Alea = require('alea')
+const { GUI } = require('dat-gui')
+const { createSpring } = require('spring-animator')
 const css = require('dom-css')
 
 title('precipitate-shark', '#555')
@@ -73,9 +73,9 @@ function printText (context, text, size) {
 }
 
 function drawImageToCanvas (context, img) {
-  let imgWidth = img.naturalWidth || img.width
-  let imgHeight = img.naturalHeight || img.height
-  let bounds = fit(
+  const imgWidth = img.naturalWidth || img.width
+  const imgHeight = img.naturalHeight || img.height
+  const bounds = fit(
     [0, 0, context.canvas.width, context.canvas.height],
     [0, 0, imgWidth, imgHeight]
   )
@@ -210,7 +210,7 @@ preSetup()
 function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui
       .add(settingsObj, key, settings[key][1], settings[key][2])

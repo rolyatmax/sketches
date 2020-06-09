@@ -62,7 +62,7 @@ createProject({
 
     let colorIndex
 
-    let xNoiseStart = rand() * 100 | 0
+    const xNoiseStart = rand() * 100 | 0
     let yNoise = rand() * 100 | 0
     for (let y = margin; y <= canvas.height - margin; y += step) {
       yNoise += noiseStep / 1000

@@ -52,7 +52,7 @@ function setup () {
 
       shuffledPixels = []
       pixels = []
-      for (let p of pixels1) {
+      for (const p of pixels1) {
         const nearest = pixels2Tree.nearest(p, 1)[0][0]
         pixels2Tree.remove(nearest)
         pixels[p.i] = {
@@ -87,7 +87,7 @@ const sketch = () => {
     context.fillStyle = '#fff'
     context.fillRect(0, 0, width, height)
     if (!shuffledPixels) return
-    for (let p of shuffledPixels) {
+    for (const p of shuffledPixels) {
       const t = p.spring.tick()
       const position = vec2.lerp([], p.startPosition, p.endPosition, t)
       const radius = settings.sampleSize * p.random * settings.circleSize
@@ -100,7 +100,7 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ],
+  dimensions: [SIZE, SIZE],
   animate: true
 })
 
@@ -120,9 +120,9 @@ function generatePixelList (picker, size, sample) {
 }
 
 function drawImageToCanvas (context, img) {
-  let imgWidth = img.naturalWidth || img.width
-  let imgHeight = img.naturalHeight || img.height
-  let bounds = fit(
+  const imgWidth = img.naturalWidth || img.width
+  const imgHeight = img.naturalHeight || img.height
+  const bounds = fit(
     [0, 0, SIZE, SIZE],
     [0, 0, imgWidth, imgHeight]
   )

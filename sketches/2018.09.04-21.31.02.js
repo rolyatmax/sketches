@@ -1,8 +1,8 @@
+import loadImg from 'load-img'
+import fit from 'objectfit/cover'
 const canvasSketch = require('canvas-sketch')
 const { random } = require('canvas-sketch-util')
 const { GUI } = require('dat-gui')
-import loadImg from 'load-img'
-import fit from 'objectfit/cover'
 
 const SIZE = 800
 const FPS = 30
@@ -98,15 +98,15 @@ function sketch ({ render }) {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ],
+  dimensions: [SIZE, SIZE],
   animate: true,
   fps: FPS
 })
 
 function drawImageToCanvas (context, img) {
-  let imgWidth = img.naturalWidth || img.width
-  let imgHeight = img.naturalHeight || img.height
-  let bounds = fit(
+  const imgWidth = img.naturalWidth || img.width
+  const imgHeight = img.naturalHeight || img.height
+  const bounds = fit(
     [0, 0, SIZE, SIZE],
     [0, 0, imgWidth, imgHeight]
   )

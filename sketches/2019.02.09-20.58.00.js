@@ -1,5 +1,5 @@
-const canvasSketch = require('canvas-sketch')
 import * as luma from 'luma.gl'
+const canvasSketch = require('canvas-sketch')
 const { GUI } = require('dat-gui')
 const { random } = require('canvas-sketch-util')
 const createRoamingCamera = require('../src/common/create-roaming-camera')

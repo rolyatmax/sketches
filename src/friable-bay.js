@@ -66,7 +66,7 @@ function draw () {
   ctx.globalCompositeOperation = 'lighten'
   clear()
   rand = new Alea(settings.seed)
-  let { canvasPadding, cellPadding, cellWidth, cellHeight } = settings
+  const { canvasPadding, cellPadding, cellWidth, cellHeight } = settings
   let width = ctx.width - canvasPadding * 2 - cellWidth
   let height = ctx.height - canvasPadding * 2 - cellHeight
   const cellTotalWidth = cellWidth + cellPadding
@@ -87,7 +87,6 @@ function draw () {
     }
     y += cellTotalHeight
   }
-
 
   function drawMiniCanvas (x, y, width, height, pow) {
     const lines = []
@@ -116,7 +115,7 @@ function drawLine (ctx, line, color) {
   ctx.beginPath()
   ctx.strokeStyle = color
   ctx.moveTo(line[0][0], line[0][1])
-  for (let pt of line.slice(1)) {
+  for (const pt of line.slice(1)) {
     ctx.lineTo(pt[0], pt[1])
   }
   ctx.stroke()

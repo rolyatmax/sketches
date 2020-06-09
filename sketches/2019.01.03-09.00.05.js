@@ -1,9 +1,9 @@
+import loadImg from 'load-img'
+import fit from 'objectfit/cover'
 const canvasSketch = require('canvas-sketch')
 const random = require('canvas-sketch-util/random')
 const vec2 = require('gl-vec2')
 const { GUI } = require('dat-gui')
-import loadImg from 'load-img'
-import fit from 'objectfit/cover'
 
 const SIZE = 2048
 const HALF_SIZE = SIZE / 2
@@ -79,7 +79,7 @@ const sketch = ({ render }) => {
 
     if (!pixelPicker) return
 
-    for (let pt of points) {
+    for (const pt of points) {
       const pixel = pixelPicker(pt.position[0], pt.position[1])
       let color
       if (settings.filter === 'all') {
@@ -102,13 +102,13 @@ const sketch = ({ render }) => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ]
+  dimensions: [SIZE, SIZE]
 })
 
 function drawImageToCanvas (context, img) {
-  let imgWidth = img.naturalWidth || img.width
-  let imgHeight = img.naturalHeight || img.height
-  let bounds = fit(
+  const imgWidth = img.naturalWidth || img.width
+  const imgHeight = img.naturalHeight || img.height
+  const bounds = fit(
     [0, 0, SIZE, SIZE],
     [0, 0, imgWidth, imgHeight]
   )

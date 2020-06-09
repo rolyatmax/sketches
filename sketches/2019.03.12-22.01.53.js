@@ -52,7 +52,7 @@ gui.add(settings, 'lightness', 0, 1).step(0.01)
 gui.add(settings, 'speed', 0, 0.02).step(0.001)
 gui.add(settings, 'hideTrisChance', 0, 1).step(0.01).onChange(onChange)
 
-const sketch = ({canvas}) => {
+const sketch = ({ canvas }) => {
   const camera = createCamera(canvas, { zoomSpeed: 4 })
   const regl = createRegl({
     extensions: ['OES_texture_float'],
@@ -354,7 +354,7 @@ const sketch = ({canvas}) => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   context: 'webgl',
   attributes: { antialias: true },
   animate: true

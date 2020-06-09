@@ -31,7 +31,7 @@ camera.lookAt([0, 0, 0], [-5, 0, -3], [0, 99, 0])
 //   .step(0.01)
 
 const modelFiles = [
-  '/src/models/fidi.mesh.json',
+  '/src/models/fidi.mesh.json'
   // '/src/models/empire-state.mesh.json'
   // '/src/models/fidi.obj'
   // '/src/models/empire-state.obj',
@@ -50,10 +50,10 @@ Promise.all(modelFiles.map(f => fetch(f).then(r => r.json()))).then(models => {
 
 let render
 
-function setup(models) {
+function setup (models) {
   window.models = models
   const renderers = models.map(createModelRenderer)
-  render = function() {
+  render = function () {
     renderers.forEach(r => r())
   }
 }
@@ -72,7 +72,7 @@ const globalRender = regl({
   }
 })
 
-function startLoop() {
+function startLoop () {
   regl.frame(({ time }) => {
     regl.clear({
       color: [1, 1, 1, 1],
@@ -91,7 +91,7 @@ function startLoop() {
   })
 }
 
-function createModelRenderer(model, i) {
+function createModelRenderer (model, i) {
   // scale these down a bit
   const scaleFactor = 0.01
   const offset = 500
@@ -242,7 +242,7 @@ function createModelRenderer(model, i) {
     primitive: 'triangle strip'
   })
 
-  return function render() {
+  return function render () {
     renderPoints()
     // renderFaces()
   }

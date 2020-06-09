@@ -1,4 +1,7 @@
 import { GUI } from 'dat-gui'
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
+import css from 'dom-css'
 const createRegl = require('regl')
 const glslify = require('glslify')
 const fit = require('canvas-fit')
@@ -8,9 +11,6 @@ const newArray = require('new-array')
 const getNormal = require('get-plane-normal')
 const pickRay = require('camera-picking-ray')
 const createCamera = require('3d-view-controls')
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
-import css from 'dom-css'
 
 title('loquacious-protest', '#ddd')
 
@@ -106,7 +106,7 @@ const globalState = regl({
   }
 })
 
-regl.frame(({viewportWidth, viewportHeight}) => {
+regl.frame(({ viewportWidth, viewportHeight }) => {
   projection = mat4.perspective([],
     Math.PI / 2,
     viewportWidth / viewportHeight,

@@ -163,7 +163,7 @@ function makePixelPicker (ctx) {
 }
 
 function getCentroid (pts) {
-  let total = [0, 0]
+  const total = [0, 0]
   pts.forEach(pt => {
     total[0] += pt[0]
     total[1] += pt[1]

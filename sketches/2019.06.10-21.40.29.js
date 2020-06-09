@@ -19,7 +19,7 @@ const settings = {
 
 let drawCircles, setup, data
 let moveToNextPosition = () => {}
-let rand = random.createRandom(settings.seed)
+const rand = random.createRandom(settings.seed)
 
 const gui = new GUI()
 gui.add(settings, 'pointSize', 1, 100)
@@ -57,7 +57,7 @@ const sketch = ({ gl, width, height }) => {
       const lon = Number(d[0])
       const elevation = Number(d[2])
       const intensity = Number(d[3])
-      return {lat, lon, elevation, intensity}
+      return { lat, lon, elevation, intensity }
     }).filter(d => d.elevation > 0)
 
     const lonExtent = extent(data, d => d.lon)
@@ -153,7 +153,7 @@ const sketch = ({ gl, width, height }) => {
     // camera._camera.up = [camera._camera.up[0], camera._camera.up[1], 999]
 
     regl.clear({
-      color: [ 1.0, 1.0, 1.0, 1.0 ],
+      color: [1.0, 1.0, 1.0, 1.0],
       depth: 1
     })
 

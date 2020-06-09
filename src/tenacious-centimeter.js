@@ -1,3 +1,5 @@
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
 const createREGL = require('regl')
 const { GUI } = require('dat-gui')
 const glslify = require('glslify')
@@ -5,8 +7,6 @@ const fit = require('canvas-fit')
 const d3 = require('d3-random')
 const mat4 = require('gl-mat4')
 const createCamera = require('3d-view-controls')
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
 const css = require('dom-css')
 
 const canvas = document.body.appendChild(document.createElement('canvas'))
@@ -175,7 +175,7 @@ function restart () {
       particleState: () => currParticleState,
       prevState: () => prevParticleState,
       pointWidth: regl.prop('pointWidth'),
-      projection: ({viewportWidth, viewportHeight}) => (
+      projection: ({ viewportWidth, viewportHeight }) => (
         mat4.perspective([],
           Math.PI / 4,
           viewportWidth / viewportHeight,

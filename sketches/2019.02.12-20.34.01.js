@@ -1,5 +1,5 @@
-const canvasSketch = require('canvas-sketch')
 import * as luma from 'luma.gl'
+const canvasSketch = require('canvas-sketch')
 const { GUI } = require('dat-gui')
 const { random } = require('canvas-sketch-util')
 const createCamera = require('3d-view-controls')
@@ -403,7 +403,7 @@ function createAnimator (initVal, accel, friction, speedLimit) {
 }
 
 function createRoamingCamera (opts) {
-  const {canvas, zoomSpeed, center, eye, getCameraPosition, accel, friction, moveEveryNFrames} = opts
+  const { canvas, zoomSpeed, center, eye, getCameraPosition, accel, friction, moveEveryNFrames } = opts
   const roamOnEveryNFrames = moveEveryNFrames || 600
   let isRoaming = true
   let frameCount = 0
@@ -414,7 +414,7 @@ function createRoamingCamera (opts) {
     zoomSpeed: zoomSpeed
   })
 
-  let cameraPos = createAnimator(center, accel, friction)
+  const cameraPos = createAnimator(center, accel, friction)
 
   camera.lookAt(
     center,

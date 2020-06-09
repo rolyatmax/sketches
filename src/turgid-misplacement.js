@@ -70,7 +70,7 @@ function render (t) {
 
   const w = t * settings.noiseSpeed / 10000
 
-  for (let cell of cells) {
+  for (const cell of cells) {
     const s = size / settings.gridSize
     const o = [
       offset[0] + s * cell.x,
@@ -104,7 +104,7 @@ function render (t) {
     ctx.strokeStyle = `hsla(${entropy * 90 + t / 20}, 70%, 50%, ${entropy * 0.3 + 0.7})`
     ctx.stroke()
 
-    for (let p of points) {
+    for (const p of points) {
       ctx.beginPath()
       ctx.arc(position(p.x) + offset[0], position(p.y) + offset[1], settings.circleSize / settings.gridSize, 0, Math.PI * 2)
       ctx.fillStyle = 'hsla(150, 50%, 50%, 0.4)'
@@ -122,7 +122,7 @@ requestAnimationFrame(function loop (t) {
 function getWeightedRandom (rand) {
   return function weightedRandom (choices) {
     let r = rand()
-    for (let choice of choices) {
+    for (const choice of choices) {
       if (choice.weight < r) {
         return choice.value
       }

@@ -1,11 +1,11 @@
 // so much credit to Íñigo Quílez
 // http://www.iquilezles.org/www/articles/spherefunctions/spherefunctions.htm
 
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
 const css = require('dom-css')
 const glsl = require('glslify')
 const createRegl = require('regl')
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
 
 title('strident-jasmine', '#fff')
 
@@ -178,7 +178,7 @@ const render = regl({
     aPosition: [-1, -1, -1, 4, 4, -1]
   },
   uniforms: {
-    uResolution: ({ viewportWidth, viewportHeight }) => ([ viewportWidth, viewportHeight ]),
+    uResolution: ({ viewportWidth, viewportHeight }) => ([viewportWidth, viewportHeight]),
     uTime: regl.prop('uTime')
   }
 })

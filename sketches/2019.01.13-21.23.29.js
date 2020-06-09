@@ -36,7 +36,7 @@ function setup () {
   lines = (new Array(settings.lineCount)).fill().map(() => {
     const center = [SIZE / 2, SIZE / 2]
     const points = [vec2.add(center, center, rand.insideCircle(settings.startSize * SIZE * 0.5))]
-    return {points}
+    return { points }
   })
 
   cells = (new Array(settings.gridSize * settings.gridSize)).fill().map((_, i) => ({
@@ -90,14 +90,14 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ],
+  dimensions: [SIZE, SIZE],
   animate: true
 })
 
 function drawLine (ctx, points) {
   ctx.beginPath()
   ctx.moveTo(points[0][0], points[0][1])
-  for (let pt of points.slice(1)) {
+  for (const pt of points.slice(1)) {
     ctx.lineTo(pt[0], pt[1])
   }
   ctx.strokeStyle = `rgba(40, 40, 40, ${settings.opacity / 100})`

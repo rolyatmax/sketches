@@ -1,14 +1,14 @@
 import Alea from 'alea'
 import { GUI } from 'dat-gui'
+
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
+import css from 'dom-css'
 const createRegl = require('regl')
 const glslify = require('glslify')
 const fit = require('canvas-fit')
 const mat4 = require('gl-mat4')
 const createCamera = require('3d-view-controls')
-
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
-import css from 'dom-css'
 
 title('lachrymose-chaise', '#ddd')
 
@@ -85,7 +85,7 @@ regl.frame(({ time }) => {
 function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui
       .add(settingsObj, key, settings[key][1], settings[key][2])

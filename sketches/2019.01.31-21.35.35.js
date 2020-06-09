@@ -83,7 +83,7 @@ const sketch = ({ gl, width, height }) => {
         rad * Math.cos(theta)
       ]
       const hue = (v * 0.5 + 0.5) * settings.hueSpread + settings.hueStart
-      const {r, g, b} = d3Color.rgb(`hsl(${hue}, ${settings.saturation}%, ${settings.lightness}%)`)
+      const { r, g, b } = d3Color.rgb(`hsl(${hue}, ${settings.saturation}%, ${settings.lightness}%)`)
       return {
         position: vec3.add(position, position, velocity),
         size: rand.range(0.5, settings.pointSize),
@@ -157,7 +157,7 @@ const sketch = ({ gl, width, height }) => {
     camera.tick()
 
     regl.clear({
-      color: [ 1.0, 1.0, 1.0, 1.0 ],
+      color: [1.0, 1.0, 1.0, 1.0],
       depth: 1
     })
 

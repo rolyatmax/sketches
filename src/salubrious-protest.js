@@ -1,15 +1,15 @@
 import Alea from 'alea'
 import Color from 'color'
 import { GUI } from 'dat-gui'
+import array from 'new-array'
+import includeFont from './common/include-font'
+import addTitle from './common/add-title'
+import css from 'dom-css'
 const createRegl = require('regl')
 const glslify = require('glslify')
 const fit = require('canvas-fit')
 const mat4 = require('gl-mat4')
 const createCamera = require('canvas-orbit-camera')
-import array from 'new-array'
-import includeFont from './common/include-font'
-import addTitle from './common/add-title'
-import css from 'dom-css'
 
 title('salburious-protest', '#ddd')
 
@@ -72,7 +72,7 @@ const drawGlobal = regl({
   frag: glslify.file('./shaders/simple.frag'),
 
   uniforms: {
-    projection: ({viewportWidth, viewportHeight}) => (
+    projection: ({ viewportWidth, viewportHeight }) => (
       mat4.perspective([],
         Math.PI / 2,
         viewportWidth / viewportHeight,
@@ -111,7 +111,7 @@ regl.frame(({ time }) => {
 function guiSettings (settings, onChange) {
   const settingsObj = {}
   const gui = new GUI()
-  for (let key in settings) {
+  for (const key in settings) {
     settingsObj[key] = settings[key][0]
     const setting = gui
       .add(settingsObj, key, settings[key][1], settings[key][2])

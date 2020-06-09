@@ -13,7 +13,7 @@ export default function addTitle (titleText, style = {}) {
     ...style
   }
 
-  for (let s in style) {
+  for (const s in style) {
     title.style[s] = style[s]
   }
 

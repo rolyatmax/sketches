@@ -44,7 +44,7 @@ gui.add(settings, 'lineNoiseSampling', 1, 50).step(1).onChange(setup)
 gui.add(settings, 't', 0, Math.PI * 100).onChange(setup)
 
 let lines, panels, rand, simplex
-let t = 0
+const t = 0
 
 ctx.globalCompositeOperation = 'darken'
 
@@ -84,10 +84,10 @@ function setup () {
   //     rand() * (settings.gridGranularity + 1) | 0,
   //     rand() * (settings.gridGranularity + 1) | 0
   //   ]
-    // two out of the three dimensions needs to translate by 1. Pick one dimension at random to _not_ translate
-    // const skipDim = rand() * 3 | 0
-    // const square = [origin]
-    // const oppositePt = origin.map((v, i) => i === skipDim ? v : v + 1)
+  // two out of the three dimensions needs to translate by 1. Pick one dimension at random to _not_ translate
+  // const skipDim = rand() * 3 | 0
+  // const square = [origin]
+  // const oppositePt = origin.map((v, i) => i === skipDim ? v : v + 1)
   // })
 
   console.log(lines)
@@ -123,7 +123,7 @@ function render (t) {
   const combined = mat4.multiply([], proj, view)
 
   lines.forEach(line => {
-    let pts = line.map(pt => {
+    const pts = line.map(pt => {
       return project([], pt, viewport, combined)
       // return [
       //   x * canvasSize + offset[0],
@@ -138,7 +138,7 @@ function render (t) {
 
     ctx.beginPath()
     ctx.moveTo(noisifiedPts[0][0], noisifiedPts[0][1])
-    for (let pt of noisifiedPts.slice(1)) {
+    for (const pt of noisifiedPts.slice(1)) {
       ctx.lineTo(pt[0], pt[1])
     }
     ctx.strokeStyle = `rgba(30, 30, 30, ${settings.opacity})`

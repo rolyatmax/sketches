@@ -16,12 +16,12 @@ ctx.setup = function () {
   const drawArea = Math.min(ctx.height, ctx.width)
   const center = [ctx.width / 2, ctx.height / 2]
   splines = array(splinesCount).map(() => array(pointsCount)
-      .map(() => random([], Math.random() * (drawArea / 2)))
-      .map(pt => ({
-        position: add(pt, pt, center),
-        velocity: random([], Math.random() * 10),
-        anchor: add([], random([], Math.random() * (drawArea / 4)), center)
-      })))
+    .map(() => random([], Math.random() * (drawArea / 2)))
+    .map(pt => ({
+      position: add(pt, pt, center),
+      velocity: random([], Math.random() * 10),
+      anchor: add([], random([], Math.random() * (drawArea / 4)), center)
+    })))
 }
 
 ctx.update = function () {

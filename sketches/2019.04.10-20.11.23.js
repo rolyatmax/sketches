@@ -90,7 +90,7 @@ const sketch = ({ canvas }) => {
       const position = project([], pos, viewport, projView)
       const depth = project([], pos, viewport, camera.matrix)[2]
       position[1] = HEIGHT - position[1]
-      return {position, depth}
+      return { position, depth }
     }
 
     nodes.forEach(p => {
@@ -114,33 +114,33 @@ const sketch = ({ canvas }) => {
     const getAlpha = pt => settings.alphaMult * scale(pt.depth)
     const getRadius = pt => settings.radiusMult * scale(pt.depth)
     // for (let i = 0; i < points.length - 1; i++) {
-      // const pt1 = points[i]
-      // const pt1Radius = Math.max(0, getRadius(pt1))
-      // const pt1Alpha = getAlpha(pt1)
-      // const pt2 = points[i + 1]
-      // const pt2Radius = Math.max(0, getRadius(pt2))
-      // const pt2Alpha = getAlpha(pt2)
-      // const toPt2 = vec2.subtract([], pt1.position, pt2.position)
-      // const rads = Math.atan2(toPt2[1], toPt2[0])
-      // const topRads = rads + Math.PI * 0.5
-      // const bottomRads = rads - Math.PI * 0.5
-      // const line = [
-      //   getPoint(topRads, pt1Radius * settings.lineWidth, pt1),
-      //   getPoint(bottomRads, pt1Radius * settings.lineWidth, pt1),
-      //   getPoint(bottomRads, pt2Radius * settings.lineWidth, pt2),
-      //   getPoint(topRads, pt2Radius * settings.lineWidth, pt2)
-      // ]
-      // const lineColor = context.createLinearGradient(
-      //   pt1.position[0], pt1.position[1],
-      //   pt2.position[0], pt2.position[1]
-      // )
-      // lineColor.addColorStop(0, `hsla(200, 45%, 45%, ${pt1Alpha})`)
-      // lineColor.addColorStop(1, `hsla(200, 45%, 45%, ${pt2Alpha})`)
-      // drawPath(context, line, lineColor, true)
+    // const pt1 = points[i]
+    // const pt1Radius = Math.max(0, getRadius(pt1))
+    // const pt1Alpha = getAlpha(pt1)
+    // const pt2 = points[i + 1]
+    // const pt2Radius = Math.max(0, getRadius(pt2))
+    // const pt2Alpha = getAlpha(pt2)
+    // const toPt2 = vec2.subtract([], pt1.position, pt2.position)
+    // const rads = Math.atan2(toPt2[1], toPt2[0])
+    // const topRads = rads + Math.PI * 0.5
+    // const bottomRads = rads - Math.PI * 0.5
+    // const line = [
+    //   getPoint(topRads, pt1Radius * settings.lineWidth, pt1),
+    //   getPoint(bottomRads, pt1Radius * settings.lineWidth, pt1),
+    //   getPoint(bottomRads, pt2Radius * settings.lineWidth, pt2),
+    //   getPoint(topRads, pt2Radius * settings.lineWidth, pt2)
+    // ]
+    // const lineColor = context.createLinearGradient(
+    //   pt1.position[0], pt1.position[1],
+    //   pt2.position[0], pt2.position[1]
+    // )
+    // lineColor.addColorStop(0, `hsla(200, 45%, 45%, ${pt1Alpha})`)
+    // lineColor.addColorStop(1, `hsla(200, 45%, 45%, ${pt2Alpha})`)
+    // drawPath(context, line, lineColor, true)
     // }
 
     const lines = nodes.map(p => p.lastPositions.map(get2DPositionAndDepth))
-    for (let line of lines) {
+    for (const line of lines) {
       for (let i = 1; i < line.length; i++) {
         const pt1 = line[i - 1]
         const pt2 = line[i]
@@ -160,7 +160,7 @@ const sketch = ({ canvas }) => {
       }
     }
 
-    for (let pt of points) {
+    for (const pt of points) {
       const ptRadius = Math.max(0, getRadius(pt))
       const ptAlpha = getAlpha(pt)
       drawCircle(context, pt.position, ptRadius, `hsla(190, 50%, 50%, ${ptAlpha})`)
@@ -169,7 +169,7 @@ const sketch = ({ canvas }) => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true
 })
 
@@ -183,7 +183,7 @@ function drawCircle (ctx, position, radius, color) {
 function drawPath (ctx, line, color, fill, lineWidth) {
   ctx.beginPath()
   ctx.moveTo(line[0][0], line[0][1])
-  for (let pt of line.slice(1)) {
+  for (const pt of line.slice(1)) {
     ctx.lineTo(pt[0], pt[1])
   }
   if (fill) {

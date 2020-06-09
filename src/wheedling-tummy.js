@@ -57,7 +57,7 @@ const globalStateDraw = regl({
   frag: pointsFragGL,
 
   uniforms: {
-    projection: ({viewportWidth, viewportHeight}) => (
+    projection: ({ viewportWidth, viewportHeight }) => (
       mat4.perspective([],
         Math.PI / 2,
         viewportWidth / viewportHeight,
@@ -66,7 +66,7 @@ const globalStateDraw = regl({
     ),
     model: mat4.identity([]),
     view: () => camera.view(),
-    aspect: ({viewportWidth, viewportHeight}) => (
+    aspect: ({ viewportWidth, viewportHeight }) => (
       viewportWidth / viewportHeight
     ),
     // pointSize: regl.prop('pointSize'),

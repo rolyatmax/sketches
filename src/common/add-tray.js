@@ -139,7 +139,7 @@ function renderTile ({ onClick, settings, main, aspectRatio }, tray, styles) {
 }
 
 function applyStylesToElement (element, styles = {}) {
-  for (let s in styles) {
+  for (const s in styles) {
     element.style[s] = styles[s]
   }
 }

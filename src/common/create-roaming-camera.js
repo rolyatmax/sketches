@@ -2,7 +2,7 @@ const { createSpring } = require('spring-animator')
 const createCamera = require('3d-view-controls')
 
 module.exports = function createRoamingCamera (opts) {
-  const {canvas, zoomSpeed, center, eye, getCameraPosition, dampening, stiffness, moveEveryNFrames} = opts
+  const { canvas, zoomSpeed, center, eye, getCameraPosition, dampening, stiffness, moveEveryNFrames } = opts
   const roamOnEveryNFrames = moveEveryNFrames || 600
   let isRoaming = true
   let frameCount = 0

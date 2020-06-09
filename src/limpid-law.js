@@ -3,7 +3,7 @@
 import Color from 'color'
 import lerp from 'lerp'
 import * as THREE from 'three'
-import {GUI} from 'dat-gui'
+import { GUI } from 'dat-gui'
 
 const settings = {
   size: 8,

@@ -69,7 +69,7 @@ function setup () {
     const branchDepth = 0
     const blooms = 0
     const blur = rand.range(15, 25)
-    return {position, radius, offset, branchDepth, blooms, blur}
+    return { position, radius, offset, branchDepth, blooms, blur }
   })
   isFirstDraw = true
 }
@@ -84,7 +84,7 @@ const sketch = () => {
     }
 
     function getNoiseVal (x, y, offset) {
-      let rads = rand.noise2D(x + radsOffset * 100, y + radsOffset * 100, settings.freq / 1000, settings.amp / 1000) * Math.PI * 2 + offset
+      const rads = rand.noise2D(x + radsOffset * 100, y + radsOffset * 100, settings.freq / 1000, settings.amp / 1000) * Math.PI * 2 + offset
       // const div = (Math.PI * 2) / settings.radsDivisor
       // rads = ((rads / div) | 0) * div
       return [
@@ -178,6 +178,6 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ],
+  dimensions: [SIZE, SIZE],
   animate: true
 })
