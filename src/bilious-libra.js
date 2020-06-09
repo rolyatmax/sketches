@@ -5,7 +5,7 @@ import includeFont from './common/include-font'
 import addTitle from './common/add-title'
 const { GUI } = require('dat-gui')
 const fit = require('canvas-fit')
-const beats = require('beats')
+// const beats = require('beats')
 const createAnalyser = require('web-audio-analyser')
 const css = require('dom-css')
 
@@ -41,9 +41,8 @@ const settings = guiSettings({
 }, setup)
 
 let analyser
-let detectBeats
-let beatVal = 0
-let audio
+// let detectBeats
+// let beatVal = 0
 
 const audioDir = 'src/audio/'
 const tracks = [
@@ -76,7 +75,7 @@ function selectRandomAudio () {
   })
 }
 
-audio = new Audio()
+const audio = new Audio()
 audio.crossOrigin = 'Anonymous'
 window.audio = audio
 
@@ -163,20 +162,20 @@ function draw (t) {
     return total / count
   }
 
-  function renderBeatDetector (buffer) {
-    const beat = detectBeats(buffer)[0]
-    beatVal = Math.max(beatVal, beat)
-    beatVal *= settings.beatFade
-    const loLine = [toPoint(settings.lo, 0), toPoint(settings.lo, 1)]
-    const hiLine = [toPoint(settings.hi, 0), toPoint(settings.hi, 1)]
-    const thresholdT = settings.threshold / maxBin
-    const thresholdLine = [toPoint(settings.lo, thresholdT), toPoint(settings.hi, thresholdT)]
-    drawLine(ctx, loLine, 'green')
-    drawLine(ctx, hiLine, 'green')
-    drawLine(ctx, thresholdLine, 'green')
-    const beatIndicatorColor = `rgba(66, 134, 244, ${beatVal / maxBin})`
-    drawRect(ctx, toPoint(settings.lo, 1), toPoint(settings.hi, 0), beatIndicatorColor)
-  }
+  // function renderBeatDetector (buffer) {
+  //   const beat = detectBeats(buffer)[0]
+  //   beatVal = Math.max(beatVal, beat)
+  //   beatVal *= settings.beatFade
+  //   const loLine = [toPoint(settings.lo, 0), toPoint(settings.lo, 1)]
+  //   const hiLine = [toPoint(settings.hi, 0), toPoint(settings.hi, 1)]
+  //   const thresholdT = settings.threshold / maxBin
+  //   const thresholdLine = [toPoint(settings.lo, thresholdT), toPoint(settings.hi, thresholdT)]
+  //   drawLine(ctx, loLine, 'green')
+  //   drawLine(ctx, hiLine, 'green')
+  //   drawLine(ctx, thresholdLine, 'green')
+  //   const beatIndicatorColor = `rgba(66, 134, 244, ${beatVal / maxBin})`
+  //   drawRect(ctx, toPoint(settings.lo, 1), toPoint(settings.hi, 0), beatIndicatorColor)
+  // }
 }
 
 function loop (t) {
@@ -194,14 +193,14 @@ function drawCircle (ctx, position, radius, color) {
   ctx.fill()
 }
 
-function drawRect (ctx, position1, position2, color) {
-  ctx.fillStyle = color
-  const dimensions = [
-    position2[0] - position1[0],
-    position2[1] - position1[1]
-  ]
-  ctx.fillRect(position1[0], position1[1], dimensions[0], dimensions[1])
-}
+// function drawRect (ctx, position1, position2, color) {
+//   ctx.fillStyle = color
+//   const dimensions = [
+//     position2[0] - position1[0],
+//     position2[1] - position1[1]
+//   ]
+//   ctx.fillRect(position1[0], position1[1], dimensions[0], dimensions[1])
+// }
 
 function drawLine (ctx, pts, color) {
   ctx.beginPath()
@@ -288,23 +287,23 @@ function formatSeconds (seconds) {
   return `${minutes}:${seconds}`
 }
 
-function createBeatDetector (canvas) {
-  // canvas.addEventListener('mousedown', e => {
-  //
-  // })
-  // window.addEventListener('mouseup', e => {
-  //
-  // })
+// function createBeatDetector (canvas) {
+//   // canvas.addEventListener('mousedown', e => {
+//   //
+//   // })
+//   // window.addEventListener('mouseup', e => {
+//   //
+//   // })
 
-  return beats([{
-    // the minimum index to sample in the frequencies array.
-    lo: settings.lo,
-    // The maximum index to sample in the frequencies array.
-    hi: settings.hi,
-    // The minimum volume at which to trigger a beat for this bin.
-    threshold: settings.threshold,
-    // the amount by which to decay the threshold for this bin for
-    // each sampled frame.
-    decay: 0
-  }])
-}
+//   return beats([{
+//     // the minimum index to sample in the frequencies array.
+//     lo: settings.lo,
+//     // The maximum index to sample in the frequencies array.
+//     hi: settings.hi,
+//     // The minimum volume at which to trigger a beat for this bin.
+//     threshold: settings.threshold,
+//     // the amount by which to decay the threshold for this bin for
+//     // each sampled frame.
+//     decay: 0
+//   }])
+// }

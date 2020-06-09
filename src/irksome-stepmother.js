@@ -1,3 +1,5 @@
+/* global requestIdleCallback, cancelIdleCallback, performance */
+
 import Alea from 'alea'
 // import Color from 'color'
 import fit from 'canvas-fit'

@@ -54,7 +54,8 @@ const settings = guiSettings({
   ], null, null, true]
 }, preSetup)
 
-let rand, points, keyCode
+let rand, points
+// let keyCode
 
 // document.addEventListener('keydown', (e) => {
 //   if (keyCode) return

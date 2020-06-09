@@ -1,3 +1,5 @@
+/* global requestAnimationFrame */
+
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
 const Alea = require('alea')

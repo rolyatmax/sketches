@@ -180,8 +180,8 @@ function title (name, color) {
   }, 200)
 }
 
-function dist (a, b) {
-  const w = a[0] - b[0]
-  const h = a[1] - b[1]
-  return Math.sqrt(w * w + h * h)
-}
+// function dist (a, b) {
+//   const w = a[0] - b[0]
+//   const h = a[1] - b[1]
+//   return Math.sqrt(w * w + h * h)
+// }

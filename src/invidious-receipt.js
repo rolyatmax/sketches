@@ -7,7 +7,7 @@ const canvas = document.body.appendChild(document.createElement('canvas'))
 const ctx = canvas.getContext('2d')
 window.addEventListener('resize', fit(canvas), false)
 
-let clicked = false
+// let clicked = false
 
 const minSpeed = 1
 const maxSpeed = 10
@@ -21,7 +21,7 @@ let destPos = [] // only for visualization
 let dragging = false
 
 document.addEventListener('mousedown', (e) => {
-  clicked = true
+  // clicked = true
   mouseStart[0] = e.clientX
   mouseStart[1] = e.clientY
   cameraStart[0] = camera[0]

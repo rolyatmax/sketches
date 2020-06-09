@@ -1,14 +1,14 @@
 // Trying to make a bunch of circles that all touch each other - work in progress
 
-import Alea from 'alea'
+// import Alea from 'alea'
 import createResizableCanvas from './common/resizable-canvas'
-import colorPalettes from './common/color-palettes'
+// import colorPalettes from './common/color-palettes'
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
 
 const win = window
-const seed = Math.random()
-const rand = new Alea(seed)
+// const seed = Math.random()
+// const rand = new Alea(seed)
 
 const container = document.createElement('div')
 document.body.appendChild(container)
@@ -52,7 +52,7 @@ function main () {
   circles.push([x2, y2, r2])
 
   // find a third circle that touches the first two
-  const r3 = Math.random() * (maxRadius - minRadius) + minRadius
+  // const r3 = Math.random() * (maxRadius - minRadius) + minRadius
 
   // GOT STUCK - TAKING A BREAK HERE
 
@@ -68,8 +68,8 @@ function drawCircle (pt, radius) {
   ctx.stroke()
 }
 
-function distance (p1, p2) {
-  const xDiff = p1[0] - p2[0]
-  const yDiff = p1[1] - p2[1]
-  return Math.sqrt(xDiff * xDiff + yDiff * yDiff)
-}
+// function distance (p1, p2) {
+//   const xDiff = p1[0] - p2[0]
+//   const yDiff = p1[1] - p2[1]
+//   return Math.sqrt(xDiff * xDiff + yDiff * yDiff)
+// }

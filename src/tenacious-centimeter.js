@@ -237,27 +237,27 @@ function cycleParticleStates () {
   nextParticleState = tmp
 }
 
-function title (name, color) {
-  includeFont({
-    fontFamily: '"Space Mono", sans-serif',
-    url: 'https://fonts.googleapis.com/css?family=Space+Mono:700'
-  })
+// function title (name, color) {
+//   includeFont({
+//     fontFamily: '"Space Mono", sans-serif',
+//     url: 'https://fonts.googleapis.com/css?family=Space+Mono:700'
+//   })
 
-  const title = addTitle(name)
-  css(title, {
-    opacity: 0,
-    color: color,
-    bottom: '5vh',
-    right: '5vh',
-    transition: 'opacity 800ms linear',
-    zIndex: 10
-  })
+//   const title = addTitle(name)
+//   css(title, {
+//     opacity: 0,
+//     color: color,
+//     bottom: '5vh',
+//     right: '5vh',
+//     transition: 'opacity 800ms linear',
+//     zIndex: 10
+//   })
 
-  document.body.appendChild(title)
-  setTimeout(() => {
-    css(title, 'opacity', 1)
-  }, 200)
-}
+//   document.body.appendChild(title)
+//   setTimeout(() => {
+//     css(title, 'opacity', 1)
+//   }, 200)
+// }
 
 function instructions (text, color) {
   includeFont({

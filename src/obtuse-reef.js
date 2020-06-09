@@ -1,5 +1,3 @@
-/* global requestAnimationFrame */
-
 const fit = require('canvas-fit')
 const { GUI } = require('dat-gui')
 const newArray = require('new-array')
@@ -43,8 +41,9 @@ gui.add(settings, 'noiseMagnitude', 0, 10).step(0.1).onChange(setup)
 gui.add(settings, 'lineNoiseSampling', 1, 50).step(1).onChange(setup)
 gui.add(settings, 't', 0, Math.PI * 100).onChange(setup)
 
-let lines, panels, rand, simplex
-const t = 0
+let lines, rand, simplex
+// let panels
+// const t = 0
 
 ctx.globalCompositeOperation = 'darken'
 

@@ -119,15 +119,15 @@ requestAnimationFrame(function loop (t) {
   render(t)
 })
 
-function getWeightedRandom (rand) {
-  return function weightedRandom (choices) {
-    let r = rand()
-    for (const choice of choices) {
-      if (choice.weight < r) {
-        return choice.value
-      }
-      r -= choice.weight
-    }
-    return choices[choices.length - 1].value
-  }
-}
+// function getWeightedRandom (rand) {
+//   return function weightedRandom (choices) {
+//     let r = rand()
+//     for (const choice of choices) {
+//       if (choice.weight < r) {
+//         return choice.value
+//       }
+//       r -= choice.weight
+//     }
+//     return choices[choices.length - 1].value
+//   }
+// }

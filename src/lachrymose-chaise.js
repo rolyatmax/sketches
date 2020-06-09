@@ -1,5 +1,5 @@
-import Alea from 'alea'
-import { GUI } from 'dat-gui'
+// import Alea from 'alea'
+// import { GUI } from 'dat-gui'
 
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
@@ -22,14 +22,15 @@ window.camera = camera
 window.addEventListener('resize', fit(canvas), false)
 document.body.appendChild(canvas)
 
-const settings = guiSettings({
-  seed: [442, 0, 1000, 1, true]
-}, setup)
+// const settings = guiSettings({
+//   seed: [442, 0, 1000, 1, true]
+// }, setup)
 
-let rand, startTime, draw
+let startTime, draw
+// let rand
 setup()
 function setup () {
-  rand = new Alea(settings.seed)
+  // rand = new Alea(settings.seed)
   startTime = 0
   draw = createRenderer()
 }
@@ -82,26 +83,26 @@ regl.frame(({ time }) => {
 
 // ------------- helpers -------------
 
-function guiSettings (settings, onChange) {
-  const settingsObj = {}
-  const gui = new GUI()
-  for (const key in settings) {
-    settingsObj[key] = settings[key][0]
-    const setting = gui
-      .add(settingsObj, key, settings[key][1], settings[key][2])
-    if (settings[key][3]) {
-      setting.step(settings[key][3])
-    }
-    if (settings[key][4]) {
-      setting.onChange(onChange)
-    }
-  }
-  if (onChange) {
-    const redraw = onChange
-    gui.add({ redraw }, 'redraw')
-  }
-  return settingsObj
-}
+// function guiSettings (settings, onChange) {
+//   const settingsObj = {}
+//   const gui = new GUI()
+//   for (const key in settings) {
+//     settingsObj[key] = settings[key][0]
+//     const setting = gui
+//       .add(settingsObj, key, settings[key][1], settings[key][2])
+//     if (settings[key][3]) {
+//       setting.step(settings[key][3])
+//     }
+//     if (settings[key][4]) {
+//       setting.onChange(onChange)
+//     }
+//   }
+//   if (onChange) {
+//     const redraw = onChange
+//     gui.add({ redraw }, 'redraw')
+//   }
+//   return settingsObj
+// }
 
 function title (name, color) {
   includeFont({

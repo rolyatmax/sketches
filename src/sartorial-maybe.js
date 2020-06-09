@@ -3,7 +3,7 @@ const createRegl = require('regl')
 const fit = require('canvas-fit')
 const mat4 = require('gl-mat4')
 const createCamera = require('3d-view-controls')
-const { createSpring } = require('spring-animator')
+// const { createSpring } = require('spring-animator')
 
 const { fetch } = window
 
@@ -14,10 +14,10 @@ const regl = createRegl(canvas)
 window.addEventListener('resize', fit(canvas), false)
 document.body.appendChild(canvas)
 
-const settings = {
-  dampening: 0.15,
-  stiffness: 0.26
-}
+// const settings = {
+//   dampening: 0.15,
+//   stiffness: 0.26
+// }
 
 // camera.lookAt([-23, 19, 0], [3, 3, 9], [0, 99, 0])
 camera.lookAt([0, 0, 0], [-5, 0, -3], [0, 99, 0])
@@ -192,55 +192,55 @@ function createModelRenderer (model, i) {
 
   // debugger;
 
-  const renderFaces = regl({
-    vert: `
-    precision highp float;
+  // const renderFaces = regl({
+  //   vert: `
+  //   precision highp float;
 
-    attribute vec3 position;
-    attribute vec3 normal;
+  //   attribute vec3 position;
+  //   attribute vec3 normal;
 
-    varying vec3 vNormal;
+  //   varying vec3 vNormal;
 
-    uniform mat4 projection;
-    uniform mat4 view;
-    uniform float heightMultiplier;
+  //   uniform mat4 projection;
+  //   uniform mat4 view;
+  //   uniform float heightMultiplier;
 
-    void main() {
-      float y = position.y * heightMultiplier;
-      gl_Position = projection * view * vec4(position.x, position.y, position.z, 1.0);
-      vNormal = normal;
-    }
-    `,
-    frag: `
-    precision highp float;
+  //   void main() {
+  //     float y = position.y * heightMultiplier;
+  //     gl_Position = projection * view * vec4(position.x, position.y, position.z, 1.0);
+  //     vNormal = normal;
+  //   }
+  //   `,
+  //   frag: `
+  //   precision highp float;
 
-    varying vec3 vNormal;
+  //   varying vec3 vNormal;
 
-    uniform float heightMultiplier;
+  //   uniform float heightMultiplier;
 
-    void main() {
-      if (heightMultiplier < 0.01) {
-        discard;
-      }
-      float bW = 0.4; // clamp(1.0 - ((vNormal.x + vNormal.y + vNormal.z) / 3.0), 0.2, 1.0);
-      gl_FragColor = vec4(vec3(bW), 0.99);
-    }
-    `,
-    blend: {
-      enable: true,
-      func: {
-        srcRGB: 'src alpha',
-        srcAlpha: 1,
-        dstRGB: 'one minus src alpha',
-        dstAlpha: 1
-      },
-      equation: { rgb: 'add', alpha: 'add' }
-    },
-    attributes: { position: faces, normal: normals },
-    uniforms: { heightMultiplier: () => heightMultiplier.tick() },
-    count: faces.length / 3,
-    primitive: 'triangle strip'
-  })
+  //   void main() {
+  //     if (heightMultiplier < 0.01) {
+  //       discard;
+  //     }
+  //     float bW = 0.4; // clamp(1.0 - ((vNormal.x + vNormal.y + vNormal.z) / 3.0), 0.2, 1.0);
+  //     gl_FragColor = vec4(vec3(bW), 0.99);
+  //   }
+  //   `,
+  //   blend: {
+  //     enable: true,
+  //     func: {
+  //       srcRGB: 'src alpha',
+  //       srcAlpha: 1,
+  //       dstRGB: 'one minus src alpha',
+  //       dstAlpha: 1
+  //     },
+  //     equation: { rgb: 'add', alpha: 'add' }
+  //   },
+  //   attributes: { position: faces, normal: normals },
+  //   uniforms: { heightMultiplier: () => heightMultiplier.tick() },
+  //   count: faces.length / 3,
+  //   primitive: 'triangle strip'
+  // })
 
   return function render () {
     renderPoints()

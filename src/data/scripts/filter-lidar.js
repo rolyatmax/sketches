@@ -13,7 +13,8 @@ rl.on('line', (input) => {
     return
   }
 
-  const [lon, lat, elevation, intensity] = csvParseRows(input)[0]
+  // const [lon, lat, elevation, intensity] = csvParseRows(input)[0]
+  const [,, elevation] = csvParseRows(input)[0]
 
   if (Number(elevation) > 0) {
     process.stdout.write(input)

@@ -6,7 +6,7 @@ const createRegl = require('regl')
 const createCamera = require('3d-view-controls')
 const createPerspectiveCamera = require('perspective-camera')
 const getNormal = require('triangle-normal')
-const primitiveIcosphere = require('primitive-icosphere')
+// const primitiveIcosphere = require('primitive-icosphere')
 const { GUI } = require('dat-gui')
 
 const canvas = document.body.appendChild(document.createElement('canvas'))
