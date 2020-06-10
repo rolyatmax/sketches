@@ -2,7 +2,7 @@ const canvasSketch = require('canvas-sketch')
 const createRegl = require('regl')
 const { GUI } = require('dat-gui')
 const { random } = require('canvas-sketch-util')
-const createRoamingCamera = require('../src/common/create-roaming-camera')
+const createRoamingCamera = require('./common/create-roaming-camera')
 const mat4 = require('gl-mat4')
 const vec3 = require('gl-vec3')
 
@@ -140,7 +140,7 @@ const sketch = ({ gl, width, height }) => {
     camera.tick()
 
     regl.clear({
-      color: [ 1.0, 1.0, 1.0, 1.0 ],
+      color: [1.0, 1.0, 1.0, 1.0],
       depth: 1
     })
 

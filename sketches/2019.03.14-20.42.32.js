@@ -60,7 +60,7 @@ gui.add(settings, 'hideTrisChance', 0, 1).step(0.01).onChange(onChange)
 gui.add(settings, 'distance', 0.1, 10).step(0.1)
 gui.add(settings, 'camera')
 
-const sketch = ({canvas}) => {
+const sketch = ({ canvas }) => {
   const camera = createCamera(canvas, { zoomSpeed: 4 })
   const regl = createRegl({
     extensions: ['OES_texture_float'],
@@ -363,7 +363,7 @@ const sketch = ({canvas}) => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   context: 'webgl',
   attributes: { antialias: true },
   animate: true

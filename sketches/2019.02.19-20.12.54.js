@@ -92,14 +92,14 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true
 })
 
 function drawLine (ctx, points, color, width = 1, fill = false) {
   ctx.beginPath()
   ctx.moveTo(points[0][0], points[0][1])
-  for (let pt of points.slice(1)) {
+  for (const pt of points.slice(1)) {
     ctx.lineTo(pt[0], pt[1])
   }
   if (fill) {

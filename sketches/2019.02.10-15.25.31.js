@@ -28,7 +28,7 @@ function setup () {
 
 const sketch = ({ canvas }) => {
   canvas.addEventListener('click', e => {
-    const {width, height} = canvas.getBoundingClientRect()
+    const { width, height } = canvas.getBoundingClientRect()
     const px = [
       e.offsetX / width * canvas.width,
       e.offsetY / height * canvas.height
@@ -98,6 +98,6 @@ function createAnimator (initVal, accel, friction, speedLimit) {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ],
+  dimensions: [SIZE, SIZE],
   animate: true
 })

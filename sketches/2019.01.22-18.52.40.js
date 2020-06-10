@@ -62,7 +62,7 @@ function setup () {
     const branchDepth = 0
     const blooms = 0
     const blur = rand.range(15, 25)
-    return {position, radius, offset, branchDepth, blooms, blur}
+    return { position, radius, offset, branchDepth, blooms, blur }
   })
   isFirstDraw = true
 }
@@ -146,6 +146,6 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ],
+  dimensions: [SIZE, SIZE],
   animate: true
 })

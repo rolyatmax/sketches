@@ -1,8 +1,8 @@
-const canvasSketch = require('canvas-sketch')
 import * as luma from 'luma.gl'
+const canvasSketch = require('canvas-sketch')
 const { GUI } = require('dat-gui')
 const { random } = require('canvas-sketch-util')
-const createRoamingCamera = require('../src/common/create-roaming-camera')
+const createRoamingCamera = require('./common/create-roaming-camera')
 const mat4 = require('gl-mat4')
 const { createSpring } = require('spring-animator')
 
@@ -44,12 +44,14 @@ gui.add(settings, 'stiffness', 0, 2).onChange(onChange)
 
 gui.add(settings, 'cameraDist', 0, 10)
 gui.add({ next: () => moveToNextPosition() }, 'next')
-gui.add({ changeNoise: () => {
-  noiseSpring.updateValue(rand.range(settings.noiseMag / 50))
-  hueSpreadSpring.updateValue(rand.range(settings.hueSpread))
-  hueStartSpring.updateValue(rand.value())
-  sizeSpring.updateValue(rand.range(0.5, 1) * settings.pointSize)
-} }, 'changeNoise')
+gui.add({
+  changeNoise: () => {
+    noiseSpring.updateValue(rand.range(settings.noiseMag / 50))
+    hueSpreadSpring.updateValue(rand.range(settings.hueSpread))
+    hueStartSpring.updateValue(rand.value())
+    sizeSpring.updateValue(rand.range(0.5, 1) * settings.pointSize)
+  }
+}, 'changeNoise')
 
 const sketch = ({ gl }) => {
   const camera = createRoamingCamera({

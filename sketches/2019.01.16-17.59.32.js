@@ -129,8 +129,8 @@ const sketch = ({ render }) => {
     //   context.stroke()
     // })
 
-    for (let lightSource of lightSources) {
-      for (let rays of lightSource.shadowPasses) {
+    for (const lightSource of lightSources) {
+      for (const rays of lightSource.shadowPasses) {
         context.beginPath()
         drawLine(context, rays.map(r => r[1]))
         context.fillStyle = `rgba(${lightSource.color.join(',')}, ${settings.shadowPassOpacity / 100})`
@@ -138,7 +138,7 @@ const sketch = ({ render }) => {
       }
     }
     context.restore()
-    for (let lightSource of lightSources) {
+    for (const lightSource of lightSources) {
       if (settings.showLightSourceCenter) {
         context.beginPath()
         context.arc(lightSource.position[0], lightSource.position[1], settings.lightJigger, 0, Math.PI * 2)
@@ -159,7 +159,7 @@ const sketch = ({ render }) => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true,
   fps: 24
 })
@@ -167,7 +167,7 @@ canvasSketch(sketch, {
 function drawLine (ctx, pts) {
   if (!pts.length) return
   ctx.moveTo(pts[0][0], pts[0][1])
-  for (let p of pts.slice(1)) {
+  for (const p of pts.slice(1)) {
     ctx.lineTo(p[0], p[1])
   }
 }
@@ -175,16 +175,16 @@ function drawLine (ctx, pts) {
 function getRays (lightSource, polys) {
   const m = settings.margin
   const canvasEdgePoints = [[m, m], [m, HEIGHT - m], [WIDTH - m, HEIGHT - m], [WIDTH - m, m]]
-  polys = [...polys, {points: canvasEdgePoints}]
+  polys = [...polys, { points: canvasEdgePoints }]
   let rays = []
   polys.forEach(p => (
     p.points.forEach(pt => {
       const angle = Math.atan2(pt[1] - lightSource[1], pt[0] - lightSource[0])
       const offsets = [-0.0001, 0, 0.0001]
-      for (let offset of offsets) {
+      for (const offset of offsets) {
         const rayEnd = vec2.add([], lightSource, angleToVec2(angle + offset))
         const intersect = getClosestIntersection([lightSource, rayEnd], polys)
-        rays.push({intersect, angle: angle + offset})
+        rays.push({ intersect, angle: angle + offset })
       }
     })
   ), [])
@@ -196,7 +196,7 @@ function getRays (lightSource, polys) {
 function getClosestIntersection (ray, polys) {
   let closest = null
   let closestDistance = Infinity
-  for (let poly of polys) {
+  for (const poly of polys) {
     for (let i = 0; i < poly.points.length; i++) {
       const segment = [
         poly.points[i],

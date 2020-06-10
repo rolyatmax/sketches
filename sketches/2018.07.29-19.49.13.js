@@ -77,7 +77,7 @@ const sketch = ({ gl }) => {
       }
     `,
     uniforms: {
-      iResolution: ({viewportWidth, viewportHeight}) => [viewportWidth, viewportHeight],
+      iResolution: ({ viewportWidth, viewportHeight }) => [viewportWidth, viewportHeight],
       iChannel0: regl.prop('fromFbo')
     },
     attributes: {
@@ -285,7 +285,7 @@ const sketch = ({ gl }) => {
     ]
 
     renderTo({ toFbo: fbo }, () => {
-      renderBG({ bgColor: [ 0.18, 0.18, 0.18, settings.blur ] })
+      renderBG({ bgColor: [0.18, 0.18, 0.18, settings.blur] })
       cells.forEach(({ camera, position }) => render({
         color,
         camera: camera.matrix,

@@ -89,7 +89,7 @@ const sketch = ({ canvas }) => {
       const position = project([], pos, viewport, projView)
       const depth = project([], pos, viewport, camera.matrix)[2]
       position[1] = HEIGHT - position[1]
-      return {position, depth}
+      return { position, depth }
     }
 
     nodes.forEach(p => {
@@ -112,7 +112,7 @@ const sketch = ({ canvas }) => {
     const getRadius = pt => settings.radiusMult * scale(pt.depth)
 
     const lines = nodes.map(p => p.lastPositions.map(get2DPositionAndDepth))
-    for (let line of lines) {
+    for (const line of lines) {
       for (let i = 1; i < line.length; i++) {
         const pt1 = line[i - 1]
         const pt2 = line[i]
@@ -132,7 +132,7 @@ const sketch = ({ canvas }) => {
       }
     }
 
-    for (let pt of points) {
+    for (const pt of points) {
       const ptRadius = Math.max(0, getRadius(pt))
       const ptAlpha = getAlpha(pt)
       drawCircle(context, pt.position, ptRadius, `hsla(190, 50%, 50%, ${ptAlpha})`)
@@ -141,7 +141,7 @@ const sketch = ({ canvas }) => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true
 })
 
@@ -156,7 +156,7 @@ function drawCircle (ctx, position, radius, color) {
 function drawPath (ctx, line, color, lineWidth) {
   ctx.beginPath()
   ctx.moveTo(line[0][0], line[0][1])
-  for (let pt of line.slice(1)) {
+  for (const pt of line.slice(1)) {
     ctx.lineTo(pt[0], pt[1])
   }
   ctx.strokeStyle = color

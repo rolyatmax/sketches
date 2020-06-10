@@ -190,7 +190,7 @@ class BaseLine {
   canRemove (curTime) {
     if (this.stopTime === null) return false
     if (getXForTime(curTime, this.stopTime) > 0) return false
-    for (let child of this.baseLines) {
+    for (const child of this.baseLines) {
       if (!child.canRemove(curTime)) return false
     }
     return true
@@ -342,7 +342,7 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true,
   fps: FPS
 })
@@ -369,9 +369,9 @@ function cutLine (line, t) {
   let last = line[0]
   let toGo = lineLength(line) * t
 
-  let toDraw = [last]
-  for (let pt of line) {
-    let segmentDist = vec2.distance(last, pt)
+  const toDraw = [last]
+  for (const pt of line) {
+    const segmentDist = vec2.distance(last, pt)
     if (!segmentDist) {
       continue
     }
@@ -384,9 +384,9 @@ function cutLine (line, t) {
       last = pt
       continue
     }
-    let cutPerc = toGo / segmentDist
-    let x = (pt[0] - last[0]) * cutPerc + last[0]
-    let y = (pt[1] - last[1]) * cutPerc + last[1]
+    const cutPerc = toGo / segmentDist
+    const x = (pt[0] - last[0]) * cutPerc + last[0]
+    const y = (pt[1] - last[1]) * cutPerc + last[1]
     toDraw.push([x, y])
     break
   }

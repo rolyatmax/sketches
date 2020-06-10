@@ -2,7 +2,7 @@ const canvasSketch = require('canvas-sketch')
 const createRegl = require('regl')
 const { GUI } = require('dat-gui')
 const { random } = require('canvas-sketch-util')
-const createRoamingCamera = require('../src/common/create-roaming-camera')
+const createRoamingCamera = require('./common/create-roaming-camera')
 const mat4 = require('gl-mat4')
 const vec3 = require('gl-vec3')
 const d3Color = require('d3-color')
@@ -98,7 +98,7 @@ const sketch = ({ gl, width, height }) => {
         rad * Math.cos(theta)
       ]
       const hue = (v * 0.5 + 0.5) * settings.hueSpread + settings.hueStart
-      const {r, g, b} = d3Color.rgb(`hsl(${hue}, ${settings.saturation}%, ${settings.lightness}%)`)
+      const { r, g, b } = d3Color.rgb(`hsl(${hue}, ${settings.saturation}%, ${settings.lightness}%)`)
       const timeOffset = rand.noise3D(x + offset1[0] + 1000, y + offset1[1] + 1000, z + offset1[2] + 1000, settings.freq)
       return {
         position: position,
@@ -196,7 +196,7 @@ const sketch = ({ gl, width, height }) => {
     })
 
     regl.clear({
-      color: [ 1.0, 1.0, 1.0, 1.0 ],
+      color: [1.0, 1.0, 1.0, 1.0],
       depth: 1
     })
 
@@ -225,7 +225,7 @@ function createStateTransitioner (regl, data) {
     0 // empty slot
   ]))
 
-  const {stateIndexes, metadataTexture} = createMetadataStateTexture(data, pt => ([
+  const { stateIndexes, metadataTexture } = createMetadataStateTexture(data, pt => ([
     pt.timeOffset,
     0, // empty slot
     0, // empty slot
@@ -364,7 +364,7 @@ function createStateTransitioner (regl, data) {
       return [stateIndexX / stateTextureSize, stateIndexY / stateTextureSize]
     })
     const metadataTexture = createStateBuffer(metadata, stateTextureSize)
-    return {stateIndexes, metadataTexture}
+    return { stateIndexes, metadataTexture }
   }
 
   function createStateBuffer (initialState, textureSize) {

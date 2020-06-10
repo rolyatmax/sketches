@@ -54,7 +54,7 @@ const sketch = ({ render }) => {
     while (points.length < settings.pointCount && tries < settings.triesCount) {
       const position = vec2.add([], rand.insideCircle(HALF_SIZE - settings.margin), [HALF_SIZE, HALF_SIZE])
       let isInsideHole = false
-      for (let h of holes) {
+      for (const h of holes) {
         if (vec2.distance(h.position, position) < h.size) {
           isInsideHole = true
           break
@@ -79,7 +79,7 @@ const sketch = ({ render }) => {
     context.fillStyle = 'white'
     context.fillRect(0, 0, width, height)
 
-    for (let pt of points) {
+    for (const pt of points) {
       const color = pt.opacity * 255
       if (settings.lines) {
         const vec = vec2.scale([], [Math.cos(pt.angle), Math.sin(pt.angle)], settings.pointSize)
@@ -104,5 +104,5 @@ const sketch = ({ render }) => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ]
+  dimensions: [SIZE, SIZE]
 })

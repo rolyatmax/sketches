@@ -77,7 +77,7 @@ function setup () {
 
     // order them deterministically so we can keep track of which side it has had neighbors added to
     if (circle2.id > circle1.id) {
-      let tmp = circle1
+      const tmp = circle1
       circle1 = circle2
       circle2 = tmp
     }
@@ -138,14 +138,14 @@ const sketch = () => {
 
     context.lineWidth = 2
 
-    for (let circle of circles) {
+    for (const circle of circles) {
       drawCircle(context, circle.pos, circle.r, `hsla(${circle.hue}, 50%, 50%, ${settings.opacity})`, settings.fill)
     }
   }
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true
 })
 

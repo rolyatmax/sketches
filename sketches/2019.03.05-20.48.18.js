@@ -31,7 +31,7 @@ gui.add(settings, 'sampleCount', 1, 10000).step(1).onChange(onChange)
 gui.add(settings, 'resolution', 1, 2048).step(1).onChange(onChange)
 gui.add(settings, 'bias', 0, 0.5).step(0.001).onChange(onChange)
 
-const sketch = ({canvas}) => {
+const sketch = ({ canvas }) => {
   const camera = createCamera(canvas, { zoomSpeed: 4 })
   const regl = createRegl({
     extensions: ['OES_texture_float'],
@@ -156,7 +156,7 @@ const sketch = ({canvas}) => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   context: 'webgl',
   attributes: { antialias: true },
   animate: true

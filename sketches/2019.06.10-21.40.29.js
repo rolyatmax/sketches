@@ -4,7 +4,7 @@ const canvasSketch = require('canvas-sketch')
 const createRegl = require('regl')
 const { GUI } = require('dat-gui')
 const { random } = require('canvas-sketch-util')
-const createRoamingCamera = require('../src/common/create-roaming-camera')
+const createRoamingCamera = require('./common/create-roaming-camera')
 const mat4 = require('gl-mat4')
 const { csvParseRows } = require('d3-dsv')
 const { extent } = require('d3-array')
@@ -19,7 +19,7 @@ const settings = {
 
 let drawCircles, setup, data
 let moveToNextPosition = () => {}
-let rand = random.createRandom(settings.seed)
+const rand = random.createRandom(settings.seed)
 
 const gui = new GUI()
 gui.add(settings, 'pointSize', 1, 100)
@@ -57,7 +57,7 @@ const sketch = ({ gl, width, height }) => {
       const lon = Number(d[0])
       const elevation = Number(d[2])
       const intensity = Number(d[3])
-      return {lat, lon, elevation, intensity}
+      return { lat, lon, elevation, intensity }
     }).filter(d => d.elevation > 0)
 
     const lonExtent = extent(data, d => d.lon)
@@ -153,7 +153,7 @@ const sketch = ({ gl, width, height }) => {
     // camera._camera.up = [camera._camera.up[0], camera._camera.up[1], 999]
 
     regl.clear({
-      color: [ 1.0, 1.0, 1.0, 1.0 ],
+      color: [1.0, 1.0, 1.0, 1.0],
       depth: 1
     })
 
@@ -161,7 +161,7 @@ const sketch = ({ gl, width, height }) => {
   }
 }
 
-fetch('src/data/west-coast-lidar/west-coast-lidar-filtered.csv')
+fetch('resources/data/west-coast-lidar/west-coast-lidar-filtered.csv')
   .then(res => res.text())
   .then(res => {
     console.log('loaded!')

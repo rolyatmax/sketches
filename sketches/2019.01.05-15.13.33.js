@@ -1,8 +1,8 @@
+import loadImg from 'load-img'
+import fit from 'objectfit/cover'
 const canvasSketch = require('canvas-sketch')
 const random = require('canvas-sketch-util/random')
 const { GUI } = require('dat-gui')
-import loadImg from 'load-img'
-import fit from 'objectfit/cover'
 
 const SIZE = 2048
 const HALF_SIZE = SIZE / 2
@@ -54,7 +54,7 @@ const sketch = ({ render }) => {
     rand = random.createRandom(settings.seed)
     tris = []
 
-    loadImg(`src/images/${settings.image}.jpg`, (err, image) => {
+    loadImg(`resources/images/${settings.image}.jpg`, (err, image) => {
       if (err) throw err
       drawImageToCanvas(hiddenCtx, image)
       pixelPicker = makePixelPicker(hiddenCanvas)
@@ -85,7 +85,7 @@ const sketch = ({ render }) => {
 
     if (!pixelPicker) return
 
-    for (let tri of tris) {
+    for (const tri of tris) {
       const pixel = pixelPicker(tri.position[0], tri.position[1])
       const { r, g, b } = pixel
       let color
@@ -107,7 +107,7 @@ const sketch = ({ render }) => {
 
       context.beginPath()
       context.moveTo(pts[0][0], pts[0][1])
-      for (let pt of pts.slice(1)) {
+      for (const pt of pts.slice(1)) {
         context.lineTo(pt[0], pt[1])
       }
       context.fillStyle = `rgba(${color.join(',')}, ${settings.opacity})`
@@ -117,13 +117,13 @@ const sketch = ({ render }) => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ]
+  dimensions: [SIZE, SIZE]
 })
 
 function drawImageToCanvas (context, img) {
-  let imgWidth = img.naturalWidth || img.width
-  let imgHeight = img.naturalHeight || img.height
-  let bounds = fit(
+  const imgWidth = img.naturalWidth || img.width
+  const imgHeight = img.naturalHeight || img.height
+  const bounds = fit(
     [0, 0, SIZE, SIZE],
     [0, 0, imgWidth, imgHeight]
   )

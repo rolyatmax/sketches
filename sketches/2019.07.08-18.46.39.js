@@ -115,8 +115,8 @@ function setup () {
 function getPositions (mesh) {
   let j = 0
   const positions = new Float32Array(mesh.cells.length * 3 * 3)
-  for (let cell of mesh.cells) {
-    for (let i of cell) {
+  for (const cell of mesh.cells) {
+    for (const i of cell) {
       positions[j++] = mesh.positions[i][0]
       positions[j++] = mesh.positions[i][1]
       positions[j++] = mesh.positions[i][2]
@@ -128,7 +128,7 @@ function getPositions (mesh) {
 function getBarys (mesh) {
   let j = 0
   const barys = new Float32Array(mesh.cells.length * 3 * 3)
-  for (let cell of mesh.cells) {
+  for (const cell of mesh.cells) {
     barys[j++] = 1
     barys[j++] = 0
     barys[j++] = 0
@@ -146,8 +146,8 @@ function getColors (mesh) {
   let j = 0
   const colors = new Float32Array(mesh.cells.length * 3 * 3)
   const colorsByPosition = []
-  for (let cell of mesh.cells) {
-    for (let i of cell) {
+  for (const cell of mesh.cells) {
+    for (const i of cell) {
       let color = colorsByPosition[i]
       if (!color) {
         const t = rand.noise3D(

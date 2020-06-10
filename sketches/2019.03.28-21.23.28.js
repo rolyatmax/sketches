@@ -78,7 +78,7 @@ const sketch = ({ canvas }) => {
       const position = project([], p.position, viewport, projView)
       const depth = project([], p.position, viewport, camera.matrix)[2]
       position[1] = HEIGHT - position[1]
-      return {position, depth}
+      return { position, depth }
     })
 
     const getPoint = (rads, radius, pt) => [
@@ -115,7 +115,7 @@ const sketch = ({ canvas }) => {
       drawPath(context, line, lineColor, true)
     }
 
-    for (let pt of points) {
+    for (const pt of points) {
       const ptRadius = Math.max(0, getRadius(pt))
       const ptAlpha = getAlpha(pt)
       drawCircle(context, pt.position, ptRadius, `hsla(190, 50%, 50%, ${ptAlpha})`)
@@ -124,7 +124,7 @@ const sketch = ({ canvas }) => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true
 })
 
@@ -138,7 +138,7 @@ function drawCircle (ctx, position, radius, color) {
 function drawPath (ctx, line, color, fill) {
   ctx.beginPath()
   ctx.moveTo(line[0][0], line[0][1])
-  for (let pt of line.slice(1)) {
+  for (const pt of line.slice(1)) {
     ctx.lineTo(pt[0], pt[1])
   }
   if (fill) {

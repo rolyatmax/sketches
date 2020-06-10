@@ -49,7 +49,7 @@ const sketch = ({ context }) => {
   function setup () {
     rand = random.createRandom(settings.seed)
 
-    loadImg(`src/images/${settings.image}.jpg`, (err, image) => {
+    loadImg(`resources/images/${settings.image}.jpg`, (err, image) => {
       if (err) throw err
       loadedImage = image
       pixelPicker = makePixelPicker(image, [SIZE, SIZE])
@@ -137,7 +137,7 @@ const sketch = ({ context }) => {
       w.size *= settings.opacityDecay
       vec2.add(w.position, w.position, dir)
       if (w.color) {
-        const {r, g, b} = w.color
+        const { r, g, b } = w.color
         const radius = w.size
         context.beginPath()
         context.fillStyle = `rgba(${[r, g, b].join(',')}, ${w.opacity})`
@@ -153,14 +153,14 @@ const sketch = ({ context }) => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ],
+  dimensions: [SIZE, SIZE],
   animate: true
 })
 
 function drawImageToCanvas (context, img) {
-  let imgWidth = img.naturalWidth || img.width
-  let imgHeight = img.naturalHeight || img.height
-  let bounds = fit(
+  const imgWidth = img.naturalWidth || img.width
+  const imgHeight = img.naturalHeight || img.height
+  const bounds = fit(
     [0, 0, SIZE, SIZE],
     [0, 0, imgWidth, imgHeight]
   )

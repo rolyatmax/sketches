@@ -49,7 +49,7 @@ function setup () {
       Math.sin(rads) * dist
     ]
     vec2.add(position, position, center)
-    return {position}
+    return { position }
   })
   isFirstDraw = true
 }
@@ -104,6 +104,6 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ SIZE, SIZE ],
+  dimensions: [SIZE, SIZE],
   animate: true
 })

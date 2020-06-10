@@ -9,7 +9,7 @@ const WIDTH = 800
 const HEIGHT = 800
 
 const settings = {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true,
   fps: 24
 }

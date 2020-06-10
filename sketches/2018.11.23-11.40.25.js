@@ -47,7 +47,7 @@ const sketch = () => {
     context.fillStyle = 'white'
     context.fillRect(0, 0, width, height)
 
-    for (let pt of points) {
+    for (const pt of points) {
       context.beginPath()
       const size = rand.noise3D(pt.position[0], pt.position[1], time * settings.speed, settings.noiseFreq, settings.noiseAmp) + settings.noiseAmp
       const angle = size / settings.noiseAmp * Math.PI
@@ -61,6 +61,6 @@ const sketch = () => {
 }
 
 canvasSketch(sketch, {
-  dimensions: [ WIDTH, HEIGHT ],
+  dimensions: [WIDTH, HEIGHT],
   animate: true
 })
