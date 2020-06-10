@@ -38,10 +38,10 @@ let rand, pixels, shuffledPixels
 function setup () {
   rand = random.createRandom(settings.seed)
 
-  loadImg(`src/images/${settings.image1}.jpg`, (err1, image1) => {
+  loadImg(`resources/images/${settings.image1}.jpg`, (err1, image1) => {
     if (err1) throw err1
     const pixelPicker1 = makePixelPicker(image1, [SIZE, SIZE])
-    loadImg(`src/images/${settings.image2}.jpg`, (err2, image2) => {
+    loadImg(`resources/images/${settings.image2}.jpg`, (err2, image2) => {
       if (err2) throw err2
       const pixelPicker2 = makePixelPicker(image2, [SIZE, SIZE])
 

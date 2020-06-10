@@ -49,7 +49,7 @@ const sketch = ({ context }) => {
   function setup () {
     rand = random.createRandom(settings.seed)
 
-    loadImg(`src/images/${settings.image}.jpg`, (err, image) => {
+    loadImg(`resources/images/${settings.image}.jpg`, (err, image) => {
       if (err) throw err
       loadedImage = image
       pixelPicker = makePixelPicker(image, [SIZE, SIZE])

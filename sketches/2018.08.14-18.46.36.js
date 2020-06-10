@@ -103,37 +103,37 @@ function fillBlob (context, rand, outline, hueStart, hueEnd) {
   context.fill()
 }
 
-function getHueStops (linePoints, startHue, endHue, lineHueOffset = 0) {
-  const distances = linePoints.map((_, i) => {
-    return vec2.distance(linePoints[i], linePoints[(i + 1) % linePoints.length])
-  })
-  const totalLen = distances.reduce((t, d) => t + d, 0)
+// function getHueStops (linePoints, startHue, endHue, lineHueOffset = 0) {
+//   const distances = linePoints.map((_, i) => {
+//     return vec2.distance(linePoints[i], linePoints[(i + 1) % linePoints.length])
+//   })
+//   const totalLen = distances.reduce((t, d) => t + d, 0)
 
-  const hueDiff = endHue - startHue
+//   const hueDiff = endHue - startHue
 
-  let offset = lineHueOffset
-  const hues = new Array(linePoints.length).fill().map((_, i) => {
-    const hue = (offset % totalLen) / totalLen * hueDiff + startHue
-    offset += distances[i]
-    return hue
-  })
+//   let offset = lineHueOffset
+//   const hues = new Array(linePoints.length).fill().map((_, i) => {
+//     const hue = (offset % totalLen) / totalLen * hueDiff + startHue
+//     offset += distances[i]
+//     return hue
+//   })
 
-  return hues
-}
+//   return hues
+// }
 
 function filterPointsByDist (points, origin, radius) {
   return points.filter((pt) => vec2.distance(origin, pt) <= radius)
 }
 
-function makePoints (rand, size, position) {
-  return new Array(settings.numDots).fill().map(() => {
-    const rad = rand() * Math.PI * 2
-    const mag = Math.pow(rand(), settings.spreadPow) * size
-    const x = Math.cos(rad) * mag + position[0]
-    const y = Math.sin(rad) * mag + position[1]
-    return [x, y]
-  })
-}
+// function makePoints (rand, size, position) {
+//   return new Array(settings.numDots).fill().map(() => {
+//     const rad = rand() * Math.PI * 2
+//     const mag = Math.pow(rand(), settings.spreadPow) * size
+//     const x = Math.cos(rad) * mag + position[0]
+//     const y = Math.sin(rad) * mag + position[1]
+//     return [x, y]
+//   })
+// }
 
 function makeBlobFromPoints (points, curviness) {
   const hull = polygonHull(points)

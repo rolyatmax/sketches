@@ -53,7 +53,7 @@ const sketch = ({ render }) => {
     rand = random.createRandom(settings.seed)
     points = []
 
-    loadImg(`src/images/${settings.image}.jpg`, (err, image) => {
+    loadImg(`resources/images/${settings.image}.jpg`, (err, image) => {
       if (err) throw err
       drawImageToCanvas(hiddenCtx, image)
       pixelPicker = makePixelPicker(hiddenCanvas)

@@ -2,10 +2,9 @@
   "name": "sketches",
   "version": "0.0.2",
   "description": "a starting point for sketches",
-  "main": "src/index.js",
   "scripts": {
     "build": "node scripts/build.js",
-    "start": "open http://localhost:8080 && cd docs && python -m SimpleHTTPServer 8080",
+    "start": "echo \"open localhost:8080 in a browser\" && cd docs && python -m SimpleHTTPServer 8080",
     "lint": "standard",
     "new": "canvas-sketch --new --output=tmp --template=./.sketch-template.js",
     "dev": "canvas-sketch --output=tmp"
@@ -61,6 +60,7 @@
     "kd-tree-javascript": "^1.0.3",
     "lerp": "^1.0.3",
     "load-img": "^1.0.0",
+    "lodash": "^4.17.15",
     "luma.gl": "^6.4.0",
     "mapbox-gl": "^1.4.0",
     "memoizee": "^0.4.14",

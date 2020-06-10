@@ -39,7 +39,7 @@ gui.add(settings, 'linearLayout')
 
 let analyser
 
-const audio = createPlayer('src/audio/06-666(upsidedowncross).mp3')
+const audio = createPlayer('resources/audio/06-666(upsidedowncross).mp3')
 document.body.appendChild(showPlayAudioButton(audio))
 audio.on('load', function () {
   analyser = Meyda.createMeydaAnalyzer({

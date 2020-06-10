@@ -4,7 +4,7 @@ const canvasSketch = require('canvas-sketch')
 const createRegl = require('regl')
 const { GUI } = require('dat-gui')
 const { random } = require('canvas-sketch-util')
-const createRoamingCamera = require('../src/common/create-roaming-camera')
+const createRoamingCamera = require('./common/create-roaming-camera')
 const mat4 = require('gl-mat4')
 const { csvParseRows } = require('d3-dsv')
 const { extent } = require('d3-array')
@@ -161,7 +161,7 @@ const sketch = ({ gl, width, height }) => {
   }
 }
 
-fetch('src/data/west-coast-lidar/west-coast-lidar-filtered.csv')
+fetch('resources/data/west-coast-lidar/west-coast-lidar-filtered.csv')
   .then(res => res.text())
   .then(res => {
     console.log('loaded!')
