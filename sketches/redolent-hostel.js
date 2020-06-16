@@ -15,10 +15,10 @@ const ctx = canvas.getContext('2d')
 
 const settings = guiSettings({
   seed: [Math.random() * 1000 | 0, 0, 1000, 1, true],
-  particles: [100, 1, 1000, 1, true],
-  angleDivision: [6, 1, 26, 1],
-  speed: [4, 1, 50, 1],
-  wander: [1, 0, 100, 1]
+  particles: [1000, 1, 5000, 1, true],
+  angleDivision: [4, 3, 8, 1, true],
+  speed: [15, 1, 50, 1],
+  wander: [120, 1, 500, 1]
 }, setup)
 
 let points, rand
