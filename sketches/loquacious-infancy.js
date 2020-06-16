@@ -24,18 +24,18 @@ let rand, cells
 const settings = guiSettings({
   seed: [Math.random() * 1000 | 0, 0, 1000, 1, true],
   // rays: [1, 1, 10, 1, true],
-  cellSize: [50, 10, 200, 1, true],
+  cellSize: [25, 10, 200, 1, true],
   reflections: [1, 0, 8, 1],
-  speed: [5, 0, 40, 1],
-  lineOpacity: [0.2, 0, 1, 0.01],
-  colorSpread: [0.4, 0.01, 2, 0.01],
-  pixelCount: [10, 2, 30, 1],
-  hueOffset: [Math.random(), 0, 1, 0.01],
-  hueRange: [0.25, 0, 1, 0.01],
-  saturationOffset: [0.25, 0, 1, 0.01],
-  saturationRange: [0.4, 0, 1, 0.01],
-  luminosityOffset: [0.2, 0, 1, 0.01],
-  luminosityRange: [0.5, 0, 1, 0.01]
+  speed: [80, 0, 150, 1],
+  lineOpacity: [0.8, 0, 1, 0.01],
+  colorSpread: [0.2, 0.01, 2, 0.01],
+  pixelCount: [3, 2, 30, 1],
+  hueOffset: [0.43, 0, 1, 0.01],
+  hueRange: [0.35, 0, 1, 0.01],
+  saturationOffset: [0.35, 0, 1, 0.01],
+  saturationRange: [0.35, 0, 1, 0.01],
+  luminosityOffset: [0.3, 0, 1, 0.01],
+  luminosityRange: [0.25, 0, 1, 0.01]
 }, setup)
 
 setup()
