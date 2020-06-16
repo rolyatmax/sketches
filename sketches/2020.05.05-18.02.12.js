@@ -13,7 +13,7 @@ const HEIGHT = 2048
 const settings = {
   seed: 1,
   margin: 200,
-  palette: 10,
+  palette: 23,
   gridSize: 50,
   permutationIterations: 10,
   stepSize: 0.1,

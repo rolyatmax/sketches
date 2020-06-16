@@ -13,7 +13,7 @@ const createPaletteAnimator = require('../lib/palette-animator/palette-animator-
 const injectGLSL = require('../lib/inject-glsl/inject-glsl-0.0.1')
 const NOISE_GLSL = require('../lib/noise-glsl/noise-glsl-0.0.1')
 
-const paletteAnimator = createPaletteAnimator(palettes, 0.001, 0.1, [1, 1, 1])
+const paletteAnimator = createPaletteAnimator(palettes, 0.001, 0.1, [0, 0, 0])
 const { PALETTE_ANIMATOR_GLSL } = paletteAnimator
 
 const DIMENSIONS = [128, 128, 128]
@@ -21,21 +21,21 @@ const DIMENSIONS = [128, 128, 128]
 const rico = window.rico = createRico()
 
 const settings = {
-  seed: 0,
+  seed: 200,
   palette: 15,
-  agentCount: 200000,
+  agentCount: 400000,
   pointSize: 0.01,
-  renderPointSize: 2.5,
-  renderPointOpacity: 0.25,
-  trailMapOpacity: 0.25,
-  stepSize: 0.0045,
-  headingStepSpread: 0.1,
-  sensorSpread: 0.1,
-  sensorDist: 0.1,
-  decay: 0.95,
+  renderPointSize: 1,
+  renderPointOpacity: 0.1,
+  trailMapOpacity: 0.05,
+  stepSize: 0.05,
+  headingStepSpread: 0.5,
+  sensorSpread: 0.5,
+  sensorDist: 0.25,
+  decay: 0.97,
   diffuse: 1,
   trailIntensity: 0.01,
-  cameraDist: 10,
+  cameraDist: 4.5,
   wrap: true,
   renderPoints: true,
   renderTrails: true
@@ -49,7 +49,7 @@ gui.add(settings, 'pointSize', 0.01, 8)
 gui.add(settings, 'renderPointSize', 0.01, 8)
 gui.add(settings, 'renderPointOpacity', 0.01, 1).step(0.01)
 gui.add(settings, 'trailMapOpacity', 0.01, 1)
-gui.add(settings, 'stepSize', 0.0001, 0.005).step(0.0001)
+gui.add(settings, 'stepSize', 0.001, 0.5).step(0.001)
 gui.add(settings, 'headingStepSpread', 0.01, 2).step(0.01)
 gui.add(settings, 'sensorSpread', 0.01, 2).step(0.01)
 gui.add(settings, 'sensorDist', 0.0001, 0.5)
@@ -68,10 +68,10 @@ let rand = random.createRandom(settings.seed)
 const camera = createRoamingCamera({
   canvas: rico.canvas,
   zoomSpeed: 4,
-  center: [settings.cameraDist, settings.cameraDist, settings.cameraDist],
+  center: [8, 8, 8],
   eye: [0, 0, 0],
-  damping: 0.003,
-  stiffness: 0.00001,
+  damping: 0.03,
+  stiffness: 0.0001,
   getCameraPosition: () => rand.onSphere(settings.cameraDist)
 })
 

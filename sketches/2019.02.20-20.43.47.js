@@ -8,7 +8,7 @@ const HEIGHT = 1024
 
 const settings = {
   seed: 8778,
-  cellSize: 31,
+  cellSize: 5,
   outlineRatio: 0.9,
   elevationLimit: 0.31,
   freq: 0.35,
@@ -21,7 +21,7 @@ const settings = {
 
 const gui = new GUI()
 gui.add(settings, 'seed', 0, 9999).step(1).onChange(setup)
-gui.add(settings, 'cellSize', 5, 400)
+gui.add(settings, 'cellSize', 2, 400)
 gui.add(settings, 'outlineRatio', 0, 3).step(0.01)
 gui.add(settings, 'elevationLimit', 0, 1).step(0.01)
 gui.add(settings, 'freq', 0, 0.6).step(0.001)

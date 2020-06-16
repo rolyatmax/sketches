@@ -20,7 +20,7 @@ function sketch ({ render }) {
   const gui = new GUI()
   gui.add(settings, 'image', [
     'coffee', 'empire', 'flatiron', 'fruit', 'mosque', 'mountains', 'palms', 'skyline', 'snowday', 'whitehouse'
-  ]).onChange(setup)
+  ]).onChange(setup).listen()
   gui.add(settings, 'resolution', 10, 500).step(1).onChange(setup)
   gui.add(settings, 'speed', 1, 30)
   gui.add(settings, 'noiseZoom', 1, 800)
@@ -36,6 +36,10 @@ function sketch ({ render }) {
   let pixelPicker, isFirstRender
 
   setup()
+  setTimeout(() => {
+    settings.image = 'skyline'
+    setup()
+  }, 4000)
   isFirstRender = true
   function setup () {
     loadImg(`resources/images/${settings.image}.jpg`, (err, image) => {

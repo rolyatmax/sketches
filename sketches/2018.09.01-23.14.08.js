@@ -15,7 +15,7 @@ const settings = {
   opacity: 0.99,
   lineOpacity: 0.3,
   lineWidth: 2,
-  fill: true
+  fill: false
 }
 
 const gui = new GUI()

@@ -30,11 +30,11 @@ const meshCenter = mesh.positions.reduce((av, pt) => [
 const rico = window.rico = createRico()
 
 const settings = {
-  seed: 26,
+  seed: 24,
   palette: 84,
   primitive: 'triangles',
   offset: 0.412,
-  cuts: 0,
+  cuts: 4,
   smoothingIterations: 1,
   rotationAmount: 0,
   translationAmount: 0,
@@ -52,7 +52,7 @@ gui.add(settings, 'seed', 0, 9999).step(1).onChange(setup)
 gui.add(settings, 'palette', 0, 100).step(1)
 gui.add(settings, 'offset', 0, 2).onChange(setup)
 gui.add(settings, 'cuts', 0, 28).step(1).onChange(setup)
-gui.add(settings, 'smoothingIterations', 0, 20).step(1).onChange(setup)
+gui.add(settings, 'smoothingIterations', 0, 5).step(1).onChange(setup)
 gui.add(settings, 'sampleCount', 1, 10000).step(1).onChange(setup)
 gui.add(settings, 'resolution', 1, 2048).step(1).onChange(setup)
 gui.add(settings, 'bias', 0, 0.5).step(0.001).onChange(setup)

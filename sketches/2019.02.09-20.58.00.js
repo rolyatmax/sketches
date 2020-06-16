@@ -11,9 +11,9 @@ const SIZE = 1024
 const onChange = () => setup()
 
 const settings = {
-  seed: 0,
-  pointCount: 300000,
-  pointSize: 5,
+  seed: 32,
+  pointCount: 500000,
+  pointSize: 55,
   noiseMag: 25,
   freq: 0.7,
   hueSpread: 0.1,
@@ -30,21 +30,25 @@ let moveToNextPosition = () => {}
 let rand = random.createRandom(settings.seed)
 
 const gui = new GUI()
-gui.add(settings, 'seed', 0, 9999).step(1).onChange(onChange)
-gui.add(settings, 'pointCount', 0, 1000000).step(1).onChange(onChange)
-gui.add(settings, 'pointSize', 1, 100)
-gui.add(settings, 'noiseMag', 0, 100)
-gui.add(settings, 'freq', 0, 3)
-// gui.add(settings, 'hueStart', 0, 1).step(0.01)
-gui.add(settings, 'hueSpread', 0, 1).step(0.01)
-gui.add(settings, 'saturation', 0, 1).step(0.01)
-gui.add(settings, 'lightness', 0, 1).step(0.01)
-gui.add(settings, 'dampening', 0, 1).onChange(onChange)
-gui.add(settings, 'stiffness', 0, 2).onChange(onChange)
+const misc = gui.addFolder('misc')
+misc.add(settings, 'seed', 0, 9999).step(1).onChange(onChange)
+misc.add(settings, 'pointCount', 0, 1000000).step(1).onChange(onChange)
+misc.add(settings, 'freq', 0, 3).onChange(onChange)
+misc.add(settings, 'saturation', 0, 1).step(0.01)
+misc.add(settings, 'lightness', 0, 1).step(0.01)
+misc.add(settings, 'dampening', 0, 1).onChange(onChange)
+misc.add(settings, 'stiffness', 0, 2).onChange(onChange)
+misc.add(settings, 'cameraDist', 0, 10)
 
-gui.add(settings, 'cameraDist', 0, 10)
-gui.add({ next: () => moveToNextPosition() }, 'next')
-gui.add({ changeNoise: changeNoise }, 'changeNoise')
+const interactive = gui.addFolder('interactive controls')
+interactive.add(settings, 'hueStart', 0, 1).step(0.01).onChange(changeNoise)
+interactive.add(settings, 'hueSpread', 0, 1).step(0.01).onChange(changeNoise)
+interactive.add(settings, 'pointSize', 1, 100).onChange(changeNoise)
+interactive.add(settings, 'noiseMag', 0, 100).onChange(changeNoise)
+interactive.add({ next: () => moveToNextPosition() }, 'next')
+interactive.add({ changeNoise }, 'changeNoise')
+
+interactive.open()
 
 function changeNoise () {
   noiseSpring.updateValue(rand.range(settings.noiseMag / 50))
@@ -86,7 +90,7 @@ const sketch = ({ gl }) => {
     noiseSpring = createSpring(settings.dampening, settings.stiffness, 0)
     hueSpreadSpring = createSpring(settings.dampening, settings.stiffness, 0)
     hueStartSpring = createSpring(settings.dampening, settings.stiffness, 0)
-    sizeSpring = createSpring(settings.dampening, settings.stiffness, 1)
+    sizeSpring = createSpring(settings.dampening, settings.stiffness, 30)
     nOffset = rand.insideSphere(500)
     frame = 0
 
@@ -328,6 +332,8 @@ const sketch = ({ gl }) => {
   }
 
   setup()
+  changeNoise()
+  setTimeout(changeNoise, 6000)
 
   return () => {
     frame += 1

@@ -21,15 +21,15 @@ const onChange = () => setup()
 
 const settings = {
   seed: 0,
-  pointCount: 20000,
-  pointSize: 12,
-  noiseMag: 25,
-  freq: 0.7,
-  cameraDist: 5,
-  hueSpread: 100,
-  hueStart: 100,
-  saturation: 50,
-  lightness: 50,
+  pointCount: 750000,
+  pointSize: 2,
+  noiseMag: 100,
+  freq: 0.5,
+  cameraDist: 10,
+  hueSpread: 45,
+  hueStart: 200,
+  saturation: 45,
+  lightness: 45,
   dampening: 0.1,
   stiffness: 0.1
 }
@@ -53,7 +53,7 @@ gui.add(settings, 'lightness', 0, 100).onChange(onChange)
 gui.add(settings, 'dampening', 0, 2).step(0.01).onChange(setup)
 gui.add(settings, 'stiffness', 0, 2).step(0.01).onChange(setup)
 
-gui.add(settings, 'cameraDist', 0, 10)
+gui.add(settings, 'cameraDist', 0, 12)
 gui.add({ next: () => moveToNextPosition() }, 'next')
 
 const sketch = ({ gl, width, height }) => {

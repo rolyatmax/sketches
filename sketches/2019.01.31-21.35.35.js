@@ -13,13 +13,13 @@ const onChange = () => setup()
 
 const settings = {
   seed: 0,
-  pointCount: 20000,
-  pointSize: 12,
-  noiseMag: 25,
+  pointCount: 200000,
+  pointSize: 15,
+  noiseMag: 80,
   freq: 0.7,
   cameraDist: 5,
-  hueSpread: 100,
-  hueStart: 100,
+  hueSpread: 200,
+  hueStart: 160,
   saturation: 50,
   lightness: 50
 }

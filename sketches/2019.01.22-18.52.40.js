@@ -7,17 +7,17 @@ const SIZE = 1024
 const SIZE_FACTOR = 1
 
 const settings = {
-  seed: 4652,
+  seed: 1842,
   branchesCount: 2,
   branchingFactor: 1,
-  branchDepthLimit: 10,
-  branchingAngle: 3,
+  branchDepthLimit: 3,
+  branchingAngle: 4,
   startRadius: 0 * SIZE_FACTOR,
-  radius: 12 * SIZE_FACTOR,
+  radius: 5 * SIZE_FACTOR,
   startHue: 200,
   hueRange: 100,
-  radsDivisor: 3,
-  radiusDecay: 994,
+  radsDivisor: 4,
+  radiusDecay: 998,
   radiusNoiseFreq: 7,
   speed: 0.6 * SIZE_FACTOR,
   opacity: 28,

@@ -8,10 +8,10 @@ const MARGIN = 200
 
 const settings = {
   seed: 10,
-  gridSize: 60,
-  noiseFreq: 0.001,
+  gridSize: 110,
+  noiseFreq: 0.0035,
   noiseAmp: 2,
-  speed: 500
+  speed: 140
 }
 
 const gui = new GUI()

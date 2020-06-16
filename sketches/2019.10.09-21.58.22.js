@@ -11,24 +11,22 @@ const createRoamingCamera = require('../lib/roaming-camera/roaming-camera-0.0.1'
 const mat4 = require('gl-mat4')
 const { createSpring } = require('spring-animator-2')
 
-const paletteSpring = createPaletteAnimator(0.001, 0.3, [
-  [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1]
-])
+const paletteSpring = createPaletteAnimator(0.001, 0.3, palettes[80].map(hexToRgb))
 
 const rico = window.rico = createRico()
 
 const settings = {
-  seed: 0,
-  palette: 0,
-  points: 10000,
-  granularity: 100,
-  tail: 1,
-  pointSize: 2,
-  colorVariance: 1.5,
-  rotationFreq: 0.1,
-  opacity: 0.95,
+  seed: 100,
+  palette: 20,
+  points: 30000,
+  granularity: 200,
+  tail: 0.8,
+  pointSize: 0.5,
+  colorVariance: 0.5,
+  rotationFreq: 0.7,
+  opacity: 0.85,
   primitive: 'points',
-  cameraDist: 5
+  cameraDist: 9
 }
 
 const gui = new GUI()
@@ -39,8 +37,8 @@ gui.add(settings, 'granularity', 2, 500).step(1).onChange(setup)
 gui.add(settings, 'tail', 0, 3)
 gui.add(settings, 'colorVariance', 0, 2)
 gui.add(settings, 'rotationFreq', 0.01, 2).step(0.01)
-gui.add(settings, 'opacity', 0, 1)
-gui.add(settings, 'pointSize', 0, 10)
+gui.add(settings, 'opacity', 0.01, 1)
+gui.add(settings, 'pointSize', 1, 10)
 gui.add(settings, 'cameraDist', 0, 20)
 gui.add(settings, 'primitive', ['points', 'lines', 'line loop', 'triangles', 'triangle strip'])
 gui.add({ next: () => camera.moveToNextPosition() }, 'next')

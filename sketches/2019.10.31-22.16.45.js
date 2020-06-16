@@ -41,7 +41,7 @@ const settings = {
   bias: 0.04,
   aoPower: 0.8,
   lightFromInside: false,
-  cameraDist: 22,
+  cameraDist: 45,
   roam: true
 }
 

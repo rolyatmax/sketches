@@ -12,11 +12,11 @@ const SIZE = 600
 
 const settings = {
   seed: 1,
-  sampleSize: 3,
-  opacity: 0.3,
-  circleSize: 3.5,
-  image1: 'pasture',
-  image2: 'coffee'
+  sampleSize: 6,
+  opacity: 0.4,
+  circleSize: 2,
+  image1: 'coffee',
+  image2: 'empire'
 }
 
 const images = [
@@ -76,7 +76,7 @@ function setup () {
           n += incr
           if (n < pixels.length) requestAnimationFrame(updateSomePixels)
         }
-      }, 6000)
+      }, 1000)
     })
   })
 }

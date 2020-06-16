@@ -10,18 +10,18 @@ const SIZE = 1024
 const onChange = () => setup()
 
 const settings = {
-  seed: 0,
-  pointCount: 100000,
-  pointSize: 200,
-  noiseMag: 20,
-  freq: 0.6,
+  seed: 25,
+  pointCount: 400000,
+  pointSize: 100,
+  noiseMag: 60,
+  freq: 0.9,
   hueSpread: 0.2,
   hueStart: 0.56,
   saturation: 0.4,
   lightness: 0.42,
-  cameraDist: 0.5,
-  accel: 0.00002,
-  friction: 0.17,
+  cameraDist: 1.3,
+  accel: 0.0002,
+  friction: 0.15,
   onSphere: false
 }
 
@@ -44,7 +44,7 @@ gui.add(settings, 'friction', 0, 0.2).step(0.001)
 gui.add(settings, 'cameraDist', 0, 10)
 gui.add(settings, 'onSphere').onChange(onChange)
 
-gui.add({ next: () => moveToNextPosition() }, 'next')
+gui.add({ moveCamera: () => moveToNextPosition() }, 'moveCamera')
 gui.add({ changeNoise: changeNoise }, 'changeNoise')
 
 function changeNoise () {
@@ -58,7 +58,7 @@ const sketch = ({ gl }) => {
   const camera = createRoamingCamera({
     canvas: gl.canvas,
     zoomSpeed: 4,
-    center: [1, 1, 1],
+    center: [2, 2, 2],
     eye: [0, 0, 0],
     accel: settings.accel,
     friction: settings.friction,
@@ -87,7 +87,7 @@ const sketch = ({ gl }) => {
     noiseSpring = createAnimator(0, settings.accel, settings.friction)
     hueSpreadSpring = createAnimator(0, settings.accel, settings.friction)
     hueStartSpring = createAnimator(0, settings.accel, settings.friction)
-    sizeSpring = createAnimator(0, settings.accel, settings.friction)
+    sizeSpring = createAnimator(15, settings.accel, settings.friction)
     nOffset = rand.insideSphere(500)
     frame = 0
 
@@ -332,6 +332,8 @@ const sketch = ({ gl }) => {
   }
 
   setup()
+  changeNoise()
+  setTimeout(changeNoise, 8000)
 
   return () => {
     frame += 1

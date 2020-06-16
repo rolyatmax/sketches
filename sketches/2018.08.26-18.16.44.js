@@ -8,24 +8,24 @@ const HEIGHT = 1024
 
 const settings = {
   seed: 0,
-  dotCount: 500,
-  maxSize: 10,
+  dotCount: 800,
+  maxSize: 8,
   maxSpeed: 0.01,
   friction: 0.05,
   spread: 300,
-  clear: 1,
-  colorOffset: 0
+  clear: 0.25,
+  colorOffset: 120
 }
 
 const gui = new GUI()
-gui.add(settings, 'seed', 0, 1000).step(1).onChange(setup)
-gui.add(settings, 'dotCount', 0, 30000).step(1)
-gui.add(settings, 'maxSize', 0, 100)
-gui.add(settings, 'maxSpeed', 0, 10)
-gui.add(settings, 'friction', 0, 1)
+// gui.add(settings, 'seed', 0, 1000).step(1).onChange(setup)
+// gui.add(settings, 'dotCount', 0, 3000).step(1)
+// gui.add(settings, 'maxSize', 0, 100)
+// gui.add(settings, 'maxSpeed', 0, 10)
+// gui.add(settings, 'friction', 0, 1)
 gui.add(settings, 'spread', 0, 1000)
-gui.add(settings, 'clear', 0, 1).step(0.01)
-gui.add(settings, 'colorOffset', 0, 360)
+// gui.add(settings, 'clear', 0, 1).step(0.01)
+// gui.add(settings, 'colorOffset', 0, 360)
 
 let dots, rand
 

@@ -18,13 +18,13 @@ const paletteSpring = createPaletteAnimator(0.001, 0.1, [
 const rico = window.rico = createRico()
 
 const settings = {
-  seed: 0,
-  palette: 0,
-  points: 100000,
+  seed: 10,
+  palette: 13,
+  points: 40000,
   pointSize: 2,
   colorVariance: 0.5,
   primitive: 'lines',
-  cameraDist: 5
+  cameraDist: 10
 }
 
 const gui = new GUI()
@@ -127,7 +127,7 @@ function setup () {
       vec3 color = getColorFromPalette(colorT);
       vColor = vec4(color, 1);
 
-      float timeOffset = snoise(position * 0.1) * 2.0;
+      float timeOffset = snoise(position * 0.09) * 1.5;
 
       float t = sin(time + timeOffset) * 0.5 + 0.5;
       float angle = mix(0.0, rotation.x, t);

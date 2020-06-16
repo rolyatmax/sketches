@@ -11,16 +11,16 @@ const SIZE = 1024
 const onChange = () => setup()
 
 const settings = {
-  seed: 0,
-  pointCount: 300000,
-  pointSize: 1.5,
+  seed: 400,
+  pointCount: 500000,
+  pointSize: 20,
   noiseMag: 25,
   freq: 0.7,
   hueSpread: 0.1,
   hueStart: 0.56,
   saturation: 0.35,
   lightness: 0.35,
-  cameraDist: 5,
+  cameraDist: 3,
   dampening: 0.01,
   stiffness: 1.5
 }
@@ -29,29 +29,33 @@ let drawCirclesModel, setup, noiseSpring, hueSpreadSpring, hueStartSpring, sizeS
 let moveToNextPosition = () => {}
 let rand = random.createRandom(settings.seed)
 
-const gui = new GUI()
-gui.add(settings, 'seed', 0, 9999).step(1).onChange(onChange)
-gui.add(settings, 'pointCount', 0, 1000000).step(1).onChange(onChange)
-gui.add(settings, 'pointSize', 1, 100)
-gui.add(settings, 'noiseMag', 0, 100)
-gui.add(settings, 'freq', 0, 3).onChange(onChange)
-// gui.add(settings, 'hueStart', 0, 1).step(0.01)
-gui.add(settings, 'hueSpread', 0, 1).step(0.01)
-gui.add(settings, 'saturation', 0, 1).step(0.01)
-gui.add(settings, 'lightness', 0, 1).step(0.01)
-gui.add(settings, 'dampening', 0, 1).onChange(onChange)
-gui.add(settings, 'stiffness', 0, 2).onChange(onChange)
+function changeNoise () {
+  noiseSpring.updateValue(rand.range(settings.noiseMag / 50))
+  hueSpreadSpring.updateValue(rand.range(settings.hueSpread))
+  hueStartSpring.updateValue(rand.value())
+  sizeSpring.updateValue(rand.range(0.5, 1) * settings.pointSize)
+}
 
-gui.add(settings, 'cameraDist', 0, 10)
-gui.add({ next: () => moveToNextPosition() }, 'next')
-gui.add({
-  changeNoise: () => {
-    noiseSpring.updateValue(rand.range(settings.noiseMag / 50))
-    hueSpreadSpring.updateValue(rand.range(settings.hueSpread))
-    hueStartSpring.updateValue(rand.value())
-    sizeSpring.updateValue(rand.range(0.5, 1) * settings.pointSize)
-  }
-}, 'changeNoise')
+const gui = new GUI()
+const misc = gui.addFolder('misc')
+misc.add(settings, 'seed', 0, 9999).step(1).onChange(onChange)
+misc.add(settings, 'pointCount', 0, 1000000).step(1).onChange(onChange)
+misc.add(settings, 'freq', 0, 3).onChange(onChange)
+misc.add(settings, 'saturation', 0, 1).step(0.01)
+misc.add(settings, 'lightness', 0, 1).step(0.01)
+misc.add(settings, 'dampening', 0, 1).onChange(onChange)
+misc.add(settings, 'stiffness', 0, 2).onChange(onChange)
+misc.add(settings, 'cameraDist', 0, 10)
+
+const interactive = gui.addFolder('interactive controls')
+interactive.add(settings, 'hueStart', 0, 1).step(0.01).onChange(changeNoise)
+interactive.add(settings, 'hueSpread', 0, 1).step(0.01).onChange(changeNoise)
+interactive.add(settings, 'pointSize', 1, 100).onChange(changeNoise)
+interactive.add(settings, 'noiseMag', 0, 100).onChange(changeNoise)
+interactive.add({ next: () => moveToNextPosition() }, 'next')
+interactive.add({ changeNoise }, 'changeNoise')
+
+interactive.open()
 
 const sketch = ({ gl }) => {
   const camera = createRoamingCamera({
@@ -213,6 +217,8 @@ const sketch = ({ gl }) => {
   }
 
   setup()
+  changeNoise()
+  setTimeout(changeNoise, 6000)
 
   return () => {
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)

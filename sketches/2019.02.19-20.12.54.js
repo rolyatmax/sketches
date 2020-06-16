@@ -7,13 +7,13 @@ const WIDTH = 1024
 const HEIGHT = 1024
 
 const settings = {
-  seed: 1,
-  cellSize: 25,
-  outlineRatio: 2,
-  freq: 0.045,
+  seed: 431,
+  cellSize: 5,
+  outlineRatio: 1.2,
+  freq: 0.02,
   timeRatio: 4.5,
   offsetSize: 35,
-  canvasSize: 260,
+  canvasSize: 400,
   lineWidth: 4,
   opacity: 1,
   fill: true
@@ -21,7 +21,7 @@ const settings = {
 
 const gui = new GUI()
 gui.add(settings, 'seed', 0, 9999).step(1).onChange(setup)
-gui.add(settings, 'cellSize', 5, 400)
+gui.add(settings, 'cellSize', 2, 400)
 gui.add(settings, 'outlineRatio', 0, 3).step(0.01)
 gui.add(settings, 'freq', 0, 0.6).step(0.001)
 gui.add(settings, 'timeRatio', 0, 5).step(0.01)

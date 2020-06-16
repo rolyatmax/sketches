@@ -14,17 +14,17 @@ const createPaletteAnimator = require('../lib/palette-animator/palette-animator-
 const injectGLSL = require('../lib/inject-glsl/inject-glsl-0.0.1')
 const NOISE_GLSL = require('../lib/noise-glsl/noise-glsl-0.0.1')
 
-const paletteAnimator = createPaletteAnimator(palettes, 0.001, 0.1, [1, 1, 1])
+const paletteAnimator = createPaletteAnimator(palettes, 0.001, 0.1, 0)
 const { PALETTE_ANIMATOR_GLSL } = paletteAnimator
 
 const rico = window.rico = createRico()
 
 const settings = {
   seed: 0,
-  palette: 0,
-  subdivisions: 4,
-  pointSize: 8,
-  colorVariance: 0.5,
+  palette: 50,
+  subdivisions: 5,
+  pointSize: 4,
+  colorVariance: 0.8,
   primitive: 'points',
   cameraDist: 10
 }

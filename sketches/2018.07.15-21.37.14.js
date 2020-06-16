@@ -17,16 +17,16 @@ const settings = {
 const sketch = ({ render }) => {
   const params = {
     seed: 0,
-    palette: 82,
-    shapes: 100,
-    maxDistFromCenter: 1.8,
-    maxRadius: 89,
-    lineWidth: 10,
+    palette: 95,
+    shapes: 1500,
+    maxDistFromCenter: 2,
+    maxRadius: 180,
+    lineWidth: 15,
     strokeWidth: 1,
-    pageMargin: 0,
-    maxRotation: 0.02,
+    pageMargin: 0.05,
+    maxRotation: 0,
     lineAngle: 0.68,
-    crossLines: 3,
+    crossLines: 0,
     crossLineWidth: 4,
     mu: 0.5,
     sigma: 0.5,
@@ -39,18 +39,18 @@ const sketch = ({ render }) => {
   const gui = new GUI()
   gui.add(params, 'seed', 0, 999).step(1).onChange(setup)
   gui.add(params, 'palette', 0, colors.length - 1).step(1).onChange(setup)
-  gui.add(params, 'shapes', 0, 1000).step(1).onChange(setup)
-  gui.add(params, 'maxDistFromCenter', 0, 2).step(0.01).onChange(setup)
+  gui.add(params, 'shapes', 0, 5000).step(1).onChange(setup)
+  gui.add(params, 'maxDistFromCenter', 0, 3).step(0.01).onChange(setup)
   gui.add(params, 'maxRadius', 0, 200).onChange(setup)
   gui.add(params, 'lineWidth', 0, 200).onChange(setup)
   gui.add(params, 'strokeWidth', 0, 200).onChange(setup)
   gui.add(params, 'pageMargin', 0, 0.5).step(0.01).onChange(setup)
   gui.add(params, 'maxRotation', 0, 1).step(0.01).onChange(setup)
-  gui.add(params, 'lineAngle', 0, 1).onChange(setup)
-  gui.add(params, 'crossLines', 0, 100).step(1).onChange(setup)
-  gui.add(params, 'crossLineWidth', 0, 50).onChange(setup)
-  gui.add(params, 'mu', 0, 2).step(0.01).onChange(setup)
-  gui.add(params, 'sigma', 0, 1).step(0.01).onChange(setup)
+  // gui.add(params, 'lineAngle', 0, 1).onChange(setup)
+  // gui.add(params, 'crossLines', 0, 100).step(1).onChange(setup)
+  // gui.add(params, 'crossLineWidth', 0, 50).onChange(setup)
+  // gui.add(params, 'mu', 0, 2).step(0.01).onChange(setup)
+  // gui.add(params, 'sigma', 0, 1).step(0.01).onChange(setup)
   gui.add(params, 'dampening', 0, 1).step(0.01).onChange(setup)
   gui.add(params, 'stiffness', 0, 1).step(0.01).onChange(setup)
   gui.add(params, 'showCrossLines').onChange(setup)

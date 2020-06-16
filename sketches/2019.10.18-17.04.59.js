@@ -11,7 +11,7 @@ const createPaletteAnimator = require('../lib/palette-animator/palette-animator-
 const injectGLSL = require('../lib/inject-glsl/inject-glsl-0.0.1')
 const NOISE_GLSL = require('../lib/noise-glsl/noise-glsl-0.0.1')
 
-const paletteAnimator = createPaletteAnimator(palettes, 0.001, 0.1, [1, 1, 1])
+const paletteAnimator = createPaletteAnimator(palettes, 0.001, 0.1, 91)
 const { PALETTE_ANIMATOR_GLSL } = paletteAnimator
 
 const rico = window.rico = createRico()
@@ -20,16 +20,16 @@ const settings = {
   seed: 0,
   palette: 15,
   agentCount: 2000000,
-  headingStartGranularity: 8,
+  headingStartGranularity: 3,
   randomStart: true,
   pointSize: 0.01,
-  stepSize: 0.0045,
-  headingStepSize: 15,
-  sensorAngle: 30,
-  sensorDist: 0.1,
-  decay: 0.95,
+  stepSize: 0.0015,
+  headingStepSize: 10,
+  sensorAngle: 2,
+  sensorDist: 0.04,
+  decay: 0.98,
   diffuse: 2,
-  trailIntensity: 0.01,
+  trailIntensity: 0.02,
   wrap: true
 }
 
