@@ -20,18 +20,18 @@ const rico = window.rico = createRico()
 const settings = {
   seed: 0,
   palette: 15,
-  agentCount: 300000,
-  pointSize: 0.01,
-  renderPointSize: 1.4,
-  renderPointOpacity: 0.15,
+  agentCount: 60000,
+  pointSize: 0.8,
+  renderPointSize: 1.8,
+  renderPointOpacity: 0.25,
   trailMapOpacity: 0.05,
-  stepSize: 0.045,
+  stepSize: 0.055,
   headingStepSpread: 0.28,
   sensorSpread: 0.4,
   sensorDist: 0.03,
   decay: 0.99,
   diffuse: 1,
-  trailIntensity: 0.055,
+  trailIntensity: 0.55,
   cameraDist: 4,
   wrap: true,
   renderPoints: true,
@@ -46,7 +46,7 @@ gui.add(settings, 'pointSize', 0.01, 8)
 gui.add(settings, 'renderPointSize', 0.01, 8)
 gui.add(settings, 'renderPointOpacity', 0.01, 1).step(0.01)
 gui.add(settings, 'trailMapOpacity', 0.01, 1)
-gui.add(settings, 'stepSize', 0.001, 0.05).step(0.0001)
+gui.add(settings, 'stepSize', 0.001, 0.2).step(0.001)
 gui.add(settings, 'headingStepSpread', 0.01, 5).step(0.01)
 gui.add(settings, 'sensorSpread', 0.01, 5).step(0.01)
 gui.add(settings, 'sensorDist', 0.0001, 0.5)
@@ -445,6 +445,7 @@ function setup () {
 
 const sketch = () => {
   setup()
+  camera.moveToNextPosition()
   return ({ width, height, time }) => {
     camera.tick()
 

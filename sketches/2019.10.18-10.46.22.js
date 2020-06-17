@@ -19,17 +19,17 @@ const rico = window.rico = createRico()
 const settings = {
   seed: 2,
   palette: 91,
-  agentCount: 2000000,
+  agentCount: 800000,
   headingStartGranularity: 38,
   randomStart: true,
-  pointSize: 0.01,
-  stepSize: 0.0045,
+  pointSize: 1,
+  stepSize: 0.0055,
   headingStepSize: 15,
   sensorAngle: 56,
   sensorDist: 0.15,
-  decay: 0.97,
+  decay: 0.98,
   diffuse: 1,
-  trailIntensity: 0.02,
+  trailIntensity: 0.03,
   wrap: true
 }
 
@@ -40,7 +40,7 @@ gui.add(settings, 'agentCount', 1000, 4000000).step(1).onChange(setup)
 gui.add(settings, 'headingStartGranularity', 1, 90).step(1).onChange(setup)
 gui.add(settings, 'randomStart').onChange(setup)
 gui.add(settings, 'pointSize', 0.01, 8)
-gui.add(settings, 'stepSize', 0.0001, 0.005).step(0.0001)
+gui.add(settings, 'stepSize', 0.001, 0.05).step(0.001)
 gui.add(settings, 'headingStepSize', 1, 90)
 gui.add(settings, 'sensorAngle', 1, 90)
 gui.add(settings, 'sensorDist', 0.0001, 0.5)

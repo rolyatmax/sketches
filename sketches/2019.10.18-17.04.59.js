@@ -19,17 +19,17 @@ const rico = window.rico = createRico()
 const settings = {
   seed: 0,
   palette: 15,
-  agentCount: 2000000,
+  agentCount: 800000,
   headingStartGranularity: 3,
-  randomStart: true,
-  pointSize: 0.01,
-  stepSize: 0.0015,
+  randomStart: false,
+  pointSize: 0.9,
+  stepSize: 0.0045,
   headingStepSize: 10,
   sensorAngle: 2,
   sensorDist: 0.04,
-  decay: 0.98,
-  diffuse: 2,
-  trailIntensity: 0.02,
+  decay: 0.96,
+  diffuse: 1,
+  trailIntensity: 0.3,
   wrap: true
 }
 
