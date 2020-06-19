@@ -8,7 +8,7 @@ const Alea = require('alea')
 const { GUI } = require('dat-gui')
 const fit = require('canvas-fit')
 const memoize = require('memoizee')
-const { createSpring } = require('spring-animator')
+const { createSpring } = require('spring-animator-1')
 const css = require('dom-css')
 
 title('equanimous-hackwork', '#555')

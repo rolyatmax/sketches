@@ -2,7 +2,7 @@ const canvasSketch = require('canvas-sketch')
 const { mapRange } = require('canvas-sketch-util/math')
 const { createRandom } = require('canvas-sketch-util/random')
 const { GUI } = require('dat-gui')
-const { createSpring } = require('spring-animator')
+const { createSpring } = require('spring-animator-1')
 const vec2 = require('gl-vec2')
 
 const WIDTH = 2436

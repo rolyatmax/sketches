@@ -3,7 +3,7 @@ const colors = require('nice-color-palettes')
 const { GUI } = require('dat-gui')
 const Alea = require('alea')
 const { randomNormal } = require('d3-random')
-const { createSpring } = require('spring-animator')
+const { createSpring } = require('spring-animator-1')
 
 const WIDTH = 800
 const HEIGHT = 800

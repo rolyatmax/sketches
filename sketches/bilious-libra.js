@@ -1,6 +1,6 @@
 /* global requestAnimationFrame, Audio */
 
-// const { createSpring } = require('spring-animator')
+// const { createSpring } = require('spring-animator-1')
 import includeFont from './common/include-font'
 import addTitle from './common/add-title'
 const { GUI } = require('dat-gui')

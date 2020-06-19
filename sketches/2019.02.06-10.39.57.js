@@ -4,7 +4,7 @@ const { GUI } = require('dat-gui')
 const { random } = require('canvas-sketch-util')
 const createRoamingCamera = require('./common/create-roaming-camera')
 const mat4 = require('gl-mat4')
-const { createSpring } = require('spring-animator')
+const { createSpring } = require('spring-animator-1')
 
 const SIZE = 1024
 

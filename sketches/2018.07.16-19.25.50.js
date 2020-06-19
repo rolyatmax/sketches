@@ -2,7 +2,7 @@ const canvasSketch = require('canvas-sketch')
 const Alea = require('alea')
 const { GUI } = require('dat-gui')
 const memoize = require('memoizee')
-const { createSpring } = require('spring-animator')
+const { createSpring } = require('spring-animator-1')
 
 const HEIGHT = 500
 const WIDTH = 500

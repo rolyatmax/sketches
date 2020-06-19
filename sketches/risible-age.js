@@ -10,7 +10,7 @@ const fit = require('canvas-fit')
 const mat4 = require('gl-mat4')
 const newArray = require('new-array')
 const createCamera = require('3d-view-controls')
-const { createSpring } = require('spring-animator')
+const { createSpring } = require('spring-animator-1')
 
 title('risible-age', '#ddd')
 

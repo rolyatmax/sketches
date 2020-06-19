@@ -5,7 +5,7 @@ const project = require('camera-project')
 const mat4 = require('gl-mat4')
 const memoize = require('memoizee')
 const normal = require('get-plane-normal')
-const { createSpring } = require('spring-animator')
+const { createSpring } = require('spring-animator-1')
 
 const settings = {
   dimensions: [800, 800],

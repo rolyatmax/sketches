@@ -3,7 +3,7 @@ const createRegl = require('regl')
 const fit = require('canvas-fit')
 const mat4 = require('gl-mat4')
 const createCamera = require('3d-view-controls')
-// const { createSpring } = require('spring-animator')
+// const { createSpring } = require('spring-animator-1')
 
 const { fetch } = window
 

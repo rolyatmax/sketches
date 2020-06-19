@@ -5,7 +5,7 @@ import addTitle from './common/add-title'
 const Sketch = require('sketch-js')
 const Alea = require('alea')
 const { GUI } = require('dat-gui')
-const { createSpring } = require('spring-animator')
+const { createSpring } = require('spring-animator-1')
 const css = require('dom-css')
 
 title('precipitate-shark', '#555')

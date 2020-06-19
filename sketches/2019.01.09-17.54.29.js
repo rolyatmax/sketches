@@ -3,7 +3,7 @@ const random = require('canvas-sketch-util/random')
 const { GUI } = require('dat-gui')
 const loadImg = require('load-img')
 const fit = require('objectfit/cover')
-const { createSpring } = require('spring-animator')
+const { createSpring } = require('spring-animator-1')
 const vec2 = require('gl-vec2')
 
 const SIZE = 2048

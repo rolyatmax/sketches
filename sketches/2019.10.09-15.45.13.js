@@ -9,7 +9,7 @@ const palettes = require('nice-color-palettes')
 const { GUI } = require('dat-gui')
 const createRoamingCamera = require('../lib/roaming-camera/roaming-camera-0.0.1')
 const mat4 = require('gl-mat4')
-const { createSpring } = require('spring-animator-2')
+const { createSpring } = require('spring-animator')
 
 const paletteSpring = createPaletteAnimator(0.001, 0.1, [
   [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1]
