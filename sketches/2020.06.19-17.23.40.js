@@ -2,6 +2,14 @@
  * Trying to sync up DOM-based annotations with objects rendered in WebGL
  */
 
+/* TODO:
+  1. Replace the individual canvases with a single large 2D canvas covering the entire container
+  2. Come up with enter/exit animations for annotations
+  3. Make annotations avoid each other with force-directed graph
+  4. Perhaps draw the lines a little differently (instead of always to the baseline?)
+  5. Try with a bigger (less spherical) mesh
+*/
+
 const canvasSketch = require('canvas-sketch')
 const { createRico } = require('../lib/dlite/dlite-0.0.10')
 const { GUI } = require('dat-gui')
@@ -10,7 +18,7 @@ const vec2 = require('gl-vec2')
 const createCamera = require('3d-view-controls')
 const project = require('camera-project')
 const { createSpring } = require('spring-animator')
-const mesh = require('primitive-icosphere')(10, { subdivisions: 1 })
+const mesh = require('primitive-icosphere')(10, { subdivisions: 2 })
 
 const meshCenter = mesh.positions.reduce((av, pt) => [
   av[0] + pt[0] / mesh.positions.length,
@@ -19,9 +27,19 @@ const meshCenter = mesh.positions.reduce((av, pt) => [
 ], [0, 0, 0])
 
 const rico = window.rico = createRico()
-const annotation1 = createAnnotation('Position 1e42dc', rico.canvas.parentElement)
-const annotation2 = createAnnotation('Position ad6e92', rico.canvas.parentElement)
-const annotation3 = createAnnotation('Position f146e0', rico.canvas.parentElement)
+let n = 6
+const annotations = []
+while (n--) {
+  const alreadyChosen = annotations.map(a => a.position)
+  let p = null
+  while (p === null || alreadyChosen.includes(p)) {
+    p = mesh.positions[mesh.positions.length * Math.random() | 0]
+  }
+  annotations.push({
+    spring: createAnnotation(`Position ${(Math.random() * 99999999 | 0).toString(16)}`, rico.canvas.parentElement),
+    position: p
+  })
+}
 
 const settings = {
   ptMargin: 50,
@@ -80,16 +98,20 @@ const sketch = () => {
     rico.clear(0.97, 0.98, 0.99, 1)
     if (settings.roam) {
       camera.up = [0, 1, 0]
-      camera.center = [settings.cameraDist * Math.cos(time / 5), 0, settings.cameraDist * Math.sin(time / 5)]
+      camera.center = [
+        settings.cameraDist * Math.cos(time / 5),
+        settings.cameraDist * Math.sin(time / 3),
+        settings.cameraDist * Math.sin(time / 4)
+      ]
     }
     camera.tick()
 
     const projMat = mat4.perspective([], Math.PI / 4, width / height, 0.01, 1000)
     const viewProjMat = mat4.multiply([], projMat, camera.matrix)
     const noTextZone = [width / 2, height / 2, settings.noTextRadius]
-    annotation1.update(mesh.positions[0], viewProjMat, [width, height], noTextZone)
-    annotation2.update(mesh.positions[8], viewProjMat, [width, height], noTextZone)
-    annotation3.update(mesh.positions[23], viewProjMat, [width, height], noTextZone)
+    for (const a of annotations) {
+      a.spring.update(a.position, viewProjMat, [width, height], noTextZone)
+    }
 
     draw({
       uniforms: {
@@ -106,7 +128,7 @@ const sketch = () => {
         view: camera.matrix,
         projection: projMat,
         color: [0.2, 0.2, 0.2, 1],
-        pointSize: 5
+        pointSize: 4
       },
       count: mesh.positions.length,
       primitive: 'points'
@@ -139,10 +161,12 @@ function createAnnotation (text, parentEl) {
   span.style.fontSize = '14px'
   span.style.color = 'firebrick'
   span.style.display = 'block'
-  span.style.padding = '8px 12px'
+  span.style.padding = '8px'
   span.innerText = text
+  // span.style.border = '1px solid blue'
   el.style.position = 'absolute'
   el.style.pointerEvents = 'none'
+  // el.style.border = '1px solid green'
 
   const bboxRect = span.getBoundingClientRect()
   const textElDims = [bboxRect.width, bboxRect.height]
@@ -153,9 +177,11 @@ function createAnnotation (text, parentEl) {
   span.style.position = 'absolute'
   span.style.zIndex = 1
 
-  const damping = 0.35
-  const stiffness = 0.05
+  const damping = 0.45
+  const stiffness = 0.02
   let xySpring = null
+
+  const baselineSideConnectionSpring = createSpring(0.2, 0.5, 0)
 
   const scratch = []
   function update (position3D, viewProjMatrix, canvasDimensions, noTextZone) { // noTextZone defined as a circle: [x, y, r]
@@ -232,9 +258,10 @@ function createAnnotation (text, parentEl) {
     const xyMax = [Math.max(...xs), Math.max(...ys)]
     const dims = vec2.sub([], xyMax, xyMin)
 
+    const curDir = vec2.subtract([], [curX, curY], noDrawCenter)
     const textPos = [
-      dir[0] < 0 ? 0 : dims[0] - textElDims[0],
-      dir[1] < 0 ? 0 : dims[1] - textElDims[1]
+      curDir[0] < 0 ? 0 : dims[0] - textElDims[0],
+      curDir[1] < 0 ? 0 : dims[1] - textElDims[1]
     ]
 
     // TODO: use translate transform here instead of top/left
@@ -252,17 +279,26 @@ function createAnnotation (text, parentEl) {
     const circleCenter = vec2.sub([], position2D, xyMin)
     const circleRadius = settings.ptHighlightRadius
 
-    const baselineCornerPt = [
-      dir[0] > 0 ? textPos[0] : textPos[0] + textElDims[0],
+    baselineSideConnectionSpring.setDestination(curDir[0] > 0 ? 0 : 1)
+    baselineSideConnectionSpring.tick()
+    const t = baselineSideConnectionSpring.getCurrentValue()
+
+    const baselineConnection = [
+      textElDims[0] * t + textPos[0],
       textPos[1] + textElDims[1]
     ]
 
-    const oppositeBaselinePt = [
-      dir[0] > 0 ? textPos[0] + textElDims[0] : textPos[0],
+    const baselineStart = [
+      Math.min(baselineConnection[0], textPos[0]),
       textPos[1] + textElDims[1]
     ]
 
-    const ptToBaselineNorm = vec2.normalize([], vec2.subtract([], baselineCornerPt, circleCenter))
+    const baselineEnd = [
+      Math.max(baselineConnection[0], textPos[0] + textElDims[0]),
+      textPos[1] + textElDims[1]
+    ]
+
+    const ptToBaselineNorm = vec2.normalize([], vec2.subtract([], baselineConnection, circleCenter))
     const ptOnCircle = vec2.scaleAndAdd(ptToBaselineNorm, circleCenter, ptToBaselineNorm, circleRadius)
 
     ctx.clearRect(0, 0, dims[0], dims[1])
@@ -270,8 +306,9 @@ function createAnnotation (text, parentEl) {
     ctx.beginPath()
     ctx.arc(circleCenter[0], circleCenter[1], circleRadius, 0, Math.PI * 2)
     ctx.moveTo(ptOnCircle[0], ptOnCircle[1])
-    ctx.lineTo(baselineCornerPt[0], baselineCornerPt[1])
-    ctx.lineTo(oppositeBaselinePt[0], oppositeBaselinePt[1])
+    ctx.lineTo(baselineConnection[0], baselineConnection[1])
+    ctx.moveTo(baselineStart[0], baselineStart[1])
+    ctx.lineTo(baselineEnd[0], baselineEnd[1])
     ctx.stroke()
   }
 
@@ -283,8 +320,6 @@ function createAnnotation (text, parentEl) {
 function getClosestPtOnRect (pt, rect) { // rect is [x1, y1, x2, y2]
   const [x, y] = pt
   const [x1, y1, x2, y2] = rect
-  // if the rect is entirely on one side of the pt (in both axes), then the closest pt is the corner
-
   let closestX, closestY
   if (x < x1 && x < x2) {
     closestX = x1
@@ -293,7 +328,6 @@ function getClosestPtOnRect (pt, rect) { // rect is [x1, y1, x2, y2]
   } else {
     closestX = x
   }
-
   if (y < y1 && y < y2) {
     closestY = y1
   } else if (y > y1 && y > y2) {
@@ -301,20 +335,5 @@ function getClosestPtOnRect (pt, rect) { // rect is [x1, y1, x2, y2]
   } else {
     closestY = y
   }
-
   return [closestX, closestY]
 }
-
-/* IDEA:
-  - Define no-text zones on the canvas and write an algorithm to figure out how to place text
-  as close as possible to a 2D point while still outside of a no-text zone.
-      - Do this by measuring the size of the text element and trying to position it such that it
-      doesn't overlap with any no-text zones
-
-        * First pass: Assuming the no-text zone is defined as a circle, push the annotation to the edge of the circle
-        along the vector (pt - center). Make sure there is some minimum offset in both x and y axes,
-        then push the text back if necessary to make it fit on the screen
-
-  - Once the text is positioned, create a canvas that stretches from the point to the text, upon
-    which you can animate the drawing of a line.
-*/
