@@ -253,9 +253,6 @@ function createAnnotationManager (parentEl) {
       if (x - textElCenter[0] < bbox.left) x += bbox.left - (x - textElCenter[0])
       if (x + textElCenter[0] > bbox.right) x -= x + textElCenter[0] - bbox.right
 
-      // TODO: Use forces to keep annotations away from each other and away from the margins
-      // and away from no-annotation zones
-
       let isVisible = 1
       if (isRemoving || position2D[0] < 0 || position2D[1] < 0 || position2D[0] > width || position2D[1] > height) {
         isVisible = 0
