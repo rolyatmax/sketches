@@ -107,6 +107,7 @@
     "web-audio-player": "^1.3.2"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-import-meta": "^7.10.4",
     "browserify": "^13.1.0",
     "bundle-collapser": "^1.2.1",
     "mkdirp": "^0.5.1",
