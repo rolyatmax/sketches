@@ -75,7 +75,7 @@ function onChangeBuildingScale () {
 
 onChangeBuildingScale()
 
-fetch('resources/data/nyc-buildings/indexed-building-triangles-all.bin')
+fetch('data/nyc-buildings/indexed-building-triangles-all.bin')
   .then(res => res.arrayBuffer())
   .then(onLoadData)
 

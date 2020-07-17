@@ -22,8 +22,6 @@ const rico = window.rico = createRico()
 
 const settings = {
   palette: 60,
-  colorOffset: 0.5,
-  colorPow: 2,
   stiffness: 0.02,
   damping: 0.15,
   noiseFreq: 200,
@@ -34,8 +32,6 @@ const settings = {
 
 const gui = new GUI()
 gui.add(settings, 'palette', 0, 99).step(1)
-gui.add(settings, 'colorOffset', 0, 1).step(0.01)
-gui.add(settings, 'colorPow', 0, 3).step(0.01)
 gui.add(settings, 'pointSize', 0, 10).step(0.01)
 gui.add(settings, 'noiseFreq', 0, 500)
 gui.add(settings, 'stiffness', 0.001, 0.1).step(0.001)
@@ -72,20 +68,20 @@ function onChangeBuildingScale () {
 
 onChangeBuildingScale()
 
-fetch('resources/data/nyc-lidar/987210-sample.bin')
+fetch('data/nyc-lidar/987210-2.bin')
   .then(res => res.arrayBuffer())
   .then(onLoadData)
 
 function onLoadData (lidarBinaryData) {
   const startTime = performance.now()
-  const { interleavedPoints, offset, pointCount } = parseLiDARData(lidarBinaryData)
+  const { interleavedPoints, intensityQuintiles, offset, pointCount } = parseLiDARData(lidarBinaryData)
   const positionOffset = offset
-  console.log({ interleavedPoints, offset, pointCount })
+  console.log({ interleavedPoints, intensityQuintiles, offset, pointCount })
 
   const interleavedBuffer = rico.createInterleavedBuffer(8, interleavedPoints)
   const vertexArray = rico.createVertexArray()
     .vertexAttributeBuffer(0, interleavedBuffer, { type: rico.gl.UNSIGNED_SHORT, size: 3, stride: 8, offset: 0, integer: true })
-    .vertexAttributeBuffer(1, interleavedBuffer, { type: rico.gl.UNSIGNED_SHORT, size: 1, stride: 8, offset: 6, normalized: true })
+    .vertexAttributeBuffer(1, interleavedBuffer, { type: rico.gl.UNSIGNED_SHORT, size: 1, stride: 8, offset: 6, integer: true })
 
   console.log('parse time:', performance.now() - startTime)
 
@@ -98,16 +94,15 @@ function onLoadData (lidarBinaryData) {
     precision highp float;
 
     layout(location=0) in uvec3 position;
-    layout(location=1) in float intensity;
+    layout(location=1) in uint intensity;
 
     uniform mat4 projection;
     uniform mat4 view;
     uniform float pointSize;
-    uniform float colorOffset;
-    uniform float colorPow;
     uniform float noiseFreq;
     uniform mat4 springs;
     uniform vec3 positionOffset;
+    uniform vec4 intensityQuintiles;
 
     out vec3 color;
 
@@ -120,8 +115,12 @@ function onLoadData (lidarBinaryData) {
       float scaleB = springs[springIdx2 / 4][springIdx2 % 4];
       float scale = mix(scaleA, scaleB, fract(springT));
 
-      float t = intensity;
-      color = getColorFromPalette(pow(t + colorOffset, colorPow));
+      float i = float(intensity);
+      float t = i < intensityQuintiles.x ? 0.1 :
+                i < intensityQuintiles.y ? 0.3 :
+                i < intensityQuintiles.z ? 0.5 :
+                i < intensityQuintiles.w ? 0.7 : 0.9;
+      color = getColorFromPalette(t);
       gl_PointSize = pointSize;
 
       p.z *= scale;
@@ -153,11 +152,10 @@ function onLoadData (lidarBinaryData) {
           view: camera.getMatrix(),
           projection: mat4.perspective([], Math.PI / 4, width / height, 1, 1000000),
           pointSize: settings.pointSize,
-          colorOffset: settings.colorOffset,
-          colorPow: settings.colorPow,
           noiseFreq: settings.noiseFreq / 10000000,
           springs: scaleSprings.map(s => s.getCurrentValue()),
           positionOffset: positionOffset,
+          intensityQuintiles: intensityQuintiles,
           ...paletteAnimator.uniforms()
         }
       })
@@ -199,7 +197,15 @@ function parseLiDARData (binaryData) {
 
   const interleavedPoints = new Uint16Array(binaryData, i)
 
-  return { interleavedPoints, pointCount, offset }
+  const intensities = []
+  for (let j = 3; j < interleavedPoints.length; j += 4) {
+    if (Math.random() < 0.05) intensities.push(interleavedPoints[j])
+  }
+  intensities.sort((a, b) => a - b)
+
+  const intensityQuintiles = [0.2, 0.4, 0.6, 0.8].map(t => intensities[intensities.length * t | 0])
+
+  return { interleavedPoints, intensityQuintiles, pointCount, offset }
 }
 
 function isLittleEndian () {

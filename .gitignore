@@ -3,3 +3,5 @@ resources/audio
 data/citibike-trips
 data/nyc-footprints
 resources/data/nyc-footprints/all-simplified-footprint-triangles.bin
+data/nyc-buildings
+data/nyc-lidar

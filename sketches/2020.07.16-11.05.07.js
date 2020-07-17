@@ -48,7 +48,7 @@ const camera = createRoamingCamera({
   getCameraPosition: () => [...MAPCENTER.map(v => v + Math.random() * 2000 - 1000), 1000 * Math.random() + 100]
 })
 
-fetch('resources/data/nyc-lidar/987210.bin')
+fetch('data/nyc-lidar/987210.bin')
   .then(res => res.arrayBuffer())
   .then(onLoadData)
 
