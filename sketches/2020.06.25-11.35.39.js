@@ -34,7 +34,7 @@ camera.lookAt(
   [0, 0, 1]
 )
 
-fetch('resources/data/nyc-footprints/all-simplified-footprint-triangles.bin')
+fetch('data/nyc-footprints/all-simplified-footprint-triangles.bin')
   .then(res => res.arrayBuffer())
   .then(onLoadData)
 
