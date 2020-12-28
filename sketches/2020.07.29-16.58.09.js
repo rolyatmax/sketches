@@ -1,5 +1,5 @@
 /**
- * Trying implement some of the ideas here: https://www.sagejenson.com/physarum
+ * physarum and hillshading
  */
 
 const canvasSketch = require('canvas-sketch')

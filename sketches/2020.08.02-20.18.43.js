@@ -232,8 +232,7 @@ function setup () {
   })
 
   const dim = settings.dimensions
-  const textureOpts = { /*magFilter: rico.gl.LINEAR*/ }
-  console.log(rico.gl.LINEAR)
+  const textureOpts = { /* magFilter: rico.gl.LINEAR */ }
   const trailMapTexture1 = rico.createTexture3D(dim, dim, dim, textureOpts)
   const trailMapTexture2 = rico.createTexture3D(dim, dim, dim, textureOpts)
 
@@ -333,7 +332,7 @@ function setup () {
 
     void main() {
       float totalPixels = pow(diffuse * 2.0 + 1.0, 3.0);
-      float sum = texture(trailMap, vUV).x / totalPixels;
+      float sum = texture(trailMap, vUV).x / totalPixels * 4.0;
 
       int dif = int(diffuse);
       for (int w = -dif; w <= dif; w += 1) {
@@ -354,38 +353,6 @@ function setup () {
     `,
     blend: false
   })
-
-  // const forward = vec3.normalize([], vec3.sub([], cC, cP))
-  // const right = vec3.normalize([], vec3.cross([], forward, up))
-  // vec3.normalize(up, vec3.cross([], right, forward))
-
-  // // Calculate how far up, down, left, and right we need to move from the
-  // // center of the ray quad to find points a', b', c', and d'.
-  // const mu = Math.tan(fov / 2)
-  // const md = -mu
-  // const mr = aspect * mu
-  // const ml = -mr
-
-  // const Z = vec3.add([], cP, forward)
-
-  // const muUp = vec3.scale([], up, mu)
-  // const mdUp = vec3.scale([], up, md)
-  // const mrRight = vec3.scale([], right, mr)
-  // const mlRight = vec3.scale([], right, ml)
-
-  // const a = vec3.add([], Z, vec3.add([], mdUp, mlRight))
-  // const b = vec3.add([], Z, vec3.add([], mdUp, mrRight))
-  // const c = vec3.add([], Z, vec3.add([], muUp, mrRight))
-  // const d = vec3.add([], Z, vec3.add([], muUp, mlRight))
-
-  // // Construct an unindexed vertex attribute array from a', b', c', and d'.
-  // const uv = []
-  // uv.push(...a)
-  // uv.push(...b)
-  // uv.push(...c)
-  // uv.push(...a)
-  // uv.push(...c)
-  // uv.push(...d)
 
   renderTrails = rico({
     vertexArray: rico.createVertexArray()
@@ -442,7 +409,7 @@ function setup () {
     float getVal (vec3 p, vec3 viewDirection) {
       float dist = length(p);
       vec3 pos = dist > sphereSize ? normalize(p) * sphereSize : p;
-      float val = 1.0 - texture(trailMap, (pos + 1.0) * 0.5).x;
+      float val = 1.0 - clamp(texture(trailMap, (pos + 1.0) * 0.5).x, 0.0, 1.0);
       return val + max(dist - sphereSize, 0.0) * sign(dot(viewDirection, pos - p));
     }
 
