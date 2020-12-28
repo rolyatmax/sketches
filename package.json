@@ -82,6 +82,7 @@
     "p5": "^0.7.2",
     "paper": "^0.11.8",
     "parse-obj": "^0.0.0",
+    "penplot": "^3.0.0",
     "perspective-camera": "^2.0.1",
     "pex-context": "^2.7.1",
     "pico-mercator": "^0.4.1",
