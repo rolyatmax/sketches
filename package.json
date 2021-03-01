@@ -104,7 +104,7 @@
     "spring-animator-1": "npm:spring-animator@^1.0.3",
     "standard": "14.3.1",
     "static-kdtree": "^1.0.2",
-    "three": "^0.84.0",
+    "three": "^0.125.0",
     "tinycolor2": "^1.4.1",
     "triangle-normal": "^0.0.0",
     "underscore": "^1.9.1",
