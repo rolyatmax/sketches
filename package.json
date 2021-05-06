@@ -107,7 +107,7 @@
     "three": "^0.84.0",
     "tinycolor2": "^1.4.1",
     "triangle-normal": "^0.0.0",
-    "underscore": "^1.9.1",
+    "underscore": "^1.12.1",
     "vertices-bounding-box": "^1.0.0",
     "vixel": "^1.0.1",
     "watercolor-canvas": "^1.1.1",
