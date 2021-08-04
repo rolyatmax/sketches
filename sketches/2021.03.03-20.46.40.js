@@ -9,8 +9,8 @@ const MAX_TRIES = 10000
 
 const MM_PER_INCH = 25.4
 const PIXELS_PER_INCH = 200
-const WIDTH = 5 * PIXELS_PER_INCH
-const HEIGHT = 3.5 * PIXELS_PER_INCH
+const WIDTH = 6.25 * PIXELS_PER_INCH
+const HEIGHT = 4.5 * PIXELS_PER_INCH
 const PIXELS_PER_MM = PIXELS_PER_INCH / MM_PER_INCH
 const PIXELS_PER_CM = PIXELS_PER_MM * 10
 
@@ -18,18 +18,18 @@ let lines1, lines2
 
 const settings = {
   seed: 2926,
-  canvasMargin: 0.05,
+  canvasMargin: 0.02,
   lineWidthMM: 0.1,
   circleCount: 5000,
-  minCircleSize: 10,
+  minCircleSize: 8,
   maxCircleSize: 285,
-  sizePower: 5,
+  sizePower: 4.2,
   noiseOffset: 32515,
   noiseFreq: 0.005,
   triScale: 0.7,
   minTriSize: 10,
-  minSideLength: 10,
-  maxSideLength: 290
+  minSideLength: 0,
+  maxSideLength: 250
 }
 
 const sketch = ({ render }) => {
