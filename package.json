@@ -87,6 +87,7 @@
     "pex-context": "^2.7.1",
     "pico-mercator": "^0.4.1",
     "picogl": "^0.15.0",
+    "picogl-0.17.7": "npm:picogl@^0.17.7",
     "primitive-capsule": "^3.0.1",
     "primitive-cube": "^2.0.1",
     "primitive-icosphere": "^1.0.2",
