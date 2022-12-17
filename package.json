@@ -6,8 +6,8 @@
     "build": "node scripts/build.js",
     "start": "echo \"open localhost:8080 in a browser\" && cd docs && python -m SimpleHTTPServer 8080",
     "lint": "standard",
-    "new": "canvas-sketch --new --output=tmp --template=./.sketch-template.js",
-    "dev": "canvas-sketch --output=tmp"
+    "new": "canvas-sketch --new --output=tmp --template=./.sketch-template.js -- --p tsify",
+    "dev": "run(){ canvas-sketch --output=tmp $1 -- -p tsify; }; run"
   },
   "author": "Taylor Baldwin",
   "license": "MIT",
@@ -31,6 +31,7 @@
     "d3-array": "^2.2.0",
     "d3-color": "^1.2.8",
     "d3-dsv": "^1.1.1",
+    "d3-force": "^3.0.0",
     "d3-polygon": "^1.0.3",
     "d3-random": "^1.1.2",
     "d3-scale-chromatic": "^1.3.3",
@@ -121,7 +122,13 @@
     "mkdirp": "^0.5.1",
     "rimraf": "^2.5.4",
     "simple-html-index": "^1.4.0",
+    "tsify": "^5.0.4",
     "uglify-js": "^2.7.3"
+  },
+  "browserify": {
+    "plugin": [
+      "tsify"
+    ]
   },
   "standard": {
     "ignore": [
