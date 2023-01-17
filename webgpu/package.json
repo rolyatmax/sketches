@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "dev": "run(){ budo $1 -- -p tsify; }; run",
+    "new": "name=sketches/$(date +\"%Y.%m.%d-%H.%M.%S.ts\"); touch $name; budo $name -- -p tsify"
+  },
+  "devDependencies": {
+    "@webgpu/types": "^0.1.23",
+    "budo": "^11.8.4",
+    "tsify": "^5.0.4",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "3d-view-controls": "^2.2.2",
+    "canvas-fit": "^1.5.0"
+  }
+}
