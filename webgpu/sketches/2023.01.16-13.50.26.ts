@@ -37,8 +37,8 @@ async function main() {
     center: CENTER
   })
 
-  const result = await getLidarStreamer(device, 'https://nyc-lidar-demo.s3.amazonaws.com/987210.bin')
-  // const result = await getLidarStreamer(device, 'https://nyc-lidar-demo.s3.amazonaws.com/midtown-sampled-xl.bin')
+  // const result = await getLidarStreamer(device, 'https://nyc-lidar-demo.s3.amazonaws.com/987210.bin')
+  const result = await getLidarStreamer(device, 'https://nyc-lidar-demo.s3.amazonaws.com/midtown-sampled-xl.bin')
   // const result = await getLidarStreamer(device, 'https://nyc-lidar-demo.s3.amazonaws.com/manhattan-sampled-lg.bin')
 
   const { getCurrentPointCount, offset, buffer: vertexBuffer } = result
@@ -155,9 +155,9 @@ async function main() {
     },
     primitive: { topology: 'point-list' },
     depthStencil:{
-      format: "depth24plus",
+      format: 'depth24plus',
       depthWriteEnabled: true,
-      depthCompare: "less"
+      depthCompare: 'less'
   }
   })
 
@@ -185,6 +185,12 @@ async function main() {
     ]
   })
 
+  const depthTexture = device.createTexture({
+    size: { width: canvas.width, height: canvas.height },
+    format: 'depth24plus',
+    usage: GPUTextureUsage.RENDER_ATTACHMENT
+  })
+
   requestAnimationFrame(function render(t) {
     requestAnimationFrame(render)
 
@@ -192,14 +198,9 @@ async function main() {
     const curTexture = context.getCurrentTexture()
     const textureView = curTexture.createView()
     const { width, height } = curTexture
-    const depthTexture = device.createTexture({
-      size: [width, height, 1],
-      format: 'depth24plus',
-      usage: GPUTextureUsage.RENDER_ATTACHMENT
-    })
 
-    camera.up = [0, 0, 1]
     camera.tick()
+    camera.up = [0, 0, 1]
     const projection = mat4.perspective(new Float32Array(16), Math.PI / 4, width / height, 1, 1000000)
     const view = camera.matrix
     const fadeHeightStart = minZ + 1200 // 2100
