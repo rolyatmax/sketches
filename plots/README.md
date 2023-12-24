@@ -1,11 +1,12 @@
 ## Useful commands for axidraw:
 
 axicli -m manual -d 30 -u 60 -M raise_pen
+axicli -m manual -d 30 -u 60 -M lower_pen
 axicli SVGPLOT -d 30 -u 60 -a 18 -z 20 -b
 
 Ex:
 
-axicli 2022.12.14-19.57.40-plot-hash-9215.svg -d 30 -u 60 -a 18 -z 20 -b
+axicli 2023.12.11-20.09.04-plot-hash-867.svg -d 30 -u 60 -a 18 -z 20 -b
 
 ## Plot server:
 
