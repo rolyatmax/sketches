@@ -56,7 +56,7 @@ const camera = createRoamingCamera({
   *       |  _,-"          |
   *   (0, 1)"-------------(1, 1)
   */
-const positionsBuffer = rico.createVertexBuffer(rico.gl.FLOAT, 2, new Float32Array([0, -1, 0, 1, 1, -1, 1, 1]))
+const positionsBuffer = rico.createVertexBuffer(rico.gl.FLOAT, 2, new Float32Array([0, -1, 0, 1, 1, 1, 1, -1]))
 
 function setup () {
   instances = 0
@@ -136,7 +136,7 @@ function setup () {
         normal1 = normalize(mix(normalize(a), normalize(b), 0.5));
         widthMult1 = mix(length(a), length(b), 0.5);
       }
-      
+
       vec3 offset1 = normal1 * position.y * lineWidth * pow(widthMult1, lineWidthPow);
       vec3 p1 = offset1 + iStart;
 
@@ -152,12 +152,12 @@ function setup () {
         normal2 = normalize(mix(normalize(a), normalize(b), 0.5));
         widthMult2 = mix(length(a), length(b), 0.5);
       }
-      
+
       vec3 offset2 = normal2 * position.y * lineWidth * pow(widthMult2, lineWidthPow);
       vec3 p2 = offset2 + iEnd;
 
       vec3 p = mix(p1, p2, position.x);
-      
+
       vAlpha = 0.8;
 
       float mag = snoiseFractal((p + vec3(noiseOffset)) * noiseFreq * 2.0) * 0.5 + 0.5;
@@ -169,7 +169,7 @@ function setup () {
     `, NOISE_GLSL),
     fs: `#version 300 es
     precision highp float;
-    
+
     in float vAlpha;
     out vec4 fragColor;
 
@@ -183,7 +183,7 @@ function setup () {
       .instanceAttributeBuffer(2, lineDataBuffer, { type: rico.gl.FLOAT, size: 3, stride, offset: 1 * stride })
       .instanceAttributeBuffer(3, lineDataBuffer, { type: rico.gl.FLOAT, size: 3, stride, offset: 2 * stride })
       .instanceAttributeBuffer(4, lineDataBuffer, { type: rico.gl.FLOAT, size: 3, stride, offset: 3 * stride }),
-    primitive: 'triangle strip',
+    primitive: 'triangle fan',
     count: 4,
     instanceCount: lineSegmentsCount,
     blend: {
@@ -265,33 +265,33 @@ float snoise(vec3 p) {
 
   vec3 s = floor(p + dot(p, vec3(F3)));
   vec3 x = p - s + dot(s, vec3(G3));
-   
+
   vec3 e = step(vec3(0.0), x - x.yzx);
   vec3 i1 = e*(1.0 - e.zxy);
   vec3 i2 = 1.0 - e.zxy*(1.0 - e);
-     
+
   vec3 x1 = x - i1 + G3;
   vec3 x2 = x - i2 + 2.0*G3;
   vec3 x3 = x - 1.0 + 3.0*G3;
-   
+
   vec4 w, d;
-   
+
   w.x = dot(x, x);
   w.y = dot(x1, x1);
   w.z = dot(x2, x2);
   w.w = dot(x3, x3);
-   
+
   w = max(0.6 - w, 0.0);
-   
+
   d.x = dot(random3(s), x);
   d.y = dot(random3(s + i1), x1);
   d.z = dot(random3(s + i2), x2);
   d.w = dot(random3(s + 1.0), x3);
-   
+
   w *= w;
   w *= w;
   d *= w;
-   
+
   return dot(d, vec4(52.0));
 }
 
