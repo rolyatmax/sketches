@@ -3,7 +3,7 @@ import config from '../config'
 
 includeFont({ url: 'https://fonts.googleapis.com/css?family=Space+Mono:700' })
 
-const projects = config.include
+const projects = config.include.map(name => name.slice(0, -3))
 
 const container = document.createElement('div')
 container.className = 'container'

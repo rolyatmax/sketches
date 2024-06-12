@@ -3,7 +3,7 @@ const mkdirpSync = require('mkdirp').sync
 const rimrafSync = require('rimraf').sync
 
 const config = require('../config')
-const files = ['index'].concat(config.include)
+const files = ['index.js'].concat(config.include)
 
 const err = rimrafSync('docs')
 if (err) throw new Error(err)
@@ -19,9 +19,9 @@ exec('cp -r resources docs/')
     console.log('Building sketches & resizing images')
     return Promise.all([
       // loop through with imagemagick and resize all the screenshots
-      ...config.include.map(name => exec(`convert docs/resources/screenshots/${name}.png -resize 800 docs/resources/screenshots/${name}.png`)),
+      ...config.include.map(name => exec(`convert docs/resources/screenshots/${stripSuffix(name)}.png -resize 800 docs/resources/screenshots/${stripSuffix(name)}.png`)),
       // build all the sketches
-      ...files.map(name => exec(`canvas-sketch sketches/${name}.js --dir docs --build --inline`))
+      ...files.map(name => exec(`canvas-sketch sketches/${name} --dir docs --build --inline -- -p tsify`))
     ])
   })
   .catch((e) => console.error(e))
@@ -44,4 +44,9 @@ function exec (cmd) {
       resolve()
     })
   })
+}
+
+// remove the .js or .ts suffix
+function stripSuffix (name) {
+  return name.slice(0, -3)
 }
