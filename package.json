@@ -43,6 +43,7 @@
     "encode-object": "^0.2.2",
     "eslint": "^6.5.1",
     "fontmetrics": "^1.0.0",
+    "frustum-intersects": "^0.2.4",
     "geo-3d-transform-mat4": "^1.0.0",
     "geo-ambient-occlusion": "^3.0.4",
     "geo-center": "^1.0.2",
@@ -118,13 +119,14 @@
     "web-audio-player": "^1.3.2"
   },
   "devDependencies": {
-    "@webgpu/types": "^0.1.42",
+    "@webgpu/types": "^0.1.44",
     "browserify": "^13.1.0",
     "bundle-collapser": "^1.2.1",
     "mkdirp": "^0.5.1",
     "rimraf": "^2.5.4",
     "simple-html-index": "^1.4.0",
     "tsify": "^5.0.4",
+    "typescript": "^5.5.3",
     "uglify-js": "^2.7.3"
   },
   "browserify": {

@@ -5,3 +5,5 @@ data/nyc-footprints
 data/nyc-buildings
 data/nyc-lidar
 plots/plots
+resources/data/nyc-buildings/manhattan-sorted.bin
+resources/data/nyc-lidar/987210.bin
