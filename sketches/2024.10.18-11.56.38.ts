@@ -104,9 +104,21 @@ async function main() {
 
     // rgb is weighted sum of colors, a is sum of weights
     var color: vec4f = vec4f(0.0, 0.0, 0.0, 0.01);
-    for (var i = 0.0; i < uniforms.gridDimensions.x; i += 1.0) {
+
+    // Calculate grid position once
+    let gridPos = (position.xy - gridOffset) / uniforms.cellSpacing;
+    let gridPosFloor = floor(gridPos);
+
+    // Limit the loop to nearby cells
+    let cellRadius = 2.0;
+    let startI = max(0.0, gridPosFloor.x - cellRadius);
+    let endI = min(uniforms.gridDimensions.x - 1.0, gridPosFloor.x + cellRadius);
+    let startJ = max(0.0, gridPosFloor.y - cellRadius);
+    let endJ = min(uniforms.gridDimensions.y - 1.0, gridPosFloor.y + cellRadius);
+
+    for (var i = startI; i <= endI; i += 1.0) {
       let isCur: f32 = step(abs(i - uniforms.curColIdx), 0.001);
-      for (var j = 0.0; j < uniforms.gridDimensions.y; j += 1.0) {
+      for (var j = startJ; j <= endJ; j += 1.0) {
         let cellIdx = u32(j * uniforms.gridDimensions.x + i);
         let cell = cells[cellIdx];
         let cellColor: vec4f = uniforms.palettes[cell.y];
