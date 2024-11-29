@@ -1,9 +1,21 @@
-// NYC Building Lines Study
+// NYC Building Lines Study for ptpx 2024
 import * as optimizePathOrder from '../plots/optimize-path-order'
 import * as canvasSketch from 'canvas-sketch'
 import * as random from 'canvas-sketch-util/random'
 import { GUI } from 'dat-gui'
 import { vec2, mat4, vec3 } from 'gl-matrix'
+
+/**
+ *
+ * Possible next steps:
+ * - skew the lines in 2D space (use a log scale?)
+ * - use noise to rotate or offset the lines
+ * - mirror the lines across some line of symmetry
+ * - have lines fall off the screen like they are responding to gravity
+ * - render each line twice with different "handwriting" params to get a sketchy effect
+ * - pick specific buildings for specific people (do an address -> BIN lookup)
+ *
+ */
 
 const PLOTNAME = '2024.11.27-10.07.31'
 
