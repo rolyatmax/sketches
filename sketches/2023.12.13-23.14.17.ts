@@ -134,6 +134,8 @@ canvasSketch(({ render }) => {
       }
     }
 
+    console.log('line count', lines.length)
+
     context.fillStyle = 'white'
     context.fillRect(0, 0, width, height)
 
