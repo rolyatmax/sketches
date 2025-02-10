@@ -4,6 +4,7 @@ import * as canvasSketch from 'canvas-sketch'
 import * as random from 'canvas-sketch-util/random'
 import { GUI } from 'dat-gui'
 import { vec2, mat4, vec3 } from 'gl-matrix'
+import * as convexHull from 'convex-hull'
 
 /**
  *
@@ -17,12 +18,12 @@ import { vec2, mat4, vec3 } from 'gl-matrix'
  *
  */
 
-const PLOTNAME = '2024.11.27-10.07.31'
+const PLOTNAME = '2024.12.12-12.55.18'
 
 const MM_PER_INCH = 25.4
 const PIXELS_PER_INCH = 200
-const WIDTH = 6 * PIXELS_PER_INCH
-const HEIGHT = 4 * PIXELS_PER_INCH
+const WIDTH = 12 * PIXELS_PER_INCH
+const HEIGHT = 9 * PIXELS_PER_INCH
 const PIXELS_PER_MM = PIXELS_PER_INCH / MM_PER_INCH
 const PIXELS_PER_CM = PIXELS_PER_MM * 10
 
@@ -30,23 +31,19 @@ const BUILDINGS_FACES_URL = 'resources/data/nyc-buildings/manhattan-faces.json'
 
 const settings = {
   seed: 8020,
-  margin: 1, // margin around the canvas (in inches)
-  outlineSpacing: 30, // spacing between the outline and the lines (in pixels)
+  margin: 2.5, // margin around the canvas (in inches)
+  outlineSpacing: 60, // spacing between the outline and the lines (in pixels)
 
+  buildingRadius: 600, // radius around the building to render (in world space)
+  circleRadiusOffset: 20,
   // render faster for exploration
   renderFast: true,
   doubleLines: false,
 
-  // camera settings
-  cameraHeightMin: 700,
-  cameraHeightMax: 1000,
-  cameraDistanceMin: 100,
-  cameraDistanceMax: 100,
+  showMargin: false,
 
-  // perturb line settings
-  perturbNoiseFreq: 0.5,
-  perturbNoiseMag: 1.6,
-  perturbDivisionSize: 4,
+  // camera settings
+  cameraHeight: 700,
 
   lineWidthMM: 0.1
 }
@@ -78,16 +75,13 @@ let lines: Line2D[] = []
   canvasSketch(({ render }) => {
     const gui = new GUI()
     gui.add(settings, 'seed', 0, 9999).step(1).onChange(render)
-    gui.add(settings, 'margin', 0, 1).step(0.01).onChange(render)
+    gui.add(settings, 'margin', 0, 4).step(0.01).onChange(render)
     gui.add(settings, 'outlineSpacing', 0, 100).step(1).onChange(render)
-    gui.add(settings, 'cameraHeightMin', 100, 1000).step(1).onChange(render)
-    gui.add(settings, 'cameraHeightMax', 100, 1000).step(1).onChange(render)
-    gui.add(settings, 'cameraDistanceMin', 100, 2000).step(1).onChange(render)
-    gui.add(settings, 'cameraDistanceMax', 100, 2000).step(1).onChange(render)
-    gui.add(settings, 'perturbNoiseFreq', 0, 2).onChange(render)
-    gui.add(settings, 'perturbNoiseMag', 0, 10).step(0.01).onChange(render)
-    gui.add(settings, 'perturbDivisionSize', 1, 20).step(1).onChange(render)
+    gui.add(settings, 'buildingRadius', 100, 2000).step(1).onChange(render)
+    gui.add(settings, 'circleRadiusOffset', 0, 100).step(1).onChange(render)
+    gui.add(settings, 'cameraHeight', 10, 2000).step(1).onChange(render)
     gui.add(settings, 'lineWidthMM', 0.05, 2).step(0.01).onChange(render)
+    gui.add(settings, 'showMargin').onChange(render)
     gui.add(settings, 'doubleLines').onChange(render)
     gui.add(settings, 'renderFast').onChange(render)
 
@@ -99,52 +93,97 @@ let lines: Line2D[] = []
 
       const rand = random.createRandom(settings.seed)
 
+      // const buildingBin = 1031626
+      // const building = buildings.find(b => b.bin === buildingBin)
+      // if (!building) {
+      //   throw new Error('building not found')
+      // }
+
       // pick random building
       const building = buildings[rand.rangeFloor(buildings.length)]
-      const center = vec3.fromValues(
+      const buildingCenter = vec3.fromValues(
         (building.bbox[0] + building.bbox[3]) / 2,
         (building.bbox[1] + building.bbox[4]) / 2,
         (building.bbox[2] + building.bbox[5]) / 2
       )
 
+      console.log('building BIN', building.bin)
+
+      // cull buildings
+      const visibleBuildings = buildings.filter(b => {
+        const distance = vec3.distance(buildingCenter, vec3.fromValues(b.bbox[0], b.bbox[1], b.bbox[2]))
+        return distance < settings.buildingRadius
+      })
+      console.log('visibleBuildings', visibleBuildings.length)
+
+      // pull out all building faces
+      const initFaces: vec3[][] = []
+      for (const building of visibleBuildings) {
+        for (const face of building.faces) {
+          initFaces.push(chunkArray(face, 3).map(v => vec3.fromValues(v[0], v[1], v[2])))
+        }
+      }
+
+      const minZ = Math.min(...initFaces.map(face => Math.min(...face.map(v => v[2]))))
+
+      const pts = flatten(initFaces).map(v => vec2.fromValues(v[0], v[1]))
+      const hull = convexHull(pts).map(([idx]) => pts[idx]) as vec2[]
+      const furthestPts = findFurthest2DPoints(hull)
+      console.log('furthestPts', furthestPts)
+
+      const circleCenter = vec2.lerp(vec2.create(), furthestPts[0], furthestPts[1], 0.5)
+      const circleRadius = vec2.distance(furthestPts[0], furthestPts[1]) / 2
+
+      const linesCount = 4
+      for (let k = 0; k < linesCount; k++) {
+        // add a face that is a circle around the building's radius
+        const circleFace: vec3[] = []
+        const resolution = 100
+        for (let i = 0; i <= resolution; i++) {
+          const dist = circleRadius + settings.circleRadiusOffset * Math.pow(1.7, k)
+          const angle = i / resolution * Math.PI * 2
+          const x = Math.cos(angle) * dist + circleCenter[0]
+          const y = Math.sin(angle) * dist + circleCenter[1]
+          circleFace.push(vec3.fromValues(x, y, minZ - 1))
+        }
+        initFaces.push(circleFace)
+      }
+
       // center the camera on its bounding box
       // calculate view-projection matrix
-      const viewMatrix = mat4.lookAt(mat4.create(), getCameraEye(rand, center), center, [0, 0, 1])
+      const eye = vec3.fromValues(circleCenter[0] + 1, circleCenter[1] + 1, settings.cameraHeight)
+      const center = vec3.fromValues(circleCenter[0], circleCenter[1], minZ - 1)
+      const viewMatrix = mat4.lookAt(mat4.create(), eye, center, [0, 0, 1])
       const projectionMatrix = mat4.perspective(mat4.create(), Math.PI / 3, width / height, 1, 4000)
       const viewProjectionMatrix = mat4.mul(mat4.create(), projectionMatrix, viewMatrix)
 
-      // cull buildings
-      const visibleBuildings = buildings.filter(b => true) //frustumIntersectsBox(b.bbox, viewProjectionMatrix))
-      console.log('visibleBuildings', visibleBuildings.length)
-
       // transform face coords to screenspace
       const faces: vec3[][] = []
-      for (const building of visibleBuildings) {
-        for (const face of building.faces) {
-          const transformedFace = chunkArray(face, 3).map(v => vec3.transformMat4(vec3.create(), vec3.fromValues(v[0], v[1], v[2]), viewProjectionMatrix))
-          // const isBehind = transformedFace.every(v => v[2] < 0)
-          const isOffScreen = transformedFace.every(v => v[0] < -1 || v[0] > 1 || v[1] < -1 || v[1] > 1 || v[2] < -1 || v[2] > 1)
-          // cull backfaces
-          if (!isOffScreen && isFrontFacing(transformedFace)) {
-            faces.push(transformedFace.map(v => vec3.fromValues(
-              (v[0] + 1) * width / 2 + margin,
-              (v[1] * -1 + 1) * height / 2 + margin, // flip y
-              v[2]
-            )))
-          }
+      for (const face of initFaces) {
+        const transformedFace = face.map(v => vec3.transformMat4(v, v, viewProjectionMatrix))
+        // cull backfaces
+        if (isFrontFacing(transformedFace)) {
+          // scaling this by width and height so we get the right aspect ratio
+          faces.push(transformedFace.map(v => vec3.fromValues(
+            (v[0] + 1) * width / 2 + margin,
+            (v[1] * -1 + 1) * height / 2 + margin, // flip y
+            v[2]
+          )))
         }
       }
 
       const initLines = faces.slice()
 
-      // add margin outline
-      initLines.push([
-        vec3.fromValues(margin, margin, 0),
-        vec3.fromValues(margin, height + margin, 0),
-        vec3.fromValues(width + margin, height + margin, 0),
-        vec3.fromValues(width + margin, margin, 0),
-        vec3.fromValues(margin, margin, 0),
-      ])
+      // box to scale the resulting lines to
+      const box = {
+        x: margin,
+        y: margin,
+        width: width,
+        height: height,
+      }
+      // scaling this up to pixel space so that we can use pixel units for determining if
+      // lines can be connected or if they are too short, etc. in subsequent steps
+      scaleLines(initLines, box)
 
       console.log('lines count', initLines.length)
       const segmentStart = performance.now()
@@ -157,19 +196,13 @@ let lines: Line2D[] = []
       }
       console.log('segments count', segments.length)
 
-      segments = segments.filter(segment => !isSegmentTooShort(segment, 2))
+      segments = segments.filter(segment => !isSegmentTooShort(segment, 1))
       console.log('segments count after short removal', segments.length)
 
       if (!settings.renderFast) {
         segments = segmentLines(segments)
         console.log('segmentLines time', performance.now() - segmentStart)
         console.log('segments count after intersection breaks', segments.length)
-
-        segments = segments.filter(segment => {
-          return (segment[0][0] > margin && segment[0][0] < width + margin && segment[0][1] > margin && segment[0][1] < height + margin) &&
-            (segment[1][0] > margin && segment[1][0] < width + margin && segment[1][1] > margin && segment[1][1] < height + margin)
-        })
-        console.log('segments count after culling offscreen', segments.length)
 
         const removeHiddenStart = performance.now()
         segments = removeHiddenSegments(segments, faces)
@@ -183,34 +216,23 @@ let lines: Line2D[] = []
       lines = combineSegments(segments2d, 2)
       console.log('combineSegments time', performance.now() - combineStart)
 
-      lines = lines.filter(line => getLineLength(line) > 2)
-
-      // for points closer to the center of the canvas, move them by some random amount
-      // for (let i = 0; i < lines.length; i++) {
-      //   const line = lines[i]
-      //   for (let j = 0; j < line.length; j++) {
-      //     const pt = line[j]
-      //     const distance = vec2.distance(pt, vec2.fromValues(viewportWidth / 2, viewportHeight / 2))
-      //     const dir = rand.onCircle(500 / distance)
-      //     vec2.add(pt, pt, dir)
-      //   }
-      // }
+      lines = lines.filter(line => getLineLength(line) > 1)
 
       if (settings.doubleLines) {
         // double the lines
         lines = lines.concat(lines.slice())
       }
 
-      lines = lines.map(line => perturbLine(rand, line))
-
-      const outline = margin - settings.outlineSpacing
-      lines.push([
-        vec2.fromValues(outline, outline),
-        vec2.fromValues(outline, viewportHeight - outline),
-        vec2.fromValues(viewportWidth - outline, viewportHeight - outline),
-        vec2.fromValues(viewportWidth - outline, outline),
-        vec2.fromValues(outline, outline),
-      ])
+      if (settings.showMargin) {
+        const outline = margin - settings.outlineSpacing
+        lines.push([
+          vec2.fromValues(outline, outline),
+          vec2.fromValues(outline, viewportHeight - outline),
+          vec2.fromValues(viewportWidth - outline, viewportHeight - outline),
+          vec2.fromValues(viewportWidth - outline, outline),
+          vec2.fromValues(outline, outline),
+        ])
+      }
 
       console.log('segments2d count', segments2d.length)
       console.log('final lines count', lines.length)
@@ -249,51 +271,8 @@ function isSegmentTooShort(segment: [vec3, vec3], threshold: number): boolean {
   return vec2.squaredDistance(vec2.fromValues(segment[0][0], segment[0][1]), vec2.fromValues(segment[1][0], segment[1][1])) < thresholdSquared
 }
 
-function perturbLine (rand: random.RandomGenerator, line: vec2[]): vec2[] {
-  const outLine: vec2[] = []
-  for (let j = 0; j < line.length - 1; j++) {
-    const start = line[j]
-    const end = line[j + 1]
-    const dir = vec2.sub(vec2.create(), end, start)
-    vec2.normalize(dir, dir)
-    const norm = vec2.fromValues(dir[1], -dir[0])
-    const tStart = rand.range(1000000)
-
-    outLine.push(start)
-    const divisions = Math.max(1, Math.floor(vec2.distance(start, end) / settings.perturbDivisionSize))
-    // skipping first and last pt because we don't want to perturb the control points
-    for (let i = 1; i < divisions; i++) {
-      const t = i / divisions
-      const noiseMagT = Math.sin(t * Math.PI)
-      const pt = vec2.lerp(vec2.create(), start, end, t)
-      const mag = rand.noise1D(t + tStart, settings.perturbNoiseFreq, settings.perturbNoiseMag * noiseMagT)
-      vec2.add(pt, pt, vec2.scale(vec2.create(), norm, mag))
-      outLine.push(pt)
-    }
-  }
-  // don't forget to push very last control pt
-  outLine.push(line[line.length - 1])
-
-  return outLine
-}
-
 function convertLineTo2d(line: vec3[]): vec2[] {
   return line.map(v => vec2.fromValues(v[0], v[1]))
-}
-
-function boxSegmentIntersections (line: [vec2, vec2], box: Box): vec2[] {
-  const segments: [vec2, vec2][] = [
-    [[box.x, box.y], [box.x + box.width, box.y]],
-    [[box.x + box.width, box.y], [box.x + box.width, box.y + box.height]],
-    [[box.x + box.width, box.y + box.height], [box.x, box.y + box.height]],
-    [[box.x, box.y + box.height], [box.x, box.y]],
-  ]
-  const intersections: vec2[] = []
-  for (const segment of segments) {
-    const int = segmentIntersection(segment, line)
-    if (int !== null) intersections.push(int)
-  }
-  return intersections
 }
 
 // this takes 3d lines but segments them in 2d space
@@ -439,7 +418,7 @@ function removeHiddenSegments(segments: [vec3, vec3][], faces: vec3[][]): [vec3,
       // if it is, get the Z value of the plane at that point
       const z = calculatePlaneZValue(face.plane, midpoint2d)
       // if the Z value is less than the midpoint's Z value, the segment is hidden and should be culled
-      if (z < midpoint[2] && Math.abs(z - midpoint[2]) > 0.00001) {
+      if (z < midpoint[2] && Math.abs(z - midpoint[2]) > 0.0001) {
         isVisible = false
         break
       }
@@ -552,23 +531,19 @@ function isFrontFacing(face: vec3[]): boolean {
   return vec3.dot(normal, face[2]) < 0
 }
 
-function getCameraEye(random: random.RandomGenerator, center: vec3): vec3 {
-  const CAMERA_HEIGHT = random.range(settings.cameraHeightMin, settings.cameraHeightMax)
-  const CAMERA_DISTANCE = random.range(settings.cameraDistanceMin, settings.cameraDistanceMax)
-  const CAMERA_ANGLE = random.range(Math.PI * 2)
-  return vec3.fromValues(
-    center[0] + Math.cos(CAMERA_ANGLE) * CAMERA_DISTANCE,
-    center[1] + Math.sin(CAMERA_ANGLE) * CAMERA_DISTANCE,
-    center[2] + CAMERA_HEIGHT
-  )
-}
-
 function chunkArray<T>(arr: T[], size: number): T[][] {
   const out: T[][] = []
   for (let i = 0; i < arr.length; i += size) {
     out.push(arr.slice(i, i + size))
   }
   return out
+}
+
+function get2DConvexHull(pts: (vec2 | vec3)[]): vec2[] {
+  const hull: vec2[] = []
+  const pts2d = pts.map(v => vec2.fromValues(v[0], v[1]))
+
+  return hull
 }
 
 function combineSegments(segments: [vec2, vec2][], threshold: number): Line2D[] {
@@ -638,6 +613,65 @@ function combineSegments(segments: [vec2, vec2][], threshold: number): Line2D[] 
   }
 
   return combined
+}
+
+function findFurthest2DPoints(pts: vec2[]): [vec2, vec2] {
+  let maxDist = 0
+  let maxPair: [vec2, vec2] = [pts[0]!, pts[1]!]
+  for (let i = 0; i < pts.length; i++) {
+    for (let j = i + 1; j < pts.length; j++) {
+      const dist = vec2.squaredDistance(pts[i]!, pts[j]!)
+      if (dist > maxDist) {
+        maxDist = dist
+        maxPair = [pts[i]!, pts[j]!]
+      }
+    }
+  }
+  return maxPair
+}
+
+// mutates the lines in place
+function scaleLines(lines: (Line2D | Line)[], box: Box) {
+  // Find the extent of all lines
+  const linesExtent = {
+    min: vec2.fromValues(Infinity, Infinity),
+    max: vec2.fromValues(-Infinity, -Infinity),
+  }
+  for (const line of lines) {
+    for (const pt of line) {
+      vec2.min(linesExtent.min, linesExtent.min, pt as vec2)
+      vec2.max(linesExtent.max, linesExtent.max, pt as vec2)
+    }
+  }
+
+  // Calculate current dimensions and target dimensions
+  const currentWidth = linesExtent.max[0] - linesExtent.min[0]
+  const currentHeight = linesExtent.max[1] - linesExtent.min[1]
+  const targetWidth = box.width
+  const targetHeight = box.height
+
+  // Calculate scale factor while preserving aspect ratio
+  const scale = Math.min(
+    targetWidth / currentWidth,
+    targetHeight / currentHeight
+  )
+
+  const center = vec2.fromValues(
+    box.width / 2 + box.x,
+    box.height / 2 + box.y
+  )
+
+  // Transform all points
+  lines.forEach(line =>
+    line.forEach((pt: vec2 | vec3) => {
+      // First center at origin
+      vec2.subtract(pt as vec2, pt as vec2, center)
+      // Then scale
+      vec2.scale(pt as vec2, pt as vec2, scale)
+      // Then move back
+      vec2.add(pt as vec2, pt as vec2, center)
+    })
+  )
 }
 
 function sortByMinValue<T>(arr: T[], fn: (t: T) => number): T[] {

@@ -17,7 +17,7 @@ import { vec2, mat4, vec3 } from 'gl-matrix'
  *
  */
 
-const PLOTNAME = '2024.11.27-10.07.31'
+const PLOTNAME = '2024.12.12-08.43.55'
 
 const MM_PER_INCH = 25.4
 const PIXELS_PER_INCH = 200
@@ -30,22 +30,26 @@ const BUILDINGS_FACES_URL = 'resources/data/nyc-buildings/manhattan-faces.json'
 
 const settings = {
   seed: 8020,
-  margin: 1, // margin around the canvas (in inches)
-  outlineSpacing: 30, // spacing between the outline and the lines (in pixels)
+  margin: 1.1, // margin around the canvas (in inches)
+  outlineSpacing: 60, // spacing between the outline and the lines (in pixels)
+
+  buildingRadius: 600, // radius around the building to render (in world space)
 
   // render faster for exploration
   renderFast: true,
   doubleLines: false,
 
+  showMargin: true,
+
   // camera settings
   cameraHeightMin: 700,
   cameraHeightMax: 1000,
-  cameraDistanceMin: 100,
-  cameraDistanceMax: 100,
+  cameraDistanceMin: 800,
+  cameraDistanceMax: 1500,
 
   // perturb line settings
   perturbNoiseFreq: 0.5,
-  perturbNoiseMag: 1.6,
+  perturbNoiseMag: 2.3,
   perturbDivisionSize: 4,
 
   lineWidthMM: 0.1
@@ -78,16 +82,18 @@ let lines: Line2D[] = []
   canvasSketch(({ render }) => {
     const gui = new GUI()
     gui.add(settings, 'seed', 0, 9999).step(1).onChange(render)
-    gui.add(settings, 'margin', 0, 1).step(0.01).onChange(render)
+    gui.add(settings, 'margin', 0, 2).step(0.01).onChange(render)
     gui.add(settings, 'outlineSpacing', 0, 100).step(1).onChange(render)
+    gui.add(settings, 'buildingRadius', 100, 2000).step(1).onChange(render)
     gui.add(settings, 'cameraHeightMin', 100, 1000).step(1).onChange(render)
     gui.add(settings, 'cameraHeightMax', 100, 1000).step(1).onChange(render)
-    gui.add(settings, 'cameraDistanceMin', 100, 2000).step(1).onChange(render)
-    gui.add(settings, 'cameraDistanceMax', 100, 2000).step(1).onChange(render)
+    gui.add(settings, 'cameraDistanceMin', 0, 2000).step(1).onChange(render)
+    gui.add(settings, 'cameraDistanceMax', 1, 2000).step(1).onChange(render)
     gui.add(settings, 'perturbNoiseFreq', 0, 2).onChange(render)
     gui.add(settings, 'perturbNoiseMag', 0, 10).step(0.01).onChange(render)
     gui.add(settings, 'perturbDivisionSize', 1, 20).step(1).onChange(render)
     gui.add(settings, 'lineWidthMM', 0.05, 2).step(0.01).onChange(render)
+    gui.add(settings, 'showMargin').onChange(render)
     gui.add(settings, 'doubleLines').onChange(render)
     gui.add(settings, 'renderFast').onChange(render)
 
@@ -114,37 +120,47 @@ let lines: Line2D[] = []
       const viewProjectionMatrix = mat4.mul(mat4.create(), projectionMatrix, viewMatrix)
 
       // cull buildings
-      const visibleBuildings = buildings.filter(b => true) //frustumIntersectsBox(b.bbox, viewProjectionMatrix))
+      const visibleBuildings = buildings.filter(b => {
+        const distance = vec3.distance(center, vec3.fromValues(b.bbox[0], b.bbox[1], b.bbox[2]))
+        return distance < settings.buildingRadius
+      })
       console.log('visibleBuildings', visibleBuildings.length)
+
+      // pull out all building faces
+      const initFaces: vec3[][] = []
+      for (const building of visibleBuildings) {
+        for (const face of building.faces) {
+          initFaces.push(chunkArray(face, 3).map(v => vec3.fromValues(v[0], v[1], v[2])))
+        }
+      }
 
       // transform face coords to screenspace
       const faces: vec3[][] = []
-      for (const building of visibleBuildings) {
-        for (const face of building.faces) {
-          const transformedFace = chunkArray(face, 3).map(v => vec3.transformMat4(vec3.create(), vec3.fromValues(v[0], v[1], v[2]), viewProjectionMatrix))
-          // const isBehind = transformedFace.every(v => v[2] < 0)
-          const isOffScreen = transformedFace.every(v => v[0] < -1 || v[0] > 1 || v[1] < -1 || v[1] > 1 || v[2] < -1 || v[2] > 1)
-          // cull backfaces
-          if (!isOffScreen && isFrontFacing(transformedFace)) {
-            faces.push(transformedFace.map(v => vec3.fromValues(
-              (v[0] + 1) * width / 2 + margin,
-              (v[1] * -1 + 1) * height / 2 + margin, // flip y
-              v[2]
-            )))
-          }
+      for (const face of initFaces) {
+        const transformedFace = face.map(v => vec3.transformMat4(v, v, viewProjectionMatrix))
+        // cull backfaces
+        if (isFrontFacing(transformedFace)) {
+          // scaling this by width and height so we get the right aspect ratio
+          faces.push(transformedFace.map(v => vec3.fromValues(
+            (v[0] + 1) * width,
+            (v[1] * -1 + 1) * height, // flip y
+            v[2]
+          )))
         }
       }
 
       const initLines = faces.slice()
 
-      // add margin outline
-      initLines.push([
-        vec3.fromValues(margin, margin, 0),
-        vec3.fromValues(margin, height + margin, 0),
-        vec3.fromValues(width + margin, height + margin, 0),
-        vec3.fromValues(width + margin, margin, 0),
-        vec3.fromValues(margin, margin, 0),
-      ])
+      // box to scale and center the resulting lines to
+      const box = {
+        x: margin,
+        y: margin,
+        width: width,
+        height: height,
+      }
+      // scaling this up to pixel space so that we can use pixel units for determining if
+      // lines can be connected or if they are too short, etc. in subsequent steps
+      scaleAndCenterLines(initLines, box)
 
       console.log('lines count', initLines.length)
       const segmentStart = performance.now()
@@ -165,12 +181,6 @@ let lines: Line2D[] = []
         console.log('segmentLines time', performance.now() - segmentStart)
         console.log('segments count after intersection breaks', segments.length)
 
-        segments = segments.filter(segment => {
-          return (segment[0][0] > margin && segment[0][0] < width + margin && segment[0][1] > margin && segment[0][1] < height + margin) &&
-            (segment[1][0] > margin && segment[1][0] < width + margin && segment[1][1] > margin && segment[1][1] < height + margin)
-        })
-        console.log('segments count after culling offscreen', segments.length)
-
         const removeHiddenStart = performance.now()
         segments = removeHiddenSegments(segments, faces)
         console.log('removeHiddenSegments time', performance.now() - removeHiddenStart)
@@ -185,17 +195,6 @@ let lines: Line2D[] = []
 
       lines = lines.filter(line => getLineLength(line) > 2)
 
-      // for points closer to the center of the canvas, move them by some random amount
-      // for (let i = 0; i < lines.length; i++) {
-      //   const line = lines[i]
-      //   for (let j = 0; j < line.length; j++) {
-      //     const pt = line[j]
-      //     const distance = vec2.distance(pt, vec2.fromValues(viewportWidth / 2, viewportHeight / 2))
-      //     const dir = rand.onCircle(500 / distance)
-      //     vec2.add(pt, pt, dir)
-      //   }
-      // }
-
       if (settings.doubleLines) {
         // double the lines
         lines = lines.concat(lines.slice())
@@ -203,14 +202,16 @@ let lines: Line2D[] = []
 
       lines = lines.map(line => perturbLine(rand, line))
 
-      const outline = margin - settings.outlineSpacing
-      lines.push([
-        vec2.fromValues(outline, outline),
-        vec2.fromValues(outline, viewportHeight - outline),
-        vec2.fromValues(viewportWidth - outline, viewportHeight - outline),
-        vec2.fromValues(viewportWidth - outline, outline),
-        vec2.fromValues(outline, outline),
-      ])
+      if (settings.showMargin) {
+        const outline = margin - settings.outlineSpacing
+        lines.push([
+          vec2.fromValues(outline, outline),
+          vec2.fromValues(outline, viewportHeight - outline),
+          vec2.fromValues(viewportWidth - outline, viewportHeight - outline),
+          vec2.fromValues(viewportWidth - outline, outline),
+          vec2.fromValues(outline, outline),
+        ])
+      }
 
       console.log('segments2d count', segments2d.length)
       console.log('final lines count', lines.length)
@@ -571,6 +572,13 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return out
 }
 
+function get2DConvexHull(pts: (vec2 | vec3)[]): vec2[] {
+  const hull: vec2[] = []
+  const pts2d = pts.map(v => vec2.fromValues(v[0], v[1]))
+
+  return hull
+}
+
 function combineSegments(segments: [vec2, vec2][], threshold: number): Line2D[] {
   segments = segments.slice()
   const thresholdSquared = threshold * threshold
@@ -638,6 +646,70 @@ function combineSegments(segments: [vec2, vec2][], threshold: number): Line2D[] 
   }
 
   return combined
+}
+
+function findFurthest2DPoints(pts: vec2[]): [vec2, vec2] {
+  let maxDist = 0
+  let maxPair: [vec2, vec2] = [pts[0]!, pts[1]!]
+  for (let i = 0; i < pts.length; i++) {
+    for (let j = i + 1; j < pts.length; j++) {
+      const dist = vec2.squaredDistance(pts[i]!, pts[j]!)
+      if (dist > maxDist) {
+        maxDist = dist
+        maxPair = [pts[i]!, pts[j]!]
+      }
+    }
+  }
+  return maxPair
+}
+
+// mutates the lines in place
+function scaleAndCenterLines(lines: (Line2D | Line)[], box: Box) {
+  // Find the extent of all lines
+  const linesExtent = {
+    min: vec2.fromValues(Infinity, Infinity),
+    max: vec2.fromValues(-Infinity, -Infinity),
+  }
+  for (const line of lines) {
+    for (const pt of line) {
+      vec2.min(linesExtent.min, linesExtent.min, pt as vec2)
+      vec2.max(linesExtent.max, linesExtent.max, pt as vec2)
+    }
+  }
+
+  // Calculate current dimensions and target dimensions
+  const currentWidth = linesExtent.max[0] - linesExtent.min[0]
+  const currentHeight = linesExtent.max[1] - linesExtent.min[1]
+  const targetWidth = box.width
+  const targetHeight = box.height
+
+  // Calculate scale factor while preserving aspect ratio
+  const scale = Math.min(
+    targetWidth / currentWidth,
+    targetHeight / currentHeight
+  )
+
+  // Calculate centering offset
+  const currentCenter = vec2.fromValues(
+    linesExtent.min[0] + currentWidth / 2,
+    linesExtent.min[1] + currentHeight / 2
+  )
+  const targetCenter = vec2.fromValues(
+    box.x + box.width / 2,
+    box.y + box.height / 2
+  )
+
+  // Transform all points
+  lines.forEach(line =>
+    line.forEach((pt: vec2 | vec3) => {
+      // First center at origin
+      vec2.subtract(pt as vec2, pt as vec2, currentCenter)
+      // Then scale
+      vec2.scale(pt as vec2, pt as vec2, scale)
+      // Then move to target center
+      vec2.add(pt as vec2, pt as vec2, targetCenter)
+    })
+  )
 }
 
 function sortByMinValue<T>(arr: T[], fn: (t: T) => number): T[] {
