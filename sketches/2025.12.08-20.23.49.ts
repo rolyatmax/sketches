@@ -16,21 +16,23 @@ const PLOTNAME = '2025.12.08-20.23.49'
 
 const MM_PER_INCH = 25.4
 const PIXELS_PER_INCH = 200
-const WIDTH = 12 * PIXELS_PER_INCH
-const HEIGHT = 9 * PIXELS_PER_INCH
+const WIDTH = 6 * PIXELS_PER_INCH
+const HEIGHT = 4 * PIXELS_PER_INCH
 const PIXELS_PER_MM = PIXELS_PER_INCH / MM_PER_INCH
 const PIXELS_PER_CM = PIXELS_PER_MM * 10
 
 const settings = {
   seed: 8020,
-  margin: 1.1, // margin around the canvas (in inches)
+  margin: 0.6, // margin around the canvas (in inches)
   lineWidthMM: 0.1,
   steps: 800,
   stepSize: 0.05,
-  rows: 10,
-  cols: 20,
+  rows: 12,
+  cols: 12,
   velocityVariance: 0.002,
-  startVelocity: 0.02,
+  startVelocity: 0.01,
+  lineRemovalThreshold: 1.05,
+  sphereRadiusScale: 0.67,
 }
 
 type Line2D = vec2[]
@@ -46,13 +48,14 @@ let lines: Line2D[] = []
     gui.add(settings, 'seed', 0, 9999).step(1).onChange(render)
     gui.add(settings, 'margin', 0, 4).step(0.01).onChange(render)
     gui.add(settings, 'lineWidthMM', 0.05, 2).step(0.01).onChange(render)
-    gui.add(settings, 'steps', 10, 10000).step(1).onChange(render)
+    gui.add(settings, 'steps', 10, 3000).step(1).onChange(render)
     gui.add(settings, 'stepSize', 0.01, 1).step(0.01).onChange(render)
-    gui.add(settings, 'rows', 1, 10).step(1).onChange(render)
+    gui.add(settings, 'rows', 1, 20).step(1).onChange(render)
     gui.add(settings, 'cols', 1, 20).step(1).onChange(render)
     gui.add(settings, 'velocityVariance', 0.00001, 0.01).step(0.00001).onChange(render)
     gui.add(settings, 'startVelocity', 0, 0.5).step(0.01).onChange(render)
-
+    gui.add(settings, 'lineRemovalThreshold', 0, 2).step(0.01).onChange(render)
+    gui.add(settings, 'sphereRadiusScale', 0, 1).step(0.01).onChange(render)
     return (args: SketchArgs) => {
       const { context, viewportWidth, viewportHeight } = args
       const margin = settings.margin * PIXELS_PER_INCH
@@ -63,49 +66,52 @@ let lines: Line2D[] = []
       const baseLine3d = generateSpherePath(rand, settings.steps, settings.stepSize, settings.velocityVariance, settings.startVelocity)
 
       lines = []
-      
+
       const numRows = settings.rows
       const numCols = settings.cols
       const numSpheres = numRows * numCols
-      
+
       const colSpacing = width / numCols
       const rowSpacing = height / numRows
+      const spacing = Math.min(colSpacing, rowSpacing)
       // Scale radius based on cell size, keeping some padding
-      const sphereRadiusScale = Math.min(colSpacing, rowSpacing) / 2 * 0.8
-      
+      const sphereRadiusScale = spacing / 2 * settings.sphereRadiusScale
+      const marginX = (viewportWidth - numCols * spacing) / 2
+      const marginY = (viewportHeight - numRows * spacing) / 2
+
       for (let i = 0; i < numSpheres; i++) {
         const row = Math.floor(i / numCols)
         const col = i % numCols
 
         // Calculate center for this sphere
         // Add margin offset + cell offset + center of cell
-        const cx = margin + col * colSpacing + colSpacing / 2
-        const cy = margin + row * rowSpacing + rowSpacing / 2
-        
+        const cx = marginX + col * spacing + spacing / 2
+        const cy = marginY + row * spacing + spacing / 2
+
         // Rotate the sphere
         // Determine rotation axis based on row and col
         // Horizontal rotation (around Y axis) from left to right
         const angleY = numCols > 1 ? (col / (numCols - 1)) * Math.PI * 2 : 0
-        
-        // Vertical rotation (around X axis) from top to bottom
-        const angleX = numRows > 1 ? (row / (numRows - 1)) * Math.PI * 2 : 0
-        
+
+        // Vertical rotation (around X axis) from top to bottom - only go halfway around
+        const angleX = numRows > 1 ? (row / (numRows - 1)) * Math.PI : 0
+
         const line2d: Line2D = baseLine3d.map(pt => {
           const rotatedPt = vec3.create()
-          
+
           // Apply horizontal rotation (around Y axis)
           vec3.rotateY(rotatedPt, pt, [0, 0, 0], angleY)
-          
+
           // Apply vertical rotation (around X axis)
           // Note: Rotating the already rotated point
           vec3.rotateX(rotatedPt, rotatedPt, [0, 0, 0], angleX)
-          
+
           // Project to 2D
           const x = rotatedPt[0] * sphereRadiusScale + cx
           const y = rotatedPt[1] * sphereRadiusScale + cy
           return vec2.fromValues(x, y)
         })
-        lines.push(line2d)
+        lines.push(simplifyLines(line2d, settings.lineRemovalThreshold))
       }
 
       context.fillStyle = 'white'
@@ -130,6 +136,23 @@ let lines: Line2D[] = []
 })();
 
 
+function simplifyLines(line: Line2D, threshold: number): Line2D {
+  const simplified: Line2D = [line[0]]
+  for (let i = 1; i < line.length; i++) {
+    const curPt = simplified[simplified.length - 1]
+    const nextPt = line[i]
+    const distance = vec2.distance(curPt, nextPt)
+    if (distance > threshold) {
+      simplified.push(nextPt)
+    }
+  }
+  if (simplified.length > 1) {
+    return simplified
+  } else {
+    return []
+  }
+}
+
 
 function getLineLength(line: vec2[]): number {
   let length = 0
@@ -144,12 +167,12 @@ function generateSpherePath(rand: any, steps: number, stepSize: number, velocity
   line3d.push(rand.onSphere(1))
   let curAngle = rand.range(0, Math.PI * 2)
   let curAngleVelocity = rand.range(-startVelocity, startVelocity)
-  
+
   while (steps--) {
     const accel = rand.gaussian(0, velocityVariance)
     curAngleVelocity += accel
     curAngle += curAngleVelocity
-    
+
     const nextPoint = stepOnSphere(line3d[line3d.length - 1]!, curAngle, stepSize)
     line3d.push(nextPoint)
   }
@@ -457,7 +480,7 @@ function stepOnSphere(point: vec3, angle: number, distance: number): vec3 {
   const step = vec3.create()
   const cos = Math.cos(angle)
   const sin = Math.sin(angle)
-  
+
   vec3.scale(u, u, distance * cos)
   vec3.scale(v, v, distance * sin)
   vec3.add(step, u, v)
